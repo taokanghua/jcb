@@ -1,0 +1,12 @@
+<script>
+    var url = location.href.split('?');
+    var pars = url[1].split('&');
+    var data = {};
+    for (var i = 0; i < pars.length; i++) {
+        var p = pars[i].split('=');
+        data[p[0]] = p[1];
+    };
+    if (!!data.app3Redirect) {
+        self.location = decodeURIComponent(data.app3Redirect);
+    };
+</script>
