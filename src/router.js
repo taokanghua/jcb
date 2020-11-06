@@ -92,6 +92,30 @@ export default new Router({
             name: 'mine',
             meta: { title: '个人中心' },
             component: ()=>import('@/views/mine/index')
+        },
+        {
+            path: '/mall',
+            name: 'mall',
+            meta: { title: '金材宝商城' },
+            component: ()=>import('@/views/home/mall')
+        },
+        {
+            path: '/brandzone',
+            name: 'brandzone',
+            meta: { title: '品牌专区' },
+            component: ()=>import('@/views/home/brand-zone')
+        },
+        {
+            path: '/allstores',
+            name: 'allstores',
+            meta: { title: '全部店铺' },
+            component: ()=>import('@/views/home/all-stores')
+        },
+        {
+            path: '/search',
+            name: 'search',
+            meta: { title: '搜索' },
+            component: ()=>import('@/views/home/search-page')
         }
     ],
     linkActiveClass:'tabbar-active'

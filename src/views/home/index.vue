@@ -1,13 +1,14 @@
 <template>
   <div class="home-wrap">
     <!-- 头部搜索 -->
-    <div class="header-top row sb ac">
+    <!-- <div class="header-top row sb ac">
       <input type="search" placeholder="请输入商品名称或店铺名称搜索" />
       <div>
         <i class="iconfont icondizhi"></i>
         <span>佛山</span>
       </div>
-    </div>
+    </div> -->
+    <search-top :search="false"></search-top>
 
     <!-- 轮播图 -->
     <div class="tools-wrap">
@@ -37,14 +38,14 @@
       </div>
 
       <div class="menu row sb">
-        <div class="menu-item">
+        <router-link to="/mall" tag="div" class="menu-item">
           <img src="../../assets/img/店铺街.png" alt="" />
           <span>店铺街</span>
-        </div>
-        <div class="menu-item">
+        </router-link>
+        <router-link to="/brandzone" tag="div" class="menu-item">
           <img src="../../assets/img/品牌专区.png" alt="" />
           <span>品牌专区</span>
-        </div>
+        </router-link>
         <div class="menu-item">
           <img src="../../assets/img/特惠专区.png" alt="" />
           <span>特惠专区</span>
@@ -63,7 +64,7 @@
       <div class="header row sb">
         <div>
           <span>限时活动</span>
-          <count-down endTime="2020/11/06" bgColor="#fc0808" fontSize="0.18rem" marginLeft="0.1rem"></count-down>
+          <count-down endTime="2020/11/10" bgColor="#fc0808" fontSize="0.18rem" marginLeft="0.1rem"></count-down>
         </div>
         <!-- <div class="more">更多 <i class="iconfont icongengduo"></i></div> -->
       </div>
@@ -101,46 +102,13 @@
     <div class="active-wrap pr24">
       <div class="header row sb">
         <span>推荐店铺</span>
-        <div class="more">更多 <i class="iconfont icongengduo"></i></div>
+        <router-link to="/allstores" tag="div" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
       </div>
-      <div class="shop-card" v-for="item in 3" :key="item">
-        <div class="shop-header row sb">
-          <div class="left row">
-            <img class="shop-img" src="../../assets/img/门店头像.png" alt="" />
-            <div class="info col sb">
-              <div class="row ac">
-                <span class="shop-name">豪迪五金店</span>
-                <img src="../../assets/img/等级一.png" alt="" />
-              </div>
-              <div> <i class="iconfont iconstar" v-for="item in 5" :key="item"></i> </div>
-            </div>
-          </div>
-          <div class="right col sb">
-            <div class="go-shop">进店</div>
-            <div class="distance">1.88KM</div>
-          </div>
-        </div>
-
-        <div class="shop-goods sb">
-          <div class="goods-item" v-for="item in 3" :key="item">
-            <div class="img-show">
-              <img src="../../assets/img/店铺商品展示.png" alt="" />
-              <div class="tag">热销</div>
-            </div>
-            <div class="name e2">
-              铁皮打包带专用大力剪刀 剪 铁皮带剪刀 钢带剪
-            </div>
-            <div class="price row">
-              <div class="now">￥150</div>
-              <div class="old">￥150</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <hot-recom-card v-for="item in 3" :key="item"></hot-recom-card>
     </div>
 
     <!-- 类型 -->
-    <tabs background="none" color="#2ecb62">
+    <!-- <tabs background="none" color="#2ecb62">
       <tab title="电动工具">
         <div class="tabs-wrap row" >
           <home-card v-for="item in 3" :key="item"></home-card>
@@ -150,7 +118,25 @@
       <tab title="电工电器">电工电器</tab>
       <tab title="机电设备">机电设备</tab>
       <tab title="佛山陶瓷">佛山陶瓷</tab>
-    </tabs>
+    </tabs> -->
+    <div class="menu-title row sb ac">
+      <div class="item column ac jc" :class="{active:recomIndex==0}" @click="changeRecom(0)">
+        <div>新品推荐</div>
+        <span>品质无忧</span>
+      </div>
+      <div class="item column ac jc" :class="{active:recomIndex==1}" @click="changeRecom(1)">
+        <div>热销排行榜</div>
+        <span>人气精选排行</span>
+      </div>
+      <div class="item column ac jc" :class="{active:recomIndex==2}" @click="changeRecom(2)">
+        <div>智能推荐</div>
+        <span>为你推荐</span>
+      </div>
+    </div>
+
+    <div class="tabs-wrap row" >
+          <home-card v-for="item in 3" :key="item"></home-card>
+        </div>
 
     <!-- 底部tabbar -->
     <myFooter></myFooter>
@@ -162,10 +148,19 @@ import { Swipe, SwipeItem, Rate, Tab, Tabs } from "vant";
 import countDown from '../../components/common/count-down'
 import myFooter from "../../components/common/my/footer";
 import HomeCard from '../../components/common/card/home-good-card'
+import searchTop from '../../components/common/my/search-top'
+import hotRecomCard from '../../components/common/card/hot-recom-card'
 export default {
   name: "home",
   data() {
-    return {};
+    return {
+      recomIndex:0
+    };
+  },
+  methods:{
+    changeRecom(i){
+      this.recomIndex = i
+    }
   },
   components: {
     myFooter,
@@ -175,7 +170,9 @@ export default {
     Tab,
     Tabs,
     countDown,
-    HomeCard
+    HomeCard,
+    searchTop,
+    hotRecomCard
   },
 };
 </script>
@@ -185,6 +182,7 @@ export default {
   padding: 0 0.25rem;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin-top: 0.28rem;
 }
 .pr24 {
   padding-right: 0.24rem;
@@ -262,114 +260,6 @@ export default {
       margin-top: 0.18rem;
     }
   }
-  .shop-card {
-    box-sizing: border-box;
-    // width: 5.81rem;
-    padding: 0.15rem;
-    height: 3.79rem;
-    background-color: #ffffff;
-    border-radius: 0.11rem;
-    margin-bottom: 0.23rem;
-    display: flex;
-    flex-direction: column;
-    .shop-header {
-      .left {
-        .shop-img {
-          width: 0.68rem;
-          height: 0.68rem;
-          border-radius: 50%;
-        }
-        .info {
-          margin-left: 0.12rem;
-          img {
-            width: 0.31rem;
-            height: 0.25rem;
-            margin-left: 0.11rem;
-          }
-          .shop-name {
-            font-size: 0.25rem;
-            color: #1a1a1a;
-            font-weight: bold;
-          }
-          i{
-            font-size: 0.2rem;
-            color:#f5b917;
-            margin-right: 0.06rem;
-          }
-        }
-      }
-      .right {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        .go-shop {
-          width: 0.96rem;
-          height: 0.36rem;
-          background-color: #2ecb62;
-          border-radius: 0.18rem;
-          text-align: center;
-          line-height: 0.36rem;
-          color: #fff;
-          font-size: 0.21rem;
-        }
-        .distance {
-          color: #1a1a1a;
-          font-size: 0.23rem;
-          text-align: right;
-        }
-      }
-    }
-    .shop-goods {
-      margin-top: 0.25rem;
-      flex: 1;
-      display: flex;
-      flex-wrap: wrap;
-      .goods-item {
-        width: 1.71rem;
-        height: 100%;
-        border-radius: 0.06rem;
-        border: solid 0.01rem #c8c8c8;
-        .img-show {
-          position: relative;
-          img {
-            height: 1.36rem;
-          }
-          .tag {
-            position: absolute;
-            left: 0.11rem;
-            bottom: 0.05rem;
-            width: 0.53rem;
-            height: 0.24rem;
-            background-color: #fc0808;
-            border-radius: 0.11rem;
-            font-size: 0.17rem;
-            color: #ffffff;
-            line-height: 0.24rem;
-            text-align: center;
-          }
-        }
-        .name {
-          margin-top: 0.12rem;
-          padding-left: 0.11rem;
-          color: #1a1a1a;
-          font-size: 0.2rem;
-        }
-        .price {
-          margin-top: 0.16rem;
-          align-items: flex-end;
-          .now {
-            font-size: 0.24rem;
-            color: #fc0808;
-          }
-          .old {
-            font-size: 0.18rem;
-            color: #a8a8a8;
-            text-decoration:line-through;
-          }
-        }
-      }
-    }
-  }
 }
 
 .home-wrap {
@@ -378,30 +268,7 @@ export default {
   overflow: auto;
   padding-bottom: 0.84rem;
 }
-.header-top {
-  padding: 0 0.27rem;
-  // margin: 0.12rem 0;
-  background-color: #ffffff;
-  input {
-    margin: 0.12rem 0;
-    width: 4.52rem;
-    font-size: 0.18rem;
-    color: #bbbbbb;
-    height: 0.51rem;
-    background-color: #f6f6f6;
-    border-radius: 0.25rem;
-    padding-left: 10px;
-  }
-  div {
-    i {
-      font-size: 0.28rem;
-    }
-    span {
-      font-size: 0.24rem;
-      color: #1a1a1a;
-    }
-  }
-}
+
 .tools-wrap {
   background-image: url("../../assets/img/首页底图.png");
   background-size: cover;
@@ -449,6 +316,37 @@ export default {
   }
   .active-img {
     margin-top: 0.34rem;
+  }
+}
+
+// 修改后的
+.menu-title{
+  padding: 0 1rem;
+  .item{
+    div{
+      font-size: 0.27rem;
+    }
+    span{
+      font-size: 0.2rem;
+      color: #a8a8a8;
+      margin-top: 0.05rem;
+    }
+  }
+  .active{
+    color: #2ecb62;
+    div{
+      font-size: 0.26rem;
+      font-weight: bold;
+    }
+    span{
+      background-color: #2ecb62;
+      border-radius: 0.14rem;
+      width: 1.36rem;
+      height: 0.28rem;
+      text-align: center;
+      line-height: 0.28rem;
+      color: #ffffff;
+    }
   }
 }
 

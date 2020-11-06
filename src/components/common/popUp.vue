@@ -1,7 +1,7 @@
 <template>
   <div class="pop-up" ref="pop">
     <div class="y-modal" :class="{'fade-show':liftUp}"></div>
-    <div class="y-menu" :class="{'up':liftUp,[position]:true}" @click="handelModalClick()">
+    <div class="y-menu" :class="{'up':liftUp,[position]:true}" @click.stop.self="handelModalClick()">
       <slot></slot>
     </div>
   </div>
@@ -62,6 +62,8 @@ export default {
   position: absolute;
   width: 100vw;
   transition: transform 225ms;
+  display: flex;
+  justify-content: flex-end;
 }
 .bottom {
   bottom: 0;

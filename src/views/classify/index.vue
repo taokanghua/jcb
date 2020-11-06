@@ -108,7 +108,7 @@
     </div>
 
     <pop-up :show="isPop" position="right-center" @onModalClick="isPop=!isPop">
-      <div style="background-color:#fff; width:80%;margin-left:auto;height:100vh">1231231</div>
+      <preparation-inner></preparation-inner>
     </pop-up>
     <myFooter></myFooter>
   </div>
@@ -118,6 +118,7 @@
 import myFooter from "../../components/common/my/footer";
 import preparation from "../../components/common/my/preparation";
 import popUp from '../../components/common/popUp'
+import preparationInner from '../../components/common/my/preparation-inner'
 export default {
   data() {
     return {
@@ -166,7 +167,8 @@ export default {
   components: {
     myFooter,
     preparation,
-    popUp
+    popUp,
+    preparationInner
   },
 };
 </script>
