@@ -51,6 +51,9 @@ export default {
 }
 </style>
 <style lang="less">
+.tabbar-active{
+  color: #2ecb62!important;
+}
 .smooth {
   -webkit-overflow-scrolling: touch;
 }
@@ -169,7 +172,7 @@ html {
 
 /** 以下为 全局默认 样式 */
 #app {
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
+  font-family: SourceHanSansCN-Regular, -apple-system, BlinkMacSystemFont, "PingFang SC",
     "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-align: center;

@@ -1,7 +1,7 @@
 <template>
   <div class="pop-up" ref="pop">
-    <div class="y-modal" :class="{'fade-show':liftUp}" @click="handelModalClick()"></div>
-    <div class="y-menu" :class="{'up':liftUp,[position]:true}">
+    <div class="y-modal" :class="{'fade-show':liftUp}"></div>
+    <div class="y-menu" :class="{'up':liftUp,[position]:true}" @click="handelModalClick()">
       <slot></slot>
     </div>
   </div>
@@ -68,6 +68,11 @@ export default {
   left: 0;
   transform: translateY(100%);
 }
+.right-center{
+  right: 0;
+  top: 50%;
+  transform: translate(100%,-50%);
+}
 .center {
   top: 50%;
   left: 50%;
@@ -81,5 +86,8 @@ export default {
 }
 .center.up {
   transform: translate(-50%, -50%) scale(1);
+}
+.right-center.up{
+  transform: translate(0%, -50%);
 }
 </style>

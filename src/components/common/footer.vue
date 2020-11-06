@@ -1,6 +1,6 @@
 <template>
   <safe-bar class="footer">
-    <div @click="goTo(0, '/')">
+    <div @click="goTo(0, '/home')">
       <ripple>
         <i class="iconfont iconshouye" :class="{ active: current == 0 }"></i>
         <span :class="[current == 0 ? 'active' : '']">首页</span>
@@ -80,7 +80,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .footer-space {
-  height: 1.5rem;
+  height: 0.83rem;
   background-color: #f5f5f5;
 }
 .footer {
@@ -109,7 +109,7 @@ export default {
 }
 
 .footer .ripple-label > i {
-  font-size: 0.42rem;
+  font-size: 0.39rem;
   display: block;
 
   &.active {

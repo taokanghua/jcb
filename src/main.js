@@ -10,12 +10,15 @@ import VueClipboard from 'vue-clipboard2'
 import filters from '@/utils/filters'
 import VueScroller from 'vue-scroller'
 import { Dialog } from 'vant'
+
+import 'vant/lib/index.css';
+
+
 Vue.use(VueScroller)
 Vue.use(VueClipboard)
 Vue.use(Toast)
 Vue.use(AwesomePicker);
 Vue.use(Dialog)
-
 Date.prototype.format = function(format) {
     var o = {
         "M+": this.getMonth() + 1, //month
