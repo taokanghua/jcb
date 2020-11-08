@@ -1,7 +1,7 @@
 <template>
   <!-- 头部搜索 -->
     <div class="header-top row sb ac">
-      <input type="search" placeholder="请输入商品名称或店铺名称搜索" @focus="checkEnv"/>
+      <input type="search" placeholder="请输入商品名称或店铺名称搜索" @focus="checkEnv" @blur="blurHandle"/>
       <div class="address" v-if="address">
         <i class="iconfont icondizhi"></i>
         <span>佛山</span>
@@ -32,7 +32,12 @@ export default {
     checkEnv(){
       if(!this.search){
         this.$router.push({name:'search'})
+      }else{
+        this.$emit('focus')
       }
+    },
+    blurHandle(){
+      this.$emit('blur')
     }
   }
 }

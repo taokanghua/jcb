@@ -1,6 +1,6 @@
 <template>
   <div class="shop-card">
-        <div class="shop-header row sb">
+        <router-link to="/store" tag="div" class="shop-header row sb">
           <div class="left row">
             <img class="shop-img" src="../../../assets/img/门店头像.png" alt="" />
             <div class="info col sb">
@@ -15,7 +15,7 @@
             <div class="go-shop">进店</div>
             <div class="distance">1.88KM</div>
           </div>
-        </div>
+        </router-link>
 
         <div class="shop-goods sb">
           <div class="goods-item" v-for="item in 3" :key="item">

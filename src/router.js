@@ -116,6 +116,31 @@ export default new Router({
             name: 'search',
             meta: { title: '搜索' },
             component: ()=>import('@/views/home/search-page')
+        },
+        {
+            path: '/store',
+            name: 'store',
+            meta: { title: '金材宝商城' },
+            component: () => import('@/views/store/index')
+        },
+        {
+            path: '/goodsdetail',
+            name: '/goodsdetail',
+            meta: { title: '商品详情' },
+            component:()=>import('@/views/store/goods-detail')
+        },
+        {
+            path: '/evaluate',
+            name: 'evaluate',
+            meta: { title: '用户评价' },
+            component:()=>import('@/views/store/evaluate')
+        },
+        {
+            path: '/confirmorder',
+            name: 'confirmorder',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/confirm-order')
+
         }
     ],
     linkActiveClass:'tabbar-active'

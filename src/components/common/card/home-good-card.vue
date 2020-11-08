@@ -1,6 +1,6 @@
 <template>
   <!-- <div class="tabs-wrap row"> -->
-    <div class="tab-goods-card">
+    <router-link to="/goodsdetail" tag="div" class="tab-goods-card">
       <img src="../../../assets/img/购物车.png" alt="" />
       <div class="name e2">
         <span>预售</span>
@@ -11,7 +11,7 @@
         <div class="price">￥399 <span>￥399</span></div>
         <div class="sale">销量:888</div>
       </div>
-    </div>
+    </router-link>
   <!-- </div> -->
 </template>
 

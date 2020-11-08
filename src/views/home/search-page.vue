@@ -1,8 +1,8 @@
 <template>
   <div class="search-page-wrap">
-    <search-top :address="false"></search-top>
+    <search-top :address="false" @focus="getFocus" @blur="loseFocus"></search-top>
 
-    <tabs color="#2ecb62">
+    <tabs color="#2ecb62" v-show="!searchStatus">
       <tab title="商品">
         <div class="store">
           <div class="prepar-wrap row sb ac">
@@ -68,6 +68,7 @@ import preparationInner from '../../components/common/my/preparation-inner'
 export default {
   data(){
     return{
+      searchStatus:false, //搜索模式
       salesCondition:0,
       conditionIdx:-1,
       praparationPop:false, //公用筛选弹框
@@ -80,6 +81,12 @@ export default {
         return
       }
       this.conditionIdx = i
+    },
+    getFocus(){
+      this.searchStatus = true
+    },
+    loseFocus(){
+      this.searchStatus = false
     }
   },
   components:{
