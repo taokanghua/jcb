@@ -2,7 +2,7 @@
   <!-- 头部搜索 -->
     <div class="header-top row sb ac">
       <input type="search" placeholder="请输入商品名称或店铺名称搜索" @focus="checkEnv" @blur="blurHandle"/>
-      <div class="address" v-if="address">
+      <div class="address" v-if="address" @click="$router.push({name:'chooseAddress'})">
         <i class="iconfont icondizhi"></i>
         <span>佛山</span>
       </div>

@@ -141,6 +141,36 @@ export default new Router({
             meta: { title: '确认订单' },
             component:()=>import('@/views/order/confirm-order')
 
+        },
+        {
+            path: '/address',
+            name: 'address',
+            meta: { title: '管理地址' },
+            component:()=>import('@/views/mine/address')
+        },
+        {
+            path: '/editaddress',
+            name: 'editaddress',
+            meta: { title: '编辑地址' },
+            component:()=>import('@/views/mine/address/modify')
+        },
+        {
+            path: '/chooseAddress',
+            name: 'chooseAddress',
+            meta: { title: '选择收货地址' },
+            component:()=>import('@/views/home/location/choose-address')
+        },
+        {
+            path: '/chooseCity',
+            name: 'chooseCity',
+            meta: { title: '选择城市' },
+            component:()=>import('@/views/home/location/choose-city')
+        },
+        {
+            path: '/editInfo',
+            name: 'editInfo',
+            meta: { title: '编辑信息' },
+            component:()=>import('@/views/mine/edit-info')
         }
     ],
     linkActiveClass:'tabbar-active'

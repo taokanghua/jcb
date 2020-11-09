@@ -55,19 +55,19 @@
         </div>
       </div>
       <!-- 行 -->
-      <div class="order-field row sb ac">
+      <div class="order-field row sb ac" @click="pops.platform=true">
         <span class="left">平台优惠</span>
         <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
       </div>
-      <div class="order-field row sb ac">
+      <div class="order-field row sb ac" @click="pops.shop=true">
         <span class="left">店铺优惠</span>
         <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
       </div>
-      <div class="order-field row sb ac">
-        <span class="left">运费 <span class="desc">物流到付</span> </span>
+      <div class="order-field row sb ac" @click="pops.way=true">
+        <span class="left">运费 <span class="desc">{{form.deliverWayIdx==0?'快递配送':'物流到付'}}</span> </span>
         <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
       </div>
-      <div class="order-field row sb ac">
+      <div class="order-field row sb ac" v-show="wayIdx==0">
         <span class="left">运费险 <span class="desc">货物运输过程中有损，可赔</span> </span>
         <span class="right row ac" @click="form.insurance=!form.insurance">
           ￥10.00 
@@ -80,7 +80,7 @@
       </div>
       <div class="order-field row sb ac">
         <span class="left">备注</span>
-        <input type="text" placeholder="请输入您备注信息">
+        <input type="text" placeholder="请输入您备注信息" v-model="form.message">
       </div>
     </div>
 
@@ -105,8 +105,15 @@
     <action-sheet v-model="pops.takeTime" title="选择自提时间">
       <div class="take-time-content row">
         <div class="date">
-          <div class="row ac jc active">10:10</div>
-          <div class="row ac jc" v-for="item in 10" :key="item">10:11</div>
+          <!-- <div class="row ac jc active">10:10</div> -->
+          <div 
+          class="row ac jc" 
+          :class="{active:i==dayIdx}"
+          v-for="(item,i) in dateList" 
+          :key="i"
+          @click="dayIdx=i">
+          {{item.month}}-{{item.day}}
+        </div>
         </div>
         <div class="time">
           <div class="row sb ac active-time" style="height:0.68rem">
@@ -120,6 +127,68 @@
         </div>
       </div>
     </action-sheet>
+
+    <action-sheet v-model="pops.way" title="配送方式">
+      <div class="way-content">
+        <div class="way-feild row ac sb" @click="form.deliverWayIdx=0;pops.way=false">
+          <span class="title">快递配送</span>
+          <div class="row ac">
+            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==0"></i>
+            <i class="iconfont iconradiobuttonunselect" v-else></i>
+          </div>
+        </div>
+        <div class="way-feild row ac sb" @click="form.deliverWayIdx=1;pops.way=false">
+          <span class="title">物流到付</span>
+          <div class="row ac">
+            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==1"></i>
+            <i class="iconfont iconradiobuttonunselect" v-else></i>
+          </div>
+        </div>
+        <div class="confirm-btn row ac jc position" @click="pops.way=false">确定</div>
+      </div>
+    </action-sheet>
+
+    <action-sheet v-model="pops.platform" title="平台优惠">
+      <div class="platform-content">
+        <!-- 下面开始 一张优惠券 -->
+        <div class="row ac mb26" v-for="(item,i) in 2" :key="i" @click="platformHandle(i)">
+          <div class="radio row ac">
+          <i class="iconfont iconxuanzhong" v-if="i==form.platformIdx"></i>
+          <i class="iconfont iconradiobuttonunselect" v-else></i>
+        </div>
+         <div class="platform-coupon row ac">
+            <div class="tag row ac jc">平台满减券</div>
+            <div class="left row jc">￥20</div>
+            <div class="mid column sb">
+              <span>满50减50</span>
+              <span>有效期至2020-10-20</span>
+               <span>可与店铺优惠叠加使用</span>
+            </div>
+          </div>
+        </div>
+        <div class="confirm-btn position row ac jc" @click="pops.platform=false">确定</div>
+      </div>
+    </action-sheet>
+
+    <action-sheet v-model="pops.shop" title="店铺优惠">
+      <div class="shop-content">
+        <div class="row ac mb26" v-for="(item,i) in 2" :key="i" @click="shopHandle(i)">
+          <div class="radio row ac">
+          <i class="iconfont iconxuanzhong" v-if="i==form.shopIdx"></i>
+          <i class="iconfont iconradiobuttonunselect" v-else></i>
+        </div>
+         <div class="coupon-item row ac">
+          <div class="left-top row ac jc">店铺满减券</div>
+          <div class="left row ac jc">￥20</div>
+          <div class="mid column sb">
+            <span>全场通用</span>
+            <span>有效期至2020-10-20</span>
+          </div>
+        </div>
+        </div>
+        <div class="confirm-btn position row ac jc" @click="pops.shop=false">确定</div>
+      </div>
+    </action-sheet>
   </div>
 </template>
 
@@ -129,21 +198,48 @@ import inputNumber from '../../components/common/my/input-number'
 export default {
   data(){
     return{
-      wayIdx:1,
-      checked: false,
+      wayIdx:1, 
       agreement: false, //同意协议
       editPhone:false, //编辑手机号
-      contact: '12345678900',
+      dateList:[], //日期
+      dayIdx:0, //选中的日期索引
+      
+      contact: '12345678900', // 联系电话
       form:{
+        platformIdx:-1, //平台优惠券索引
+        shopIdx:-1, //店铺优惠券索引
+        deliverWayIdx:0, //配送方式 两种
         num:1,
         insurance: false, //运费险
+        message:''
       },
       pops:{
-        takeTime:true,
+        takeTime:false,
+        way:false,
+        platform:false,
+        shop:false
       }
     }
   },
   methods:{
+    getMonthDay(){
+      // let date = new Date()
+      let oneDay = 86400000 //一天
+      let today = Date.now() - oneDay //不知道为啥 直接跳了一天 这就是明天
+      let days = [] //最后数组
+      let d = null
+      let month = null
+      let day = null
+      for(let i=0;i<31;i++){
+        today += oneDay
+        d = new Date(today+oneDay)
+        month = (d.getMonth()+1).toString().padStart(2,0)
+        day = d.getDate().toString().padStart(2,0)
+        days.push({month, day})
+      }
+      // console.log(days)
+      this.dateList = days
+    },
     editHandle(){
       if(this.editPhone) return
       setTimeout(()=>{this.$refs.input.focus()},100) //必须要延时一下
@@ -151,7 +247,26 @@ export default {
     },
     checkPhone(e){
       this.editPhone = false
+    },
+    platformHandle(i){
+      // 店铺优惠切换
+      if(this.form.platformIdx == i){
+        this.form.platformIdx = -1
+        return
+      }
+      this.form.platformIdx = i
+    },
+    shopHandle(i){
+      // 店铺优惠切换
+      if(this.form.shopIdx == i){
+        this.form.shopIdx = -1
+        return
+      }
+      this.form.shopIdx = i
     }
+  },
+  mounted(){
+    this.getMonthDay()
   },
   components:{
     ActionSheet,
@@ -422,6 +537,24 @@ export default {
 </style>
 
 <style lang="less" scoped>
+.confirm-btn{
+  width: 5.81rem;
+	height: 0.56rem;
+	background-color: #5ecc26;
+  border-radius: 0.28rem;
+  // position: absolute;
+  bottom: 0.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.21rem;
+  color: #ffffff;
+}
+.position{
+  position: absolute;
+}
+.mb26{
+  margin-bottom: 0.26rem;
+}
 .take-time-content{
   height: 5.64rem;
   .date{
@@ -461,4 +594,150 @@ export default {
     }
   }
 }
+.way-content{
+  padding: 0 0.27rem;
+  height: 5.64rem;
+  box-sizing: border-box;
+  position: relative;
+  .way-feild{
+    margin-bottom: 0.4rem;
+    .title{
+      font-size: 0.21rem;
+      color: #1a1a1a;
+    }
+    .iconradiobuttonunselect{
+      color: #a8a8a8;
+      font-size: 0.3rem;
+      transform: scale(1.3);
+    }
+    .iconxuanzhong{
+      font-size: 0.28rem;
+      color: #5ecc26;
+    }
+  }
+}
+.platform-content{
+  height: 5.64rem;
+  overflow: scroll;
+  padding: 0 0.27rem;
+  box-sizing: border-box;
+  .platform-coupon{
+    flex: 1;
+    height: 1.47rem;
+	  background-color: #f6f6f6;
+    border-radius: 0.11rem;
+    box-sizing: border-box;
+    margin-bottom: 0.23rem;
+    padding: 0.14rem 0;
+    // box-sizing: border-box;
+    position: relative;
+    .tag{
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1.47rem;
+      height: 0.31rem;
+      background-color: #2ecb62;
+      font-size: 0.18rem;
+      color: #ffffff;
+      border-radius: 0.11rem 0rem 0.11rem 0rem;
+    }
+    .left{
+      width: 1.47rem;
+      font-size: 0.36rem;
+      color: #fc0808;
+      font-weight: bold;
+    }
+    .mid{
+      flex: 2;
+      font-size: 0.21rem;
+      height: 100%;
+      color: #1a1a1a;
+      margin-left: 0.22rem;
+    }
+    .right{
+      flex: 1;
+      .take{
+        width: 1.24rem;
+        height: 0.45rem;
+        background-color: #2ecb62;
+        border-radius: 0.23rem;
+        font-size: 0.21rem;
+        color: #ffffff;
+      }
+      .took{
+        background-color: #a8a8a8;
+      }
+    }
+  }
+}
+.shop-content{
+  height: 5.64rem;
+  overflow: scroll;
+  padding: 0 0.27rem;
+  box-sizing: border-box;
+  .coupon-item{
+    width: 5.81rem;
+    height: 1.47rem;
+    background-color: #f6f6f6;
+    border-radius: 0.11rem;
+    margin-bottom: 0.23rem;
+    position: relative;
+    box-sizing:  border-box;
+    padding: 0.38rem 0;
+    .left-top{
+      width: 1.47rem;
+      height: 0.31rem;
+      background-color: #fc0808;
+      font-size: 0.18rem;
+      border-radius: 0.11rem 0rem 0.11rem 0rem;
+      color: #ffffff;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .left{
+      width: 1.47rem;
+      font-size: 0.36rem;
+      color: #fc0808;
+      font-weight: bold;
+      margin-right: 0.22rem;
+    }
+    .mid{
+      flex: 2;
+      font-size: 0.21rem;
+      height: 100%;
+      color: #1a1a1a;
+    }
+    .right{
+      flex: 1;
+      .take{
+        width: 1.24rem;
+        height: 0.45rem;
+        background-color: #fc0808;
+        border-radius: 0.23rem;
+        font-size: 0.21rem;
+        color: #ffffff;
+        margin-right: 0.23rem;
+      }
+      .took{
+        background-color: #a8a8a8;
+      }
+    }
+  }
+}
+
+
+.radio{
+    margin-right: 0.27rem;
+    .iconradiobuttonunselect{
+      color: #a8a8a8;
+      font-size: 0.3rem;
+      transform: scale(1.3);
+    }
+    .iconxuanzhong{
+      font-size: 0.28rem;
+      color: #5ecc26;
+    }
+  }
 </style>

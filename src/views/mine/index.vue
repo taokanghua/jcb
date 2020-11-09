@@ -12,7 +12,7 @@
             </div>
           </div>
         </div>
-        <i class="iconfont iconARROW strong"></i>
+        <router-link to="/editInfo" tag="i" class="iconfont iconARROW strong"></router-link>
       </div>
     </div>
 
@@ -83,10 +83,10 @@
                 <i class="iconfont iconyouhuiquan"></i>
                 <span>领券中心</span>
               </div>
-              <div class="other-item">
+              <router-link to="/address" tag="div" class="other-item">
                 <i class="iconfont icondizhi"></i>
-                <span>收获地址</span>
-              </div>
+                <span>收货地址</span>
+              </router-link>
               <div class="other-item">
                 <i class="iconfont iconkefu_1"></i>
                 <span>联系我们</span>
