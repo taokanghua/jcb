@@ -225,17 +225,17 @@ export default {
     getMonthDay(){
       // let date = new Date()
       let oneDay = 86400000 //一天
-      let today = Date.now() - oneDay //不知道为啥 直接跳了一天 这就是明天
+      let today = Date.now()
       let days = [] //最后数组
       let d = null
       let month = null
       let day = null
       for(let i=0;i<31;i++){
-        today += oneDay
         d = new Date(today+oneDay)
         month = (d.getMonth()+1).toString().padStart(2,0)
         day = d.getDate().toString().padStart(2,0)
         days.push({month, day})
+        today += oneDay
       }
       // console.log(days)
       this.dateList = days

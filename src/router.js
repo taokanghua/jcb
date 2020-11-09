@@ -171,6 +171,24 @@ export default new Router({
             name: 'editInfo',
             meta: { title: '编辑信息' },
             component:()=>import('@/views/mine/edit-info')
+        },
+        {
+            path: '/couponCenter',
+            name: 'couponCenter',
+            meta: { title: '领券中心' },
+            component:()=>import('@/views/mine/coupon-center')
+        },
+        {
+            path: '/feedback',
+            name: 'feedback',
+            meta: { title: '意见反馈' },
+            component:()=>import('@/views/mine/feedback')
+        },
+        {
+            path: '/collection',
+            name: 'collection',
+            meta: { title: '我的收藏' },
+            component:()=>import('@/views/mine/collection')
         }
     ],
     linkActiveClass:'tabbar-active'

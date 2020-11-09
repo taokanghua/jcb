@@ -23,14 +23,14 @@
           <span>4</span>
           <span class="word">优惠券</span>
         </div>
-        <div class="item">
+        <router-link to="/collection?type=0" tag="div" class="item">
           <span>4</span>
           <span class="word">关注商品</span>
-        </div>
-        <div class="item">
+        </router-link>
+        <router-link to="/collection?type=1" tag="div" class="item">
           <span>4</span>
           <span class="word">关注店铺</span>
-        </div>
+        </router-link>
       </div>
       <!-- 我的订单 -->
       <div class="common-card my-order column sb">
@@ -45,7 +45,7 @@
           </div>
           <div class="order-item column ac jc">
             <i class="iconfont iconyiwancheng"></i>
-            <span>待收获</span>
+            <span>待收货</span>
           </div>
           <div class="order-item column ac jc">
             <i class="iconfont icondingdan"></i>
@@ -79,10 +79,10 @@
           <div class="common-card other-serve">
             <span class="title">其他服务</span>
             <div class="other-wrap">
-              <div class="other-item">
+              <router-link to="/couponCenter" tag="div" class="other-item">
                 <i class="iconfont iconyouhuiquan"></i>
                 <span>领券中心</span>
-              </div>
+              </router-link>
               <router-link to="/address" tag="div" class="other-item">
                 <i class="iconfont icondizhi"></i>
                 <span>收货地址</span>
@@ -91,10 +91,10 @@
                 <i class="iconfont iconkefu_1"></i>
                 <span>联系我们</span>
               </div>
-              <div class="other-item">
+              <router-link to="/feedback" tag="div" class="other-item">
                 <i class="iconfont iconxiaoxi"></i>
                 <span>意见反馈</span>
-              </div>
+              </router-link>
               <div class="other-item">
                 <i class="iconfont iconeye"></i>
                 <span>浏览记录</span>
