@@ -29,11 +29,21 @@
 </template>
 
 <script>
+import api from '../../api/user'
 export default {
   data(){
     return{
       defaultIdx:0
     }
+  },
+  methods:{
+    async getAddressList(){
+      let {data:res} = await api.getAddressList()
+      console.log(res)
+    }
+  },
+  created(){
+    this.getAddressList()
   }
 }
 </script>

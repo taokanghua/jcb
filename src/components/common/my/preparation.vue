@@ -34,11 +34,11 @@ export default {
 <style lang="less" scoped>
 .preparation{
   height: 0.18rem;
-  transform: translateY(-40%);
+  transform: translateY(-10%);
   // justify-content: flex-start;
   i{
     transform: scale(.7);
-    font-size: 0.12rem;
+    font-size: 0.14rem;
     color: #1a1a1a;
     &:last-child{
       transform: translateY(-40%) scale(.7);

@@ -35,9 +35,9 @@
           </div>
         </div>
         <div class="bottom row sb ac">
-          <span><i class="iconfont iconguanzhu"></i> 期货保证</span>
-          <span><i class="iconfont iconguanzhu"></i> 100%正品</span>
-          <span><i class="iconfont iconguanzhu"></i> 售后无忧</span>
+          <span><i class="iconfont iconanquan"></i> 期货保证</span>
+          <span><i class="iconfont iconzhengpinbaozhang"></i> 100%正品</span>
+          <span><i class="iconfont iconshouhou1"></i> 售后无忧</span>
         </div>
       </div>
       <!-- 地址 -->
@@ -248,9 +248,9 @@ export default {
   }
   .bottom{
     color:#a9a9a9;
-    font-size: 0.15rem;
+    font-size: 0.18rem;
     i{
-      font-size: 0.15rem;
+      font-size: 0.18rem;
     }
   }
 }

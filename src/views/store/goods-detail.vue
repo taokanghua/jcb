@@ -40,7 +40,7 @@
           <i class="iconfont iconARROW"></i>
         </div>
         <!-- 运费 -->
-        <div class="filed-item">
+        <router-link to="/detailChoose" tag="div" class="filed-item">
           <div class="row">
             <span class="r38">运费</span>
             <div class="column sb">
@@ -49,7 +49,7 @@
             </div>
           </div>
           <i class="iconfont iconARROW"></i>
-        </div>
+        </router-link>
 
         <div class="filed-item" @click="pops.serverInfo=true">
           <div>

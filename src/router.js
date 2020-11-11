@@ -161,6 +161,12 @@ export default new Router({
             component:()=>import('@/views/home/location/choose-address')
         },
         {
+            path: '/detailChoose',
+            name: 'detailChoose',
+            meta: { title: '配送地址' },
+            component:()=>import('@/views/store/choose-address')
+        },
+        {
             path: '/chooseCity',
             name: 'chooseCity',
             meta: { title: '选择城市' },
@@ -171,6 +177,18 @@ export default new Router({
             name: 'editInfo',
             meta: { title: '编辑信息' },
             component:()=>import('@/views/mine/edit-info')
+        },
+        {
+            path: '/orderEvaluate',
+            name: 'orderEvaluate',
+            meta: { title: '发表评价' },
+            component:()=>import('@/views/order/evaluate')
+        },
+        {
+            path: '/orderList',
+            name: 'orderList',
+            meta:{title:'我的订单'},
+            component:()=>import('@/views/mine/order')
         },
         {
             path: '/couponCenter',
@@ -189,6 +207,90 @@ export default new Router({
             name: 'collection',
             meta: { title: '我的收藏' },
             component:()=>import('@/views/mine/collection')
+        },
+        {
+            path: '/popularizeCenter',
+            name: 'popularize',
+            meta: { title: '推广中心' },
+            component:()=>import('@/views/mine/popularize')
+        },
+        {
+            path: '/popularizeOrder',
+            name: 'popOrder',
+            meta: { title: '推广中心' },
+            component:()=>import('@/views/mine/popularize/order')
+        },
+        {
+            path: '/popularizePeople',
+            name: 'popPeople',
+            meta: { title: '推广中心' },
+            component:()=>import('@/views/mine/popularize/people')
+        },
+        {
+            path: '/waitPay',
+            name: 'waitPay',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/order-status/wait-pay')
+        },
+        {
+            path: '/waitConsignment',
+            name: 'waitConsignment',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/order-status/wait-consignment')
+        },
+        {
+            path: '/waitReceive',
+            name: 'waitReceive',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/order-status/wait-receive')
+        },
+        {
+            path: '/waitRefund',
+            name: 'waitRefund',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/order-status/wait-refund')
+        },
+        {
+            path: '/cancel',
+            name: 'cancel',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/order-status/cancel')
+        },
+        {
+            path: '/complete',
+            name: 'complete',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/order-status/complete')
+        },
+        {
+            path: '/selfTake',
+            name: 'selfTake',
+            meta: { title: '确认订单' },
+            component:()=>import('@/views/order/self-take')
+        },
+        {
+            path: '/applyRefund',
+            name: 'applyRefund',
+            meta: { title: '退款申请' },
+            component:()=>import('@/views/order/apply-refund')
+        },
+        {
+            path: '/refund/all',
+            name: 'moneyGoods',
+            meta: { title: '退货退款' },
+            component:()=>import('@/views/order/refund/money-goods')
+        },
+        {
+            path: '/refund/money',
+            name: 'money',
+            meta: { title: '我要退款' },
+            component:()=>import('@/views/order/refund/money')
+        },
+        {
+            path: '/memberGrade',
+            name: 'memberGrade',
+            meta: { title: '会员中心' },
+            component:()=>import('@/views/mine/member-grade')
         }
     ],
     linkActiveClass:'tabbar-active'

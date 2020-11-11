@@ -12,7 +12,9 @@ import VueScroller from 'vue-scroller'
 import { Dialog } from 'vant'
 
 import 'vant/lib/index.css';
-
+// 自定义 toast 可通过 this.showToast(title, duration) 调用
+import toast from './components/common/my/showToast'
+Vue.use(toast)
 
 Vue.use(VueScroller)
 Vue.use(VueClipboard)

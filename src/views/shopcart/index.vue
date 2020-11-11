@@ -28,7 +28,7 @@
           <span>合计: <span class="price">￥298</span></span>
           <span class="total">共计1个商品</span>
         </div>
-        <div class="btn-buy row ac jc">立即购买</div>
+        <div class="btn-buy row ac jc" @click="showToast('hello', 5000)">立即购买</div>
       </div>
     </div>
     <my-footer></my-footer>

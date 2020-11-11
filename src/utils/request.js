@@ -2,7 +2,7 @@ import axios from 'axios'
 import { updateToken } from './auth'
 import tokenHolder from './tokenHolder'
 import qs from 'qs';
-const ApiUrl = process.env.NODE_ENV == 'development' ? '/api' : 'http://api.chengdajiaoyu.com'
+const ApiUrl = process.env.NODE_ENV == 'development' ? 'http://192.168.2.108:8080/jcb-collect/api' : 'http://api.chengdajiaoyu.com'
 const request = axios.create({
     baseURL: `${ApiUrl}`,
     timeout: 10000 // 请求超时时间

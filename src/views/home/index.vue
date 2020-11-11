@@ -144,6 +144,7 @@
 </template>
 
 <script>
+import api from '../../api/home'
 import { Swipe, SwipeItem, Rate, Tab, Tabs } from "vant";
 import countDown from '../../components/common/count-down'
 import myFooter from "../../components/common/my/footer";
@@ -160,7 +161,18 @@ export default {
   methods:{
     changeRecom(i){
       this.recomIndex = i
+    },
+    async getHomeGoodsList(){
+      let params = {
+        pageNo:1,
+        pageSize:10
+      }
+      let {data:res} = await api.getGoodsList(params)
+      console.log(res)
     }
+  },
+  created(){
+    this.getHomeGoodsList()
   },
   components: {
     myFooter,

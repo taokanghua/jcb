@@ -7,9 +7,9 @@
           <img src="../../assets/img/个人中心头像.png" alt="" />
           <div class="user-info column sb">
             <span class="name">每一个明天</span>
-            <div class="member row ac jc">
+            <router-link to="/memberGrade" tag="div" class="member row ac jc">
               一级会员 <i class="iconfont iconARROW"></i>
-            </div>
+            </router-link>
           </div>
         </div>
         <router-link to="/editInfo" tag="i" class="iconfont iconARROW strong"></router-link>
@@ -34,45 +34,57 @@
       </div>
       <!-- 我的订单 -->
       <div class="common-card my-order column sb">
-        <div class="top row sb">
+        <router-link to="/orderList" tag="div" class="top row sb">
           <span class="title">我的订单</span>
           <span class="all-order">全部订单 <i class="iconfont icongengduo"></i></span>
-        </div>
+        </router-link>
         <div class="icon-wrap row sb ac">
-          <div class="order-item column ac jc">
-            <i class="iconfont iconweizhifu"></i>
+          <router-link to="/orderList?type=1" tag="div" class="column ac jc">
+            <div class="order-item">
+              <i class="iconfont iconweizhifu"></i>
+            <div class="badge">5</div>
+            </div>
             <span>待支付</span>
-          </div>
-          <div class="order-item column ac jc">
-            <i class="iconfont iconyiwancheng"></i>
+          </router-link>
+          <router-link to="/orderList?type=2" tag="div" class="column ac jc">
+            <div class="order-item">
+              <i class="iconfont iconyiwancheng"></i>
+              <div class="badge">5</div>
+            </div>
             <span>待收货</span>
-          </div>
-          <div class="order-item column ac jc">
-            <i class="iconfont icondingdan"></i>
+          </router-link>
+          <router-link to="/orderList?type=3" tag="div" class="column ac jc">
+            <div class="order-item">
+              <i class="iconfont icondingdan"></i>
+              <div class="badge">50</div>
+            </div>
             <span>已完成</span>
-          </div>
-          <div class="order-item column ac jc">
-            <i class="iconfont iconshouhou"></i>
+          </router-link>
+          <router-link to="/orderList" tag="div" class="column ac jc">
+            <div class="order-item">
+              <i class="iconfont iconshouhou"></i>    
+              <div class="badge">5</div>
+            </div>
             <span>售后/退货</span>
-          </div>
+          </router-link>
         </div>
       </div>
       <!-- 推广中心 -->
       <div class="common-card promotion-center column sb">
         <span class="title">推广中心</span>
         <div class="wrap row ">
-          <div class="info-item column ac sb f1">
+          <router-link to="/popularizeCenter" tag="div" class="info-item column ac sb f1">
             <span>3000</span>
             <div>集采分</div>
-          </div>
-          <div class="info-item column ac jc f1">
+          </router-link>
+          <router-link to="/popularizePeople" tag="div" class="info-item column ac jc f1">
             <span>302</span>
             <div>推广人数</div>
-          </div>
-          <div class="info-item column ac jc f1">
+          </router-link>
+          <router-link to="/popularizeOrder" tag="div" class="info-item column ac jc f1">
             <span>22</span>
             <div>推广人订单</div>
-          </div>
+          </router-link>
         </div>
       </div>
           <!-- 其他服务 -->
@@ -220,8 +232,26 @@ export default {
     font-size: 0.24rem;
     i{
       color: #2ecb62;
-      font-size: 0.4rem;
+      font-size: 0.43rem;
       margin-bottom: 0.1rem;
+    }
+    .order-item{
+      position: relative;
+      .badge{
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(40%, -50%);
+        width: 0.28rem;
+        height: 0.28rem;
+        background-color: #fc0808;
+        font-size: 0.18rem;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+      }
     }
   }
 }

@@ -3,7 +3,7 @@
     <span class="title">问题内容描述</span>
     <textarea name="" id="" cols="30" rows="10"></textarea>
     
-    <span class="title">问题内容描述</span>
+    <span class="title">上传图片</span>
     <div class="img-wrap row">
       <Uploader :after-read="afterRead" multiple></Uploader>
       <!-- <div class="choose-box row jc ac"> <i class="iconfont icontianjia"></i></div> -->
@@ -12,6 +12,9 @@
         <div class="close row ac jc"><i class="iconfont iconguanbi"></i></div>
       </div>
     </div>
+
+    <span class="title">联系电话</span>
+    <input type="phone" placeholder="请输入联系电话" class="contact">
 
     <div class="submit-btn row ac jc">提交</div>
   </div>
@@ -92,6 +95,15 @@ textarea{
       font-weight: bold;
     }
   } 
+}
+.contact{
+  height: 0.75rem;
+	background-color: #f6f6f6;
+  border-radius: 0.11rem;
+  padding-left: 0.18rem;
+  box-sizing: border-box;
+  font-size: 0.24rem;
+  color: #a8a8a8;
 }
 .submit-btn{
   width: 5.81rem;

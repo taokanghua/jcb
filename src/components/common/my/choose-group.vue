@@ -69,7 +69,7 @@ export default {
     display: none;
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: -0.01rem;
     font-size: 0.15rem;
     color: #2ecb62;
   }

@@ -2,10 +2,10 @@
 	<div :style="{color,display:'inline-block', fontSize, marginLeft}">
 		<span class="time-item" 
 		:style="{backgroundColor:bgColor}" :class="{crowd}">{{time[0]}}</span>
-		<span class="colon">:</span>
+		<span class="colon" :style="{color:colonColor}">:</span>
 		<span class="time-item" 
 		:style="{backgroundColor:bgColor}" :class="{crowd}">{{time[1]}}</span>
-		<span class="colon">:</span>
+		<span class="colon" :style="{color:colonColor}">:</span>
 		<span class="time-item" 
 		:style="{backgroundColor:bgColor}" :class="{crowd}">{{time[2]}}</span>
 	</div>
@@ -77,6 +77,10 @@
 			marginLeft:{
 				type: String,
 				default:'0rpx'
+			},
+			colonColor:{
+				type:String,
+				default: 'black'
 			}
 		},
 		mounted(){
@@ -97,7 +101,7 @@
 		border-radius: 1px;
   }
   .colon{
-    color: black;
+    // color: black;
     margin: 0 0.03rem;
   }
 	.crowd{
