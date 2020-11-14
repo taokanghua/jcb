@@ -23,7 +23,7 @@
             <span>总收益</span>
           </div>
         </div>
-        <i class="iconfont iconerweima"></i>
+        <i class="iconfont iconerweima" @click="$router.push({name:'sharing'})"></i>
       </div>
     </div>
 

@@ -1,16 +1,36 @@
 <template>
   <div class="confirm-order">
-    <div class="tab-card">
+    <!-- 心动我做得这么好的tabbar栏 改啥改  :( -->
+    <div class="deliver">
+          <!-- 无地址情况 -->
+      <!-- <div class="no-address row ac jc">+添加地址</div> -->
+
+      <div class="has-address row sb ac">
+        <div class="column">
+          <div class="row ac top">
+            <span>张三</span>
+            <span class="phone">12345678900</span>
+          </div>
+          <div class="row ac bottom">
+            <i class="iconfont icondizhi"></i>
+            <p>地球市地球镇地球村东南西北888号</p>
+          </div>
+        </div>
+        <i class="iconfont iconARROW"></i>
+      </div>
+
+    </div>
+    
+    <!-- <div class="tab-card">
 			<div class="title-wrap row">
 				<div class="item left" :class="{active:wayIdx==0}" @click="wayIdx=0">送货上门</div>
 				<div class="item right" :class="{active:wayIdx==1}" @click="wayIdx=1">上门自提</div>
 			</div>
 			<div class="wrap-content">
 				<div class="deliver" v-show="wayIdx==0">
-          <!-- 无地址情况 -->
           <div class="no-address row ac jc">+添加地址</div>
         </div>
-        <!-- 自提 -->
+
         <div class="selftake-wrap row" v-show="wayIdx==1">
           <div class="info column sb">
             <div class="shop-address">
@@ -39,10 +59,10 @@
           <i class="iconfont iconARROW r"></i>
         </div>
 			</div>
-		</div>
+		</div> -->
 
     <!-- 商品卡片 -->
-    <div class="choose-methods-card">
+    <!-- <div class="choose-methods-card">
       <div class="goods row">
         <img src="../../assets/img/确认订单.png" alt="">
         <div class="column sb" style="margin-left:0.23rem">
@@ -54,7 +74,28 @@
           </div>
         </div>
       </div>
-      <!-- 行 -->
+     
+      <div class="selftake-wrap row">
+          <div class="info column sb">
+            <span class="take-info">取货信息</span>
+            <div class="shop-address">
+              <i class="iconfont icondizhi"></i>
+              <span>地球市地球镇地球村东南西北888号 </span>
+            </div>
+            <div class="user-select row">
+              <div class="take-time column sb" @click="pops.takeTime=true">
+                <span class="title">自提时间</span>
+                <div class="row">10-30 18:00 <i class="iconfont iconARROW"></i></div>
+              </div>
+              <div class="phone column sb" @click="editHandle">
+                <span class="title">联系电话</span>
+                <input ref="input" type="phone" class="edit-phone" v-model="contact" v-show="editPhone" @blur="checkPhone">
+                <div class="row" v-show="!editPhone">{{contact}}<i class="iconfont iconbianji"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+]
       <div class="order-field row sb ac" @click="pops.platform=true">
         <span class="left">平台优惠</span>
         <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
@@ -67,7 +108,7 @@
         <span class="left">运费 <span class="desc">{{form.deliverWayIdx==0?'快递配送':'物流到付'}}</span> </span>
         <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
       </div>
-      <div class="order-field row sb ac" v-show="wayIdx==0">
+      <div class="order-field row sb ac">
         <span class="left">运费险 <span class="desc">货物运输过程中有损，可赔</span> </span>
         <span class="right row ac" @click="form.insurance=!form.insurance">
           ￥10.00 
@@ -82,7 +123,9 @@
         <span class="left">备注</span>
         <input type="text" placeholder="请输入您备注信息" v-model="form.message">
       </div>
-    </div>
+    </div> -->
+
+    <chooseMethCard v-for="item in 2" :key="item"></chooseMethCard>
 
     <div class="alone-feild row sb ac">
       <span class="title">发票</span>
@@ -193,13 +236,15 @@
 </template>
 
 <script>
+import api from '../../api/home'
 import {ActionSheet} from 'vant'
 import inputNumber from '../../components/common/my/input-number'
+import chooseMethCard from '../../components/common/card/order-goods-card'
 export default {
   data(){
     return{
-      wayIdx:1, 
-      agreement: false, //同意协议
+      // wayIdx:1, 
+      //agreement: false, //同意协议
       editPhone:false, //编辑手机号
       dateList:[], //日期
       dayIdx:0, //选中的日期索引
@@ -222,6 +267,11 @@ export default {
     }
   },
   methods:{
+    async getOrderInfo(){
+      let ids = this.$route.query.orderId
+      let res = await api.getOrder({ids})
+      console.log(res)
+    },
     getMonthDay(){
       // let date = new Date()
       let oneDay = 86400000 //一天
@@ -268,9 +318,13 @@ export default {
   mounted(){
     this.getMonthDay()
   },
+  created(){
+    this.getOrderInfo()
+  },
   components:{
     ActionSheet,
-    inputNumber
+    inputNumber,
+    chooseMethCard
   }
 }
 </script>
@@ -333,157 +387,44 @@ export default {
       box-sizing: border-box;
       padding: 0.26rem 0.18rem;
       background-color: #FFFFFF;
-      .deliver{
-        .no-address{
-          height: 0.73rem;
-          background-color: #f6f6f6;
-          font-size: 0.21rem;
-          color: #a8a8a8;
-        }
-      }
-      .selftake-wrap{
-        position: relative;
-        padding-right: 0.6rem;
-        box-sizing: border-box;
-        .info{
-          .shop-address{
-            font-size: 0.24rem;
-            color: #000000;
-            i{
-              font-size: 0.22rem;
-            }
-            span{
-              margin-left: 0.23rem;
-            }
-          }
-          .user-select{
-            // .title{
-              margin: 0.24rem 0 0.23rem 0;
-              font-size: 0.21rem;
-              color: #000000;
-            // }
-            .phone{
-              margin-left: 0.56rem;
-              .edit-phone{
-                border:none;
-                text-align: center;
-                border-bottom: 1px solid #cccccc;
-              }
-            }
-            .row{
-              margin-top: 0.16rem;
-              justify-content: flex-end;
-              line-height: 1;
-              i{
-                font-size: 0.2rem;
-                color: #a8a8a8;
-                margin-left: 0.08rem;
-                // font-weight: bold;
-              }
-            }
-            
-          }
-        }
-        .rule{
-          color: #1a1a1a;
-          font-size: 0.2rem;
-              .checkbox{
-                margin-right: 0.14rem;
-                .no{
-                  border:1px solid  #dddddd;
-                  width: 0.2rem;
-                  height: 0.2rem;
-                  box-sizing: border-box;
-                }
-                i{
-                  font-size: 0.2rem;
-                  color: #2ecb62;
-                }
-              }
-              .agreement{
-                color: #13438c;
-              }
-            }
-        .r{
-          position: absolute;
-          top:0;
-          right: 0;
-          font-size: 0.4rem;
-          font-weight: bold;
-        }
-      }
+      
+      
     }
   }
-.choose-methods-card{
-  padding: 0.17rem 0.17rem;
-  background-color: #FFFFFF;
-  border-radius: 0.11rem;
+
+.deliver{
   margin-bottom: 0.23rem;
-  .goods{
-    margin-bottom: 0.2rem;
-    img{
-      width: 1.41rem;
-      height: 1.41rem;
-      border-radius: 0.11rem;
-    }
-    .name{
-      font-size: 0.21rem;
-      color: #1a1a1a;
-    }
-    .sku{
-      font-size: 0.18rem;
-      color: #a8a8a8;
-    }
-    .price{
-      font-size: 0.27rem;
-      color: #fc0808;
-    }
-  }
-  .order-field{
-    // padding: 0 0.17rem;
-    color: #1a1a1a;
-    height: 0.68rem;
+
+  .no-address{
+    height: 0.73rem;
+    background-color: #ffffff;
     font-size: 0.21rem;
-    .left{
-      position: relative;
-      .desc{
-        display: block;
-        position: absolute;
-        left: 1.34rem;
-        top: 50%;
-        width: 50vw;
-        transform: translateY(-50%);
+    color: #1a1a1a;
+  }
+  .has-address{
+    padding: 0.36rem 0.18rem;
+    background-color: #ffffff;
+    border-radius: 0.11rem;
+    color: #000000;
+    .top{
+      font-size: 0.24rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+      .phone{
+        margin-left: 0.3rem;
       }
     }
-    .desc{
+    .bottom{
       font-size: 0.21rem;
-      color: #a8a8a8;
-      // margin-left: 0.54rem;
-    }
-    .iconARROW{
-      color: #a8a8a8;
-      font-size: 0.25rem;
-    }
-    .right{
-      .insurance{
-        margin-left: 0.1rem;
-        &i{
-          font-size: 0.28rem;
-        }
-        &.iconxuanzhong{
-          color: #2ecb62;
-        }
-        &.iconradiobuttonunselect{
-          color: #dddddd;
-        }
+      i{
+        font-size: 0.2rem;
+        margin-right: 0.17rem;
+        font-weight: bold;
       }
-    }
-    input{
-      width: 80%;
-      text-align: right;
     }
   }
 }
+
 .alone-feild{
   padding: 0 0.16rem;
   height: 0.68rem;
@@ -536,208 +477,3 @@ export default {
 }
 </style>
 
-<style lang="less" scoped>
-.confirm-btn{
-  width: 5.81rem;
-	height: 0.56rem;
-	background-color: #5ecc26;
-  border-radius: 0.28rem;
-  // position: absolute;
-  bottom: 0.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.21rem;
-  color: #ffffff;
-}
-.position{
-  position: absolute;
-}
-.mb26{
-  margin-bottom: 0.26rem;
-}
-.take-time-content{
-  height: 5.64rem;
-  .date{
-    width: 2.08rem;
-    height: 100%;
-    overflow: scroll;
-    background-color: #f6f6f6;
-    div{
-      height: 0.68rem;
-    }
-    .active{
-      background-color: #ffffff;
-    }
-  }
-  .time{
-    height: 100%;
-    overflow: scroll;
-    flex: 1;
-    padding: 0 0.27rem 0 0.72rem;
-    span{
-      font-size: 0.27rem;
-      color: #1a1a1a;
-    }
-    i{
-      font-size: 0.23rem;
-      color: #2ecb62;
-      display: none;
-    }
-    .active-time{
-      span{
-
-        color: #2ecb62;
-      }
-      i{
-        display: block;
-      }
-    }
-  }
-}
-.way-content{
-  padding: 0 0.27rem;
-  height: 5.64rem;
-  box-sizing: border-box;
-  position: relative;
-  .way-feild{
-    margin-bottom: 0.4rem;
-    .title{
-      font-size: 0.21rem;
-      color: #1a1a1a;
-    }
-    .iconradiobuttonunselect{
-      color: #a8a8a8;
-      font-size: 0.3rem;
-      transform: scale(1.3);
-    }
-    .iconxuanzhong{
-      font-size: 0.28rem;
-      color: #5ecc26;
-    }
-  }
-}
-.platform-content{
-  height: 5.64rem;
-  overflow: scroll;
-  padding: 0 0.27rem;
-  box-sizing: border-box;
-  .platform-coupon{
-    flex: 1;
-    height: 1.47rem;
-	  background-color: #f6f6f6;
-    border-radius: 0.11rem;
-    box-sizing: border-box;
-    margin-bottom: 0.23rem;
-    padding: 0.14rem 0;
-    // box-sizing: border-box;
-    position: relative;
-    .tag{
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 1.47rem;
-      height: 0.31rem;
-      background-color: #2ecb62;
-      font-size: 0.18rem;
-      color: #ffffff;
-      border-radius: 0.11rem 0rem 0.11rem 0rem;
-    }
-    .left{
-      width: 1.47rem;
-      font-size: 0.36rem;
-      color: #fc0808;
-      font-weight: bold;
-    }
-    .mid{
-      flex: 2;
-      font-size: 0.21rem;
-      height: 100%;
-      color: #1a1a1a;
-      margin-left: 0.22rem;
-    }
-    .right{
-      flex: 1;
-      .take{
-        width: 1.24rem;
-        height: 0.45rem;
-        background-color: #2ecb62;
-        border-radius: 0.23rem;
-        font-size: 0.21rem;
-        color: #ffffff;
-      }
-      .took{
-        background-color: #a8a8a8;
-      }
-    }
-  }
-}
-.shop-content{
-  height: 5.64rem;
-  overflow: scroll;
-  padding: 0 0.27rem;
-  box-sizing: border-box;
-  .coupon-item{
-    width: 5.81rem;
-    height: 1.47rem;
-    background-color: #f6f6f6;
-    border-radius: 0.11rem;
-    margin-bottom: 0.23rem;
-    position: relative;
-    box-sizing:  border-box;
-    padding: 0.38rem 0;
-    .left-top{
-      width: 1.47rem;
-      height: 0.31rem;
-      background-color: #fc0808;
-      font-size: 0.18rem;
-      border-radius: 0.11rem 0rem 0.11rem 0rem;
-      color: #ffffff;
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-    .left{
-      width: 1.47rem;
-      font-size: 0.36rem;
-      color: #fc0808;
-      font-weight: bold;
-      margin-right: 0.22rem;
-    }
-    .mid{
-      flex: 2;
-      font-size: 0.21rem;
-      height: 100%;
-      color: #1a1a1a;
-    }
-    .right{
-      flex: 1;
-      .take{
-        width: 1.24rem;
-        height: 0.45rem;
-        background-color: #fc0808;
-        border-radius: 0.23rem;
-        font-size: 0.21rem;
-        color: #ffffff;
-        margin-right: 0.23rem;
-      }
-      .took{
-        background-color: #a8a8a8;
-      }
-    }
-  }
-}
-
-
-.radio{
-    margin-right: 0.27rem;
-    .iconradiobuttonunselect{
-      color: #a8a8a8;
-      font-size: 0.3rem;
-      transform: scale(1.3);
-    }
-    .iconxuanzhong{
-      font-size: 0.28rem;
-      color: #5ecc26;
-    }
-  }
-</style>

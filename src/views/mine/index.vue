@@ -115,6 +115,10 @@
                 <i class="iconfont iconliaotian"></i>
                 <span>我的评价</span>
               </div>
+              <div class="other-item">
+                <i class="iconfont iconqiehuan"></i>
+                <span>切换店铺</span>
+              </div>
             </div>
           </div>
     </div>

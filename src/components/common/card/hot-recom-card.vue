@@ -2,33 +2,35 @@
   <div class="shop-card">
         <router-link to="/store" tag="div" class="shop-header row sb">
           <div class="left row">
-            <img class="shop-img" src="../../../assets/img/门店头像.png" alt="" />
+            <img class="shop-img" :src="info.head" alt="" />
             <div class="info col sb">
-              <div class="row ac">
-                <span class="shop-name">豪迪五金店</span>
-                <img src="../../../assets/img/等级一.png" alt="" />
+              <div class="row" style="align-item:base-line">
+                <span class="shop-name" style="flex-wrap:wrap">{{info.storeName}}</span>
+                <img src="../../../assets/img/等级一.png" alt="" v-show="info.level==1" />
+                <img src="../../../assets/img/等级二.png" alt="" v-show="info.level==2" />
+                <img src="../../../assets/img/等级三.png" alt="" v-show="info.level==3"/>
               </div>
-              <div> <i class="iconfont iconstar" v-for="item in 5" :key="item"></i> </div>
+              <div> <i class="iconfont iconstar" v-for="item in Number(info.score)" :key="item"></i> </div>
             </div>
           </div>
           <div class="right col sb">
             <div class="go-shop">进店</div>
-            <div class="distance">1.88KM</div>
+            <div class="distance">{{info.displayDistance}}</div>
           </div>
         </router-link>
 
-        <div class="shop-goods sb">
-          <div class="goods-item" v-for="item in 3" :key="item">
+        <div class="shop-goods">
+          <div class="goods-item" v-for="item in info.productList" :key="item.productId">
             <div class="img-show">
-              <img src="../../../assets/img/店铺商品展示.png" alt="" />
+              <img :src="item.pic" alt="" />
               <div class="tag">热销</div>
             </div>
             <div class="name e2">
-              铁皮打包带专用大力剪刀 剪 铁皮带剪刀 钢带剪
+              {{item.productName}}
             </div>
             <div class="price row">
-              <div class="now">￥150</div>
-              <div class="old">￥150</div>
+              <div class="now">￥{{Number(item.paymentPrice).toFixed(0)}}</div>
+              <div class="old">￥{{Number(item.price).toFixed(0)}}</div>
             </div>
           </div>
         </div>
@@ -37,7 +39,17 @@
 
 <script>
 export default {
+  data(){
+    return{
 
+    }
+  },
+  props:{
+    info:{
+      type:Object,
+      default:()=>({head:''})
+    }
+  }
 }
 </script>
 
@@ -101,9 +113,9 @@ export default {
     }
     .shop-goods {
       margin-top: 0.25rem;
-      flex: 1;
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-column: 0.2rem;
       .goods-item {
         width: 1.71rem;
         height: 100%;

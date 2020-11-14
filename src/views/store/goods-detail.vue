@@ -1,34 +1,35 @@
 <template>
   <div class="goods-detail-wrap" indicator-color="#c5c5c5">
     <swipe autoplay="5000" class="swipe">
-      <swipe-item class="swipe-item">
-        <img src="../../assets/img/商品详情大图.png" alt="">
+      <swipe-item class="swipe-item" v-for="(item,i) in pageInfo.pics.split(',')" :key="i">
+        <img :src="item" alt="">
       </swipe-item>
-      <swipe-item class="swipe-item">
+      <!-- <swipe-item class="swipe-item">
         <img src="../../assets/img/商品详情大图.png" alt="">
-      </swipe-item>
+      </swipe-item> -->
     </swipe>
     <!-- 商品信息 -->
     <div class="goods-info">
-      <span class="pre-sale">付款后，最晚2020年11月01日发货</span>
-      <div class="name"> <div class="pre-tag">预售</div> 锂电冲击钻 充电式手电钻多功能家用电动螺丝刀多功能家用电动螺丝刀</div>
+      <span class="pre-sale" v-show="pageInfo.isPreSale==1">付款后，最晚{{takeDay[0]}}年{{takeDay[1]}}月{{takeDay[2]}}日发货</span>
+      <div class="name"> <div class="pre-tag">预售</div> {{pageInfo.name}}</div>
       <div class="row sb ac" style="margin: 0.15rem 0 0.08rem 0;">
         <div class="row" style="align-items:flex-end">
-          <span class="now">￥199~499</span>
-          <span class="old">￥249~599</span>
+          <span class="now">￥{{pageInfo.paymentPrice}}</span>
+          <span class="old">￥{{pageInfo.price}}</span>
         </div>
-        <div @click="iscollect=!iscollect">
-          <i class="iconfont iconguanzhu" v-show="!iscollect"></i>
-          <i class="iconfont iconguanzhu2" v-show="iscollect"></i>
+        <div @click="collectIt">
+          <i class="iconfont iconguanzhu2" v-if="isCollect" ></i>
+          <i class="iconfont iconguanzhu" v-else></i>
         </div>
       </div>
-      <span class="sale">销量：432</span>
+      <span class="sale">销量：{{pageInfo.saleCount}}</span>
     </div>
 
     <div class="detail-content plr">
         <!-- 优惠 折扣 -->
       <div class="odd-wrap" >
-        <div class="filed-item hot" @click="pops.platform=true">
+        <!-- 优惠券暂时注释 -->
+        <!-- <div class="filed-item hot" @click="pops.platform=true">
           <span>平台可用叠加优惠，满2000减50</span>
           <i class="iconfont iconARROW"></i>
         </div>
@@ -38,9 +39,9 @@
             <span>满500减10  满1000减100</span>
           </div>
           <i class="iconfont iconARROW"></i>
-        </div>
+        </div> -->
         <!-- 运费 -->
-        <router-link to="/detailChoose" tag="div" class="filed-item">
+        <!-- <router-link to="/detailChoose" tag="div" class="filed-item">
           <div class="row">
             <span class="r38">运费</span>
             <div class="column sb">
@@ -49,7 +50,7 @@
             </div>
           </div>
           <i class="iconfont iconARROW"></i>
-        </router-link>
+        </router-link> -->
 
         <div class="filed-item" @click="pops.serverInfo=true">
           <div>
@@ -71,22 +72,22 @@
     <!-- 评论 -->
     <div class="comment-wrap plr">
         <div class="top row sb ac">
-          <span class="total">用户评价(483)</span> 
+          <span class="total">用户评价({{pageInfo.comments.total}})</span> 
           <router-link to="/evaluate" tag="span" class="go-all">全部评价 <i class="iconfont icongengduo"></i></router-link>
         </div>
-        <evaluate-card :hasBar="false"></evaluate-card>
+        <evaluate-card :hasBar="false"  :info="pageInfo.comments.records[0]"></evaluate-card>
     </div>
 
     <!-- 店铺推荐 -->
     <div class="plr" style="margin-bottom:0.23rem">
-      <hot-recom-card></hot-recom-card>
+      <hot-recom-card :info="pageInfo.storeHotProductVo"></hot-recom-card>
     </div>
 
     <!-- 商品详情图 -->
-    <div class="detail-img column plr" style="margin-bottom:0.23rem">
-      <img src="../../assets/img/商品详情图.png" alt="">
+    <div class="detail-img column plr" style="margin-bottom:0.23rem" v-html="pageInfo.productSubVo.detail">
+      <!-- <img src="../../assets/img/商品详情图.png" alt="">
       <img src="../../assets/img/商品详情图2.png" alt="">
-      <img src="../../assets/img/商品详情图3.png" alt="">
+      <img src="../../assets/img/商品详情图3.png" alt=""> -->
     </div>
 
     <!-- 权利说明 -->
@@ -97,7 +98,7 @@
     <div class="plr">
       <div style="margin-bottom:0.23rem">推荐商品</div>
       <div class="recom-wrap row sb" style="flex-wrap:wrap">
-        <home-good-card v-for="item in 3" :key="item"></home-good-card>
+        <home-good-card v-for="(item,i) in recomList" :key="i" :info="item"></home-good-card>
       </div>
     </div>
 
@@ -193,11 +194,11 @@
     </action-sheet>
     <action-sheet v-model="pops.goodsParams" title="产品参数">
       <div class="pop-content pop-content-big params-content">
-        <div class="params-field row">
-          <span class="left">品牌</span>
-          <div class="right">博世</div>
+        <div class="params-field row" v-for="(item, i) in Object.keys(pageInfo.productParameter)" :key="i">
+          <span class="left">{{item}}</span>
+          <div class="right">{{pageInfo.productParameter[item]}}</div>
         </div>
-        <div class="params-field row">
+        <!-- <div class="params-field row">
           <span class="left">型号</span>
           <div class="right">ARZ充电电钻</div>
         </div>
@@ -241,45 +242,51 @@
         <div class="params-field row">
           <span class="left">有无正反转向</span>
           <div class="right">有</div>
-        </div>
+        </div> -->
         <div class="pop-close-btn position" @click="pops.goodsParams=false">关闭</div>
       </div>
     </action-sheet>
 
-    <!-- 添加购物车 立即购买弹框 （这里用了看不见的字符 ^ - ^）-->
+    <!-- 添加购物车 立即购买弹框-->
     <action-sheet v-model="pops.specs" :round="false">
       <div class="pop-content tabbar-pop shopcart-content">
         <!-- 顶部信息栏 -->
         <div class="top row">
-          <img src="../../assets/img/推荐商品.png" alt="">
+          <img :src="sku_obj.preview" alt="">
           <div class="column sb">
             <div class="row price-wrap">
-              <span class="symbol">￥</span><span class="price">298</span>
+              <span class="symbol">￥</span><span class="price">{{sku_obj.price}}</span>
             </div>
-            <span class="stock">库存：50</span>
-            <span class="select-params">已选：黑色、手紧式手电钻、黑色、手紧式手电钻</span>
+            <span class="stock">库存：{{sku_obj.volume}}</span>
+            <span class="select-params" v-show="sku_list.length>0">已选：{{sku_selected}}</span>
           </div>
         </div>
         <!-- 选择规格栏 -->
-        <div class="spec-wrap">
-          <span class="title">颜色</span>
+        <div class="spec-wrap" v-for="(item,i) in pageInfo.propertyBoots" :key="i">
+          <span class="title">{{item.propertyName}}</span>
           <div class="row" style=" margin-top: 0.17rem;">
-            <div class="spec-item active">黑色</div>
-            <div class="spec-item">黄色</div>
+            <!-- <div class="spec-item active">黑色</div>-->
+            <div class="spec-item" 
+            :class="{active:sku_active_id[i]==idx}"
+            v-for="(v, idx) in item.options" 
+            :key="v.propertyId" 
+            @click="selectSku(v.value, idx, i)">
+              {{v.value}}
+            </div>     
           </div>
         </div>
-        <div class="spec-wrap">
+        <!-- <div class="spec-wrap">
           <span class="title">规格</span>
           <div class="row" style=" margin-top: 0.17rem;">
             <div class="spec-item active">手紧式手电钻</div>
             <div class="spec-item">手紧式手电钻</div>
           </div>
-        </div>
+        </div> -->
         <div class="spec-wrap row sb" style="margin-top:0.45rem">
           <span class="title">数量</span>
           <input-number v-model="num"></input-number>
         </div>
-        <div class="confirm-btn row ac jc" @click="$router.push({name:'confirmorder'})">确定</div>
+        <div class="confirm-btn row ac jc" @click="buyNow">确定</div>
       </div>
     </action-sheet>
 
@@ -287,6 +294,7 @@
 </template>
 
 <script>
+import api from '../../api/home'
 import { Swipe, SwipeItem, ActionSheet } from 'vant';
 import hotRecomCard from '../../components/common/card/hot-recom-card'
 import homeGoodCard from '../../components/common/card/home-good-card'
@@ -295,7 +303,7 @@ import evaluateCard from '../../components/common/card/evaluate-card'
 export default {
  data(){
    return{
-     iscollect:false,
+     isCollect:false,
      pops:{ //一堆pop
       serverInfo: false,
       coupon:false,
@@ -303,10 +311,86 @@ export default {
       platform: false,
       specs: false
      },
-     num:1
+     num:1, //商品数量
+     pageInfo:{pics:'',comments:{records:[]}, productSubVo:{},productParameter:{}}, //详情
+     recomList:[],
+     takeDay:[0,0,0], //预售发货时间
+     sku_list:[], //选购规格的value 动态绑定
+     sku_active_id:[],
+     sku_obj:{}, // 筛选出来的obj 展示用
+     sku_selected:'', //已选中的规格
    }
  },
- methods:{},
+ methods:{
+   async getDetail(){ //获取商品详情
+     let {id} = this.$route.query
+     let res = await api.getGoodsDetail({id})
+     this.pageInfo = res.result
+     this.isCollect = res.result.collectState==1?true:false
+     this.takeDay = res.result.deliveryDate.split('-')
+     // 给规格展示一个默认值
+     this.sku_obj = this.pageInfo.productSkuVos[0]
+   },
+   async getRecomList(){ //获取推荐商品  暂时设定只加载30个
+      let res = await api.getGoodsList({pageSize:30,pageNo:1, type:2})
+      this.recomList = res.result.lists
+   },
+   collectIt(){
+     //收藏功能
+     this.isCollect = !this.isCollect
+   },
+   selectSku(value, idx, fidx){ //设置规格函数
+     let map = this.pageInfo.productSkuVos // 规则
+     if(this.sku_list[fidx]==value){
+       //已有就取消选中
+       this.sku_list[fidx] = null
+       this.sku_active_id[fidx] = -1
+     }else{
+       //选中
+       this.sku_list[fidx] = value
+       this.sku_active_id[fidx]=idx
+     }
+     let index = map.findIndex(v=>{
+       let rules = v.propertyList //数组
+       let res = rules.every(item=>this.sku_list.includes(item.value))
+       if(res) return v
+     })
+     if(index!=-1){ //找到了才给赋值
+       this.sku_obj = map[index]
+     }
+     this.sku_selected = this.sku_list.join('、')
+    //  console.log(map)
+     this.$forceUpdate() //强制更新组件
+   },
+   async buyNow(){
+     //console.log(this.sku_obj)
+     let data = {
+       productList: [
+          {
+            productId: this.$route.query.id,
+            productNumber: 1,
+            productPrice: this.sku_obj.price,
+            productSkuId: this.sku_obj.id,
+            shelveId:'1324301545862070274',
+            shelveType:2,
+          }
+        ],
+        sourceType:1,
+        sourceId:'1308242941815496705'
+     }
+     let res = await api.createOrder(data)
+     if(res.success){
+       this.$router.push({name:'confirmorder', query:{orderId:res.result}})
+     }else{
+       this.showToast('获取订单失败！')
+     }
+     //console.log(res)
+   }
+ },
+ created(){
+   this.getDetail()
+   this.getRecomList()
+ },
  components:{
    Swipe,
    SwipeItem,
@@ -327,7 +411,6 @@ export default {
 .r38{
   margin-right: 0.38rem;
 }
-
 .goods-detail-wrap{
   height: 100vh;
   overflow: scroll;
@@ -386,7 +469,7 @@ export default {
     color: #a8a8a8;
   }
   .iconguanzhu2{
-    color: #fc0808;
+    color: #2ecb62;
   }
   .sale{
     color: #a8a8a8;

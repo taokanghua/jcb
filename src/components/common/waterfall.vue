@@ -1,9 +1,9 @@
 <template>
-  <div :style="{'height':height,'overflow':'hidden'}" @scroll="handleScroll">
+  <div :style="{ height: height, overflow: 'scroll' }" @scroll="handleScroll">
     <div>
       <slot />
-      <div class="tips" v-show="err">{{err}}</div>
-      <loading v-show="loading" :class="[pageNo>1?'nearby':'center']" />
+      <div class="tips" v-show="err">{{ err }}</div>
+      <loading v-show="loading" :class="[pageNo > 1 ? 'nearby' : 'center']" />
     </div>
   </div>
 </template>
@@ -29,6 +29,7 @@ export default {
     params: { type: Object }, //除了pageNo,pageSize 以外的参数
     after: { type: Function }, //自行处理接口返回结果, 更新数据 需要返回count，与@afterFetch 互斥
     autoInit: { type: Boolean, default: true }, //是否在creadted生命周期自动请求数据
+    isWatchParams: { type: Boolean, default: true }, //是否在creadted生命周期自动请求数据
     pageSize: { type: Number, default: 10 }, //每页数量
     emptyMsg: { type: String },
   },
@@ -59,22 +60,24 @@ export default {
     },
     async fetch() {
       this.loading = true;
+      let { pageSize, pageNo } = this;
       let params = {
-        skipCount: this.pageNo * this.pageSize,
-        maxResultCount: this.pageSize,
+        pageNo: pageNo + 1,
+        pageSize,
         ...this.params,
       };
       let res = await this.req(params);
       this.loading = false;
+      this.pageNo++;
       if (this.after) {
         this.count = this.after(res) || this.count;
         return;
       }
       this.count = res.result.totalCount || this.count;
       if (!res.success) return (this.err = res.msg);
-      this.pageNo += 1;
-      let d = res.result.items;
-      if (!d.length) return (this.err = this.emptyMsg || "暂无数据");
+      let d = res.result;
+      if (!d.lists.length) return (this.err = this.emptyMsg || "暂无数据");
+      console.log(d)
       this.$emit("afterFetch", d);
     },
     refresh() {

@@ -7,7 +7,7 @@
       :key="i"
       @click="checkIt(i)"
     >
-      {{ item }}
+      {{ item.name }}
       <i class="iconfont iconxuanzhong4"></i>
     </div>
     <!-- <div class="s-item"><i class="iconfont iconxuanzhong4"></i></div> -->
@@ -30,7 +30,11 @@ export default {
         return;
       }
       this.selectIndex = i;
+      this.$emit('update:index', i)
     },
+    reset(){
+      this.selectIndex = -1
+    }
   },
 };
 </script>

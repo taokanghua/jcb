@@ -2,15 +2,15 @@
   <!-- 评论卡牌 -->
         <div class="comment-card">
           <div class="avatar-wrap row ac">
-            <img src="../../../assets/img/会员中心头像.png" alt="">
+            <img :src="info.head" alt="">
             <div class="column sb" style="margin-left:0.11rem;height:100%">
-              <span class="name">我也不懂啊</span> 
-              <span class="time">2020-09-09</span>
+              <span class="name">{{info.name}}</span> 
+              <span class="time">{{info.time}}</span>
             </div>
           </div>
-          <p class="comment-content">我也不知道写什么，我只是占个位的，看下排版，看下效果，好让别人知道怎么排</p>
+          <p class="comment-content">{{info.content}}</p>
           <div class="img-wrap row sb">
-            <img src="../../../assets/img/商品详情-评价图片.png" alt="" v-for="item in 4" :key="item">
+            <img :src="item" alt="" v-for="(item,i) in info.pics.split(',')" :key="i">
           </div>
           <div class="footer row ac" v-if="hasBar">
             <div><i class="iconfont icondianzan"></i> <span>533</span></div>
@@ -31,7 +31,8 @@ export default {
       //是否有下面的👍 评论栏
       type: Boolean,
       default: true
-    }
+    },
+    info:{type:Object,default:()=>({pics:''})}
   }
 }
 </script>

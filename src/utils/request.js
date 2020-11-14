@@ -2,9 +2,11 @@ import axios from 'axios'
 import { updateToken } from './auth'
 import tokenHolder from './tokenHolder'
 import qs from 'qs';
-const ApiUrl = process.env.NODE_ENV == 'development' ? 'http://192.168.2.108:8080/jcb-collect/api' : 'http://api.chengdajiaoyu.com'
+//const ApiUrl = process.env.NODE_ENV == 'development' ? 'http://192.168.2.108:8080/jcb-collect/api' : 'http://api.chengdajiaoyu.com'
+const defaultUrl = 'http://192.168.2.108:8080/jcb-collect/api'
+//onst defaultUrl = 'http://192.168.2.117:8080/jcb-collect/api'
 const request = axios.create({
-    baseURL: `${ApiUrl}`,
+    baseURL: defaultUrl,
     timeout: 10000 // 请求超时时间
 })
 
@@ -34,9 +36,7 @@ const handleResErr = err => {
 }
 request.interceptors.response.use(response => {
 
-    if (response.data.code) {
-        console.warn(`${response.config.url}-->${response.data.msg}`)
-    }
+
     if (response.data.msg == '未授权登录') {
         updateToken()
     }

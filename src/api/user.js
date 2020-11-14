@@ -3,5 +3,6 @@ export default {
     /**根据已有的token 获取用户信息 */
     // getUserByToken: () => req.get('user'),
 
-    getAddressList: ()=>req.get('memberSubApi/listAddress')
+    getAddressList: () => req.get('memberSubApi/listAddress'),
+    //getOrderList:()=>req.get('')
     }

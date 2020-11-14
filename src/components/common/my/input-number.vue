@@ -1,7 +1,7 @@
 <template>
 	<div class="input-number">
 		<i class="iconfont iconjian" @click.stop="clickHandle(-1)"></i>
-		<input :value="value" @input="checkEnter" type="number" @blur="checkValue" :disabled="disabled">
+		<input :value="value" @input="checkEnter" type="number" @blur="checkValue" disabled>
 		<i class="iconfont iconjia" @click.stop="clickHandle(1)"></i>
 	</div>
 </template>

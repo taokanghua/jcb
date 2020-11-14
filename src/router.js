@@ -227,6 +227,24 @@ export default new Router({
             component:()=>import('@/views/mine/popularize/people')
         },
         {
+            path: '/sharing',
+            name: 'sharing',
+            meta: { title: '分享' },
+            component:()=>import('@/views/mine/popularize/sharing-posters')
+        },
+        {
+            path: '/registered',
+            name: 'registered',
+            meta: { title: '注册' },
+            component:()=>import('@/views/mine/popularize/registered')
+        },
+        {
+            path: '/loginUp',
+            name: 'loginUp',
+            meta: { title: '注册' },
+            component:()=>import('@/views/mine/popularize/login-up')
+        },
+        {
             path: '/waitPay',
             name: 'waitPay',
             meta: { title: '确认订单' },
@@ -291,7 +309,20 @@ export default new Router({
             name: 'memberGrade',
             meta: { title: '会员中心' },
             component:()=>import('@/views/mine/member-grade')
-        }
+        },
+        {
+            path: '/introduce',
+            name: 'introduce',
+            meta: { title: '招商加盟' },
+            component:()=>import('@/views/join-in/introduce')
+        },
+        {
+            path: '/information',
+            name: 'information',
+            meta: { title: '招商加盟' },
+            component:()=>import('@/views/join-in/information')
+        },
+        
     ],
     linkActiveClass:'tabbar-active'
 })

@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <img class="active-img" src="../../assets/img/招商加盟拷贝.png" alt="" />
+      <img class="active-img" src="../../assets/img/招商加盟拷贝.png" alt="" @click="$router.push({name:'introduce'})" />
     </div>
 
     <!-- 限时活动 -->
@@ -134,18 +134,25 @@
       </div>
     </div>
 
-    <div class="tabs-wrap row" >
-          <home-card v-for="item in 3" :key="item"></home-card>
-        </div>
+    <list @load="loadNext">
+      <div class="tabs-wrap row" >
+        <home-card v-for="(item,i) in goodsList" :key="i" :info="item"></home-card>
+      </div>
+    </list>
 
     <!-- 底部tabbar -->
     <myFooter></myFooter>
+    <!-- 红包展示栏 -->
+    <overlay :show="isRedpack" class="redpack" @touchmove.native="e=>e.preventDefault()">
+      <img src="../../assets/img/新手红包.png" alt="" @click="takeRedpack">
+      <div class="close row ac jc" @click="isRedpack=false"><i class="iconfont iconguanbi"></i></div>
+    </overlay>
   </div>
 </template>
 
 <script>
 import api from '../../api/home'
-import { Swipe, SwipeItem, Rate, Tab, Tabs } from "vant";
+import { Swipe, SwipeItem, Rate, Tab, Tabs, List, Overlay } from "vant";
 import countDown from '../../components/common/count-down'
 import myFooter from "../../components/common/my/footer";
 import HomeCard from '../../components/common/card/home-good-card'
@@ -155,20 +162,46 @@ export default {
   name: "home",
   data() {
     return {
-      recomIndex:0
+      recomIndex:0,
+      goodsParams:{pageNo:1, pageSize:10, type:1},
+      timer:null,
+      isRedpack:true, //红包遮罩
+
+      goodsList:[]
     };
   },
   methods:{
     changeRecom(i){
       this.recomIndex = i
+      this.goodsParams.type = i+1
+      this.goodsList = []
+      this.goodsParams.pageNo = 1
+      this.getHomeGoodsList()
+    },
+    loadNext(){ //触底加载（执行多次） 设置了节流 最快2s间隔加载一次
+      if(!this.timer){
+        this.timer = setTimeout(()=>{
+          clearTimeout(this.timer)
+          this.timer = null
+          this.goodsParams.pageNo += 1
+          this.getHomeGoodsList()
+          }, 2000)
+        // console.log(1)
+      }
+      
     },
     async getHomeGoodsList(){
-      let params = {
-        pageNo:1,
-        pageSize:10
+      let res = await api.getGoodsList(this.goodsParams)
+      if(!res.success){
+        this.showToast('获取商品失败!', 2500)
+        return
       }
-      let {data:res} = await api.getGoodsList(params)
-      console.log(res)
+      this.goodsList = [...this.goodsList, ...res.result.lists]
+    },
+    takeRedpack(){
+      //领取红包
+      this.isRedpack = false
+      this.showToast('恭喜🎉  领取成功', 2000)
     }
   },
   created(){
@@ -184,7 +217,9 @@ export default {
     countDown,
     HomeCard,
     searchTop,
-    hotRecomCard
+    hotRecomCard,
+    List,
+    Overlay
   },
 };
 </script>
@@ -361,7 +396,26 @@ export default {
     }
   }
 }
-
+.redpack{
+  img{
+    margin-top: 20%;
+  }
+  .close{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0.47rem;
+	  height: 0.47rem;
+    margin-top: 0.73rem;
+    border-radius: 50%;
+    border: 0.05rem solid #ffffff;
+    i{
+      color: #ffffff;
+      font-size: 0.4rem;
+      font-weight: bold;
+    }
+  }
+}
 /deep/.van-tabs__line {
   bottom: 50%;
   height: 0.09rem;
