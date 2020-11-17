@@ -265,9 +265,9 @@ export default {
         address.map((v) => v.code).includes(v.code)
       );
       this.address = objs.map((v) => v.name).join("/");
-      this.form.storeAddress.provinceCode = objs[0].id;
-      this.form.storeAddress.cityCode = objs[1].id;
-      this.form.storeAddress.districtCode = objs[2].id;
+      this.form.storeAddress.provinceCode = objs[0].code;
+      this.form.storeAddress.cityCode = objs[1].code;
+      this.form.storeAddress.districtCode = objs[2].code;
       this.isPop = false;
     },
     logoUp(file) {

@@ -14,6 +14,7 @@ import { Dialog } from 'vant'
 import 'vant/lib/index.css';
 // 自定义 toast 可通过 this.showToast(title, duration) 调用
 import toast from './components/common/my/showToast'
+import tokenHolder from './utils/tokenHolder'
 Vue.use(toast)
 
 Vue.use(VueScroller)
@@ -50,24 +51,36 @@ router.beforeEach((to, from, next) => {
         document.title = to.meta.title;
     }
     //定时循环回到顶部
-    let scrollToptimer = setInterval(function() {
-        // console.log("定时循环回到顶部")
-        var top = document.body.scrollTop || document.documentElement.scrollTop;
-        var speed = top / 4;
-        if (document.body.scrollTop != 0) {
-            document.body.scrollTop -= speed;
+    // let scrollToptimer = setInterval(function() {
+    //     // console.log("定时循环回到顶部")
+    //     var top = document.body.scrollTop || document.documentElement.scrollTop;
+    //     var speed = top / 4;
+    //     if (document.body.scrollTop != 0) {
+    //         document.body.scrollTop -= speed;
+    //     } else {
+    //         document.documentElement.scrollTop -= speed;
+    //     }
+    //     if (top == 0) {
+    //         clearInterval(scrollToptimer);
+    //     }
+    // }, 30);
+    let whiteList = ['/home', '/classify', '/search', '/mall', '/store', '/goodsdetail']
+    if (to.path == '/login') return next()
+    let token = tokenHolder.get()
+    if (!token) {
+        if (whiteList.includes(to.path)) {
+            console.log('while list')
+            next()
         } else {
-            document.documentElement.scrollTop -= speed;
+            console.log('none')
+            vm.showToast('请登录后查看', 2000)
+            return next('/login')
         }
-        if (top == 0) {
-            clearInterval(scrollToptimer);
-        }
-    }, 30);
-
+    }
     next()
 })
 
-new Vue({
+const vm = new Vue({
     router,
     store,
     render: h => h(App)

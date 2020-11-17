@@ -13,14 +13,14 @@
               <div> <i class="iconfont iconstar" v-for="item in Number(info.score)" :key="item"></i> </div>
             </div>
           </div>
-          <div class="right col sb">
+          <router-link :to="'/store?id='+info.storeId" tag="div" class="right col sb">
             <div class="go-shop">进店</div>
             <div class="distance">{{info.displayDistance}}</div>
-          </div>
+          </router-link>
         </router-link>
 
-        <div class="shop-goods">
-          <div class="goods-item" v-for="item in info.productList" :key="item.productId">
+        <div class="shop-goods row sb">
+          <div class="goods-item column sb" v-for="item in info.productList" :key="item.productId">
             <div class="img-show">
               <img :src="item.pic" alt="" />
               <div class="tag">热销</div>
@@ -112,13 +112,13 @@ export default {
       }
     }
     .shop-goods {
+      width: 100%;
       margin-top: 0.25rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-column: 0.2rem;
+      flex-wrap: wrap;
+      // grid-column: 0.2rem;
       .goods-item {
         width: 1.71rem;
-        height: 100%;
+        //height: 100%;
         border-radius: 0.06rem;
         border: solid 0.01rem #c8c8c8;
         .img-show {
@@ -159,6 +159,10 @@ export default {
             text-decoration:line-through;
           }
         }
+      }
+      &::after{
+        content: '';
+        width: 1.71rem;
       }
     }
   }

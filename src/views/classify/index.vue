@@ -76,7 +76,7 @@
                 @click="changeCondition(2)"
               >
                 价格
-                <preparation :status.sync="salesCondition"></preparation>
+                <preparation :status.sync="salesCondition" ref="prepa"></preparation>
               </span>
             </div>
             <div class="row right" @click="isPop=true">
@@ -86,20 +86,17 @@
 
           <!-- 筛选出来的商品 -->
             <div class="searched-goods" ref="resultBox" :style="`height:${dynamicHeight}px`">
-          <list @load="loadMore">
               <div class="goods-card row" v-for="item in 8" :key="item">
                 <img src="../../assets/img/分类220x220.png" alt="" />
                 <div class="right-info column sb">
-                  <span class="name e2"
-                    >得力(deli) 10.8V无线单锂电电钻18+1电钻……</span
-                  >
+                  <span class="name e2">得力(deli) 10.8V无线单锂电电钻18+1电钻……</span>
                   <div class="price row">
                     <div class="now">￥199</div>
                     <div class="old">￥200</div>
                   </div>
                 </div>
               </div>
-          </list>
+              <div if="!iphoneX" style="height:0.82rem"></div>
             </div>
         </div>
       </div>
@@ -108,9 +105,18 @@
     <!-- 占位 -->
     <div class="useless"></div>
 
-    <pop-up :show="isPop" position="right-center" @onModalClick="isPop=!isPop">
-      <preparation-inner></preparation-inner>
-    </pop-up>
+    <!-- 商品筛选弹框 -->
+      <pop-up
+        :show="isPop"
+        position="right-center"
+        @onModalClick="closePop"
+      >
+        <preparation-inner 
+        :info="goodsBrands" 
+        @close="closePop"
+        @reset="resetPop"
+        @confirm="confirm"></preparation-inner>
+      </pop-up>
     <myFooter></myFooter>
   </div>
 </template>
@@ -118,10 +124,13 @@
 <script>
 import {list } from 'vant'
 import api from '../../api/classify'
+import homeApi from '../../api/home'
 import myFooter from "../../components/common/my/footer";
 import preparation from "../../components/common/my/preparation";
 import popUp from '../../components/common/popUp'
 import preparationInner from '../../components/common/my/preparation-inner'
+
+import {isIphoneX} from '../../utils/iosOnly'
 export default {
   data() {
     return {
@@ -129,10 +138,12 @@ export default {
       thirdIdx:-1, //三级筛选 选中id
       fuck:0,
       isPop:false, //筛选pop弹框
+      goodsBrands:[], //商品品牌列表
       conditionIdx: 0, //条件筛选 选中idx
       salesCondition: 0,  //筛选状态 
       isThrid:true, //三级显示状态
       timer: null,
+      iphoneX: isIphoneX(),
 
       //xin
       allList:[],
@@ -140,10 +151,28 @@ export default {
       third:[],
       scroll:null,
       leftHeight: 400,
-      dynamicHeight:400
+      dynamicHeight:400,
+      searchParams:{ //筛选参数
+        //brandId: 'string',
+        //endPrice: 0,
+        //id: 'string',
+        pageNo: 1,
+        pageSize: 100,
+        //priceSort: false,
+        //saleSort: false,
+        //startPrice: 0,
+        type: -1,
+        //userLat: 0,
+        //userLng: 0
+      },
+      goodsList:[],
     };
   },
   methods: {
+    async getGoodList(){
+      let res = await api.getGoods(this.searchParams)
+      //this.goodsList = [...this.goodsList, ...res.result]
+    },
     changeOne(i){ //一级
       this.second = this.allList[i].children
       // 给二级复位
@@ -154,20 +183,40 @@ export default {
       this.activeIndex = i;
       this.isThrid = this.third.length>0
       // this.resizeCon()
+      this.searchParams.id = this.second[i].id
+      console.log(this.second[i].id)
+      this.goodsList = []
+      this.getGoodList()
     },
     changeThird(i){
       this.thirdIdx = i
-    },
-    loadMore(){
-      if(!this.timer){
-        this.timer = setTimeout(()=>{
-          clearTimeout(this.timer)
-            console.log('bo')
-          }, 2000)
-      }
+      this.searchParams.id = this.third[i].id
+      this.goodsList = []
+      this.getGoodList()
     },
     changeCondition(i) { //切换筛选类型
       this.conditionIdx = i;
+      if(i==0){
+        delete this.searchParams.priceSort
+        this.searchParams.saleSort=false
+        this.$refs.prepa.reset()
+      }
+      if(i==1){
+        this.searchParams.saleSort = true
+        delete this.searchParams.priceSort
+        this.$refs.prepa.reset()
+      }
+      if(i==2){
+        if(this.salesCondition==0){
+          delete this.searchParams.priceSort
+        }else if(this.salesCondition==1){
+          this.searchParams.priceSort = true
+        }else{
+          this.searchParams.priceSort = false
+        }
+      }
+      this.goodsList = []
+      this.getGoodList()
     },
     async getAllClassifyList(){
       let res = await api.getAllList()
@@ -175,6 +224,13 @@ export default {
       this.second = this.allList[0].children
       this.third = this.second.children||[]
       this.isThrid = this.third.length>0 //判断一开始有莫有三级
+
+      let {index} = this.$route.query
+      if(index){
+        this.changeOne(index)
+        return
+      }
+      this.changeOne(0)
     },
     updateDynamicHeight(){ //动态计算 content高度
       let {  rightBox,lv3box,  filterBox } = this.$refs;
@@ -184,13 +240,41 @@ export default {
       this.dynamicHeight=rh-fh-lv3h 
       this.leftHeight = rh
       console.log(rh,fh,lv3h)    
+    },
+
+    //筛选pop
+    closePop(){
+      this.isPop = !this.isPop
+    },
+    async getBrandRec(){
+      //获取品牌
+      let res = await homeApi.getAllBrand()
+      Object.values(res.result).map(v=>{this.goodsBrands.push(...v)}) 
+    },
+    resetPop(){
+      this.searchParams.startPrice = 0
+      this.searchParams.endPrice = 0
+      this.searchParams.type = -1
+      this.searchParams.brandId = ''
+      this.goodsList = []
+      this.getGoodList()
+    },
+    confirm(value, price){
+      console.log(value,price)
+      this.searchParams.startPrice = price.start
+      this.searchParams.endPrice = price.end
+      this.searchParams.type = value[0]
+      this.searchParams.brandId = value[1].id
+      this.goodsList = []
+      this.getGoodList()
     }
   },
   created(){
     this.getAllClassifyList()
+    this.getBrandRec()
   },
   mounted() {
-    // this.updateDynamicHeight()
+    this.updateDynamicHeight()
     
   },
   watch: {
@@ -269,10 +353,10 @@ export default {
   .left-menu {
     width: 1.81rem;
     height: 9.4rem;
-    // padding-bottom: 0.82rem;
+    padding-bottom: 0.4rem;
     box-sizing: border-box;
     background-color: #f6f6f6;
-    // flex-shrink: 0;
+    flex-shrink: 0;
     // overflow: hidden;
     overflow: scroll;
     .menu-item-name {
@@ -284,8 +368,8 @@ export default {
     }
   }
   .right-content {
-    flex: 1;
-    height: 100%;
+    //flex: 1;
+    //height: 100%;
     background-color: #ffffff;
     overflow: hidden;
     .top-search {
@@ -335,7 +419,7 @@ export default {
       // padding-bottom: 0.83rem;
       overflow-y: scroll;
       flex-grow: 1;
-      padding-bottom:.82rem;
+      //padding-bottom:.82rem;
       box-sizing: border-box;
       .goods-card {
         margin-top: 0.18rem;

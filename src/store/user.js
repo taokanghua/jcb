@@ -5,10 +5,12 @@ import api from '../api/user'
 import { initToken, validateToken } from '../utils/auth';
 import tokenHolder from '../utils/tokenHolder'
 const state = {
-
+    info: {}
 };
 const mutations = {
-
+    SET_INFO(state, obj) {
+        state.info = obj
+    },
     [INIT_USER](state, payload) {
         Object.assign(state, payload)
     },

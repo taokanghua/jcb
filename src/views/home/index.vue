@@ -16,13 +16,13 @@
         <swipe-item
           ><img
             class="swipe-img"
-            src="../../assets/img/店铺街-新店推荐.png"
+            src="../../assets/img/banner拷贝.png"
             alt=""
         /></swipe-item>
         <swipe-item
           ><img
             class="swipe-img"
-            src="../../assets/img/店铺街-新店推荐2.png"
+            src="../../assets/img/banner拷贝.png"
             alt=""
         /></swipe-item>
         <swipe-item
@@ -46,11 +46,11 @@
           <img src="../../assets/img/品牌专区.png" alt="" />
           <span>品牌专区</span>
         </router-link>
-        <div class="menu-item">
+        <div class="menu-item" @click="waitOpen">
           <img src="../../assets/img/特惠专区.png" alt="" />
           <span>特惠专区</span>
         </div>
-        <div class="menu-item">
+        <div class="menu-item" @click="waitOpen">
           <img src="../../assets/img/活动.png" alt="" />
           <span>活动</span>
         </div>
@@ -60,13 +60,12 @@
     </div>
 
     <!-- 限时活动 -->
-    <div class="active-wrap pr24">
+    <!-- <div class="active-wrap pr24">
       <div class="header row sb">
         <div>
           <span>限时活动</span>
           <count-down endTime="2020/11/10" bgColor="#fc0808" fontSize="0.18rem" marginLeft="0.1rem"></count-down>
         </div>
-        <!-- <div class="more">更多 <i class="iconfont icongengduo"></i></div> -->
       </div>
       <div class="content">
         <div class="active-card col" v-for="item in 5" :key="item">
@@ -80,20 +79,20 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 品牌专区 -->
     <div class="active-wrap pr24">
       <div class="header row sb">
         <span>大牌驾到</span>
-        <div class="more">更多 <i class="iconfont icongengduo"></i></div>
+        <router-link to="/brandzone" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
       </div>
       <div class="logo-list">
         <img
-          src="../../assets/img/品牌1.png"
-          alt=""
-          v-for="item in 8"
-          :key="item"
+          :src="item.logo"
+          v-for="item in reconBrandList" 
+          :key="item.id" 
+          @click="$router.push({path:'/search?id='+item.id})"
         />
       </div>
     </div>
@@ -104,7 +103,7 @@
         <span>推荐店铺</span>
         <router-link to="/allstores" tag="div" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
       </div>
-      <hot-recom-card v-for="item in 3" :key="item"></hot-recom-card>
+      <hot-recom-card v-for="item in reconStoreList" :key="item.storeId" :info="item"></hot-recom-card>
     </div>
 
     <!-- 类型 -->
@@ -158,16 +157,20 @@ import myFooter from "../../components/common/my/footer";
 import HomeCard from '../../components/common/card/home-good-card'
 import searchTop from '../../components/common/my/search-top'
 import hotRecomCard from '../../components/common/card/hot-recom-card'
+import tokenHolder from '../../utils/tokenHolder';
 export default {
   name: "home",
   data() {
     return {
-      recomIndex:0,
+      recomIndex:1,
       goodsParams:{pageNo:1, pageSize:10, type:1},
       timer:null,
-      isRedpack:true, //红包遮罩
+      userInfo:{},
+      isRedpack:false, //红包遮罩
 
-      goodsList:[]
+      goodsList:[],
+      reconBrandList:[],
+      reconStoreList:[]
     };
   },
   methods:{
@@ -198,14 +201,45 @@ export default {
       }
       this.goodsList = [...this.goodsList, ...res.result.lists]
     },
-    takeRedpack(){
+    async takeRedpack(){
       //领取红包
+      let memberId = this.userInfo.id
+      let res = await api.takeFirstCoupon(memberId)
+      if(res.success){
+        this.showToast('领取成功! 赶快去使用吧', 2000)
+      }else{
+        this.showToast('领取失败!', 2000)
+      }
       this.isRedpack = false
-      this.showToast('恭喜🎉  领取成功', 2000)
+    },
+    async getRecomBrand(){
+      let res = await api.getRecomBrand()
+      this.reconBrandList = res.result
+    },
+    async getRecomStore(){
+      let params = {pageNo:1, pageSize:3}
+      let res = await api.searchStore(params)
+      this.reconStoreList = res.result.lists
+    },
+    async getUserInfo(){
+      //获取用户信息
+      let token = tokenHolder.get()||false
+      if(!token) return
+      let res = await api.getUserInfo()
+      this.isRedpack = res.result.memberUserInfoVo.firstCouponStatus==1
+      this.userInfo = res.result.memberUserInfoVo
+      this.$store.commit('SET_INFO', res.result)
+    },
+    waitOpen(){
+      //暂未开放弹框
+      this.showToast('暂未开放!', 2000)
     }
   },
   created(){
     this.getHomeGoodsList()
+    this.getRecomBrand()
+    this.getRecomStore()
+    this.getUserInfo()
   },
   components: {
     myFooter,
@@ -230,6 +264,7 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
   margin-top: 0.28rem;
+  min-height: 5rem;
 }
 .pr24 {
   padding-right: 0.24rem;

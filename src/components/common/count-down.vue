@@ -43,12 +43,12 @@
 				}, 1000)
 			}
 		},
-		watch:{
-			endTime(n){
-				clearInterval(this.timer)
-				this.countingDown()
-			}
-		},
+		// watch:{
+		// 	endTime(n){
+		// 		clearInterval(this.timer)
+		// 		this.countingDown()
+		// 	}
+		// },
 		props:{
 			endTime:{
 				//结束时间

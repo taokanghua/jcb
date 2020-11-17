@@ -6,7 +6,7 @@
         <span v-if="info.isPreSale==1">预售</span>
         {{info.productName}}
       </div>
-      <div class="shop-name">{{info.storeName}}</div>
+      <div class="shop-name e1">{{info.storeName}}</div>
       <div class="price-wrap row sb">
         <div class="price">￥{{parseInt(info.paymentPrice).toFixed(0)}} <span style="text-decoration:line-through">￥{{parseInt(info.price).toFixed(0)}}</span></div>
       </div>
@@ -37,13 +37,15 @@ export default {
     justify-content: space-between;
     margin-bottom: 0.18rem;
     img {
-      width: 2.82rem;
+      width: 100%;
       height: 2.82rem;
+      border-radius: 0.11rem;
     }
     .name {
       font-size: 0.21rem;
       color: #1a1a1a;
       margin-left: 0.19rem;
+      margin-right: 0.19rem;
       margin-top: 0.11rem;
       margin-bottom: 0.11rem;
       span {
@@ -61,6 +63,7 @@ export default {
       font-size: 0.18rem;
       color: #a8a8a8;
       padding-left: 0.19rem;
+      padding-right: 0.19rem;
       margin-bottom: 0.11rem;
     }
     .price-wrap {

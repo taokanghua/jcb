@@ -1,6 +1,6 @@
 <template>
   <div class="mall-wrap">
-    <search-top></search-top>
+    <search-top :search="false"></search-top>
 
     <swipe autoplay class="swipe">
       <swipe-item>
@@ -15,50 +15,14 @@
       <!-- 这里暂无 -->
       <div class="menu-wrap">
         <swipe style="width:100%;height:100%">
-          <swipe-item class="swipe-item row sb ac">
-            <div class="item">
-              <img src="../../assets/img/分类图标/电动工具.png" alt="">
-              <span>电动工具</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/电线电缆.png" alt="">
-              <span>电线电缆</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/装饰材料.png" alt="">
-              <span>装饰材料</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/工具配件.png" alt="">
-              <span>工具配件</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/电工电器_1.png" alt="">
-              <span>电工电器</span>
-            </div>
+          <swipe-item class="swipe-item row sb ac" v-for="(item,i) in allBrands" :key="i">
+            <router-link :to="'/classify?index='+i" tag="div" class="item" v-for="v in item" :key="v.id">
+              <img :src="v.icon" alt="">
+              <span>{{v.name}}</span>
+            </router-link>
+            
           </swipe-item>
-          <swipe-item class="swipe-item row sb ac">
-            <div class="item">
-              <img src="../../assets/img/分类图标/电动工具.png" alt="">
-              <span>电动工具</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/电动工具.png" alt="">
-              <span>电动工具</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/电动工具.png" alt="">
-              <span>电动工具</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/电动工具.png" alt="">
-              <span>电动工具</span>
-            </div>
-            <div class="item">
-              <img src="../../assets/img/分类图标/电动工具.png" alt="">
-              <span>电动工具</span>
-            </div>
-          </swipe-item>
+          
         </swipe>
       </div>
 
@@ -69,19 +33,26 @@
         <!-- <div class="more">更多 <i class="iconfont icongengduo"></i></div> -->
       </div>
       <div class="shop-wrap row sb" >
-        <div class="shop-item" v-for="item in 6" :key="item">
-          <img src="../../assets/img/店铺街-新店推荐2.png" alt="">
-          <div>商店名</div>
-        </div>
+        <router-link :to="'/store?id='+item.id" class="shop-item" v-for="item in newStoreList" :key="item.id">
+          <img :src="item.pic" alt="">
+          <div>{{item.name}}</div>
+        </router-link>
       </div>
     </div>
       <!-- 热门店铺 -->
       <div class="mall-com-card">
         <div class="title row sb ac mb2">
           <span>热门店铺</span>
-          <div class="more">更多 <i class="iconfont icongengduo"></i></div>
+          <router-link to="/allstores" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
         </div>
-        <hot-recom-card v-for="item in 3" :key="item"></hot-recom-card>
+        <waterFall
+              @afterFetch="storeListData"
+              :req="searchStore"
+              :params="storeParams"
+            >
+        <hot-recom-card v-for="(item,i) in storeList" :key="i" :info="item"></hot-recom-card>
+        <!-- <hot-recom-card v-for="(item,i) in storeList" :key="i" :info="item"></hot-recom-card> -->
+        </waterFall>
       </div>
 
     </div>
@@ -91,19 +62,60 @@
 </template>
 
 <script>
+import api from '../../api/home'
+import classifyApi from '../../api/classify'
 import { Swipe, SwipeItem } from 'vant';
 import searchTop from '../../components/common/my/search-top'
 import hotRecomCard from '../../components/common/card/hot-recom-card'
+import waterFall from '../../components/common/waterfall'
 export default {
   data(){
-    return{}
+    return{
+      allBrands:[],
+      newStoreList:[],
+      storeList:[],
+      storeParams:{
+        //brandId: string,
+        keyword: '',
+        // pageNo: 0,
+        // pageSize: 0,
+        saleCount: false,
+        score: true,
+        // userLat: 0,
+        // userLng: 0
+      },
+    }
   },
-  methods:{},
+  methods:{
+    searchStore: api.searchStore,
+    async getAllBrands(){
+      let res = await classifyApi.getAllList()
+      let count = Math.ceil(res.result.length/5)
+      for(let i=0;i<count;i++){
+        this.allBrands.push(res.result.splice(0,5))
+      }
+      // console.log(count, this.allBrands)
+    },
+    async getNewStoreList(){
+      let res = await api.getNewStore()
+      //console.log(res)
+      this.newStoreList = res.result
+    },
+
+    storeListData(result){
+      this.storeList = [...this.storeList, ...result.lists]
+    },
+  },
+  created(){
+    this.getAllBrands()
+    this.getNewStoreList()
+  },
   components:{
     Swipe,
     SwipeItem,
     searchTop,
-    hotRecomCard
+    hotRecomCard,
+    waterFall
   }
 }
 </script>
@@ -189,6 +201,11 @@ export default {
       color: #ffffff;
     }
   }
+  &::after{
+    content:'';
+    display:block;
+    width: 1.79rem;
+  }
 }
 
 
@@ -203,7 +220,7 @@ export default {
 	  height: 0.07rem;
 	  background-color: #2ecb62;
     border-radius: 0.03rem;
-    margin-right: 0;
+    margin-right: 0.03rem;
   }
 }
 </style>

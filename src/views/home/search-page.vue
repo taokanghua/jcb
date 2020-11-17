@@ -161,9 +161,7 @@ export default {
     async getBrandRec(){
       //获取推荐品牌
       let res = await api.getAllBrand()
-      Object.values(res.result).map(v=>{this.goodsBrands.push(...v)})
-      console.log(this.goodsBrands)
-      
+      Object.values(res.result).map(v=>{this.goodsBrands.push(...v)}) 
     },
     changeCondition(i) {
       this.conditionIdx = i;
@@ -243,6 +241,9 @@ export default {
     }
   },
   created(){
+    if(this.$route.query.id){
+      this.goodsParams.brandId = this.$route.query.id
+    }
     this.getBrandRec()
   },
   watch: {

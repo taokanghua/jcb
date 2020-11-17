@@ -15,7 +15,7 @@
       </div>
       <div class="filed bottom-border">
         <span>密码</span>
-        <input type="text" placeholder="请输入密码" v-model="phone" />
+        <input type="text" placeholder="请输入密码" v-model="password" />
       </div>
     </div>
 
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import api from '../../api/login'
 export default {
   data() {
     return {
@@ -43,15 +44,33 @@ export default {
       //发送请求
       // console.log('send msg')
       this.timer = setInterval(() => {
-        if (this.second == 0) {
+        if (this.second <= 0) {
           clearInterval(this.timer);
           this.waitText = "获取验证码";
+          this.timer = null
+          this.second = 60
+          return
         }
         this.second -= 1;
         this.waitText = `${this.second}S后重新获取`;
       }, 1000);
+      let params = {
+            openId:'oM2fl5MDsV8pP-2WivrweUej5L5U',
+            phone: this.phone,
+            service:2 //1登录 2注册 3找回
+      }
+      //api.getMsgCode(params)
     },
-    register() {},
+    async register() {
+      let params ={
+        openId: '',
+        password:this.password,
+        phone: this.phone,
+        sourceCode: this.verifyMsg
+      }
+      let res = await api.register(params)
+      console.log(res)
+    },
   },
 };
 </script>

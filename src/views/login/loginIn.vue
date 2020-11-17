@@ -1,6 +1,6 @@
 <template>
   <div class="login-wrap">
-    <div class="tour">先去逛逛</div>
+    <router-link to="/home" tag="div" class="tour">先去逛逛</router-link>
     <h3>欢迎回来</h3>
 
     <div class="login-way">
@@ -44,6 +44,8 @@
 
 <script>
 import {Tab,Tabs} from 'vant';
+import api from '../../api/login'
+import tokenHolder from '../../utils/tokenHolder';
 export default {
   name:'login',
   data(){
@@ -53,7 +55,7 @@ export default {
       timer:null,
       waitText:'获取验证码',
 
-      phone:'',
+      phone:'13409820341',
       password:'',
       verifyMsg:''
     }
@@ -64,19 +66,72 @@ export default {
       //发送请求
       // console.log('send msg')
       this.timer = setInterval(()=>{
-        if(this.second==0){
+        if(this.second<=0){
           clearInterval(this.timer)
+          this.timer = null
           this.waitText = '获取验证码'
+          this.second = 60
+          return
         }
         this.second -= 1
         this.waitText = `${this.second}S后重新获取`
       }, 1000)
+      //发送请求
+          let params ={
+            openId:'oM2fl5MDsV8pP-2WivrweUej5L5U',
+            phone: this.phone,
+            service:1 //1登录 2注册 3找回
+          }
+          api.getMsgCode(params)
     },
     forget(){ //忘记密码
-      this.$router.push({name:'forget'})
+      this.$router.push({name:'forget', query:{phone:this.phone}})
     },
-    loginIn(){
-      this.$router.push({name:'home'})
+    async loginIn(){
+      let access = false
+      let phone = /^1[0-9]{10}$/.test(this.phone)
+      if(this.type=='password'){
+        //如果是密码登录  true 表示不通过
+        access = [phone, this.password].some(v=>!v)
+      }else{
+        access = [phone, this.verifyMsg].some(v=>!v)
+      }
+      if(!access){
+        let res = {}
+        if(this.type=='password'){
+          res = await this.pwdWay()
+        }else{
+          res = await this.verifyWay()
+        }
+        //拿结果做判断
+        if(res.success){
+          tokenHolder.set(res.result)
+          this.$router.replace({name:'home'})
+        }else{
+          this.showToast(res.message, 2500)
+        }
+      }else{
+        this.showToast('请输入完整的内容！')
+      }
+      //console.log(access)
+    },
+    pwdWay(){ //密码登录
+      let params = {
+          openId: 'oM2fl5MDsV8pP-2WivrweUej5L5U',
+          password: this.password,
+          phone: this.phone,
+          type: 1 //1密码 2 验证码
+      }
+      return api.loginIn(params)
+    },
+    verifyWay(){//验证码登录
+      let params = {
+          openId: 'oM2fl5MDsV8pP-2WivrweUej5L5U',
+          code: this.verifyMsg,
+          phone: this.phone,
+          type: 2 //1密码 2 验证码
+      }
+      return api.loginIn(params)
     }
   },
   watch:{

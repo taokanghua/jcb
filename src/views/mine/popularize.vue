@@ -1,12 +1,13 @@
 <template>
   <div class="popularize-wrap">
     <div class="top-card column sb">
-      <div class="top row sb ac">
+      <div class="top row sb">
         <div class="left column sb ac">
           <span>剩余集采分</span>
           <div class="integral">5467</div>
         </div>
-        <div class="reflect">我要提现</div>
+        <!-- 暂时不不要 -->
+        <!-- <div class="reflect">我要提现</div> -->
       </div>
       <div class="bottom row sb ac">
         <div class="left row sb ac">

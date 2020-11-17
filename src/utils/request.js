@@ -4,7 +4,7 @@ import tokenHolder from './tokenHolder'
 import qs from 'qs';
 //const ApiUrl = process.env.NODE_ENV == 'development' ? 'http://192.168.2.108:8080/jcb-collect/api' : 'http://api.chengdajiaoyu.com'
 const defaultUrl = 'http://192.168.2.108:8080/jcb-collect/api'
-//onst defaultUrl = 'http://192.168.2.117:8080/jcb-collect/api'
+// const defaultUrl = 'http://192.168.2.117:8080/jcb-collect/api'
 const request = axios.create({
     baseURL: defaultUrl,
     timeout: 10000 // 请求超时时间
@@ -13,8 +13,9 @@ const request = axios.create({
 request.interceptors.request.use(config => {
 
         let token = tokenHolder.get()
+        // let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE2MDU1MDQ1MTUsImV4cCI6MTYwODA5NjUxNSwidXNlcklkIjoiMTMyNzg2NzY5NzU0MDM3ODYyNSIsImlhdCI6MTYwNTUwNDUxNSwianRpIjoiMTMyNzg2NzY5NzU0MDM3ODYyNSIsInVzZXJuYW1lIjoiMTM0MDk4MjAzNDEifQ.1iszcDic-PXQOPh_3nKwY45oMavO-JufFRvredfGIZ0'
         if (token) {
-            config.headers['Authorization'] = 'Bearer ' + token
+            config.headers['token'] = token
         }
         if (config.method === 'get') {
             // 如果是get请求，且params是数组类型如arr=[1,2]，则转换成arr=1&arr=2

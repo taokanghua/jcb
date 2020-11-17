@@ -11,7 +11,7 @@
       <!-- 推荐产品 -->
       <h3 class="title">推荐产品</h3>
       <div class="row sb" style="flex-wrap:wrap">
-        <home-card v-for="item in 3" :key="item"></home-card>
+        <!-- <home-card v-for="item in 3" :key="item"></home-card> -->
       </div>
     </div>
 

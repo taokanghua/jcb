@@ -1,11 +1,11 @@
 <template>
   <div class="brand-zone-wrap">
-    <searchTop :address="false"></searchTop>
+    <searchTop :address="false" :search="false"></searchTop>
     
     <div class="brand-zone-content">
       <!-- <span class="title">电动工具</span> -->
       <div class="shop-wrap">
-        <img :src="item.logo" alt="" v-for="item in recomBrandList" :key="item.id">
+        <img :src="item.logo" alt="" v-for="item in recomBrandList" :key="item.id" @click="$router.push({path:'/search?id='+item.id})">
       </div>
       <!-- <span class="title">电工电器</span>
       <div class="shop-wrap">
@@ -18,10 +18,10 @@
 
     </div>
     <!-- 索引栏 -->
-      <index-bar highlight-color="#2ecb62">
+      <index-bar highlight-color="#2ecb62" :sticky="false">
         <index-anchor :index="k" v-for="k in allBrandKeys" :key="k">
           <span>{{k}}</span>
-          <cell :title="k.name"  v-for="(k,i) in allBrandObj[k]" :key="i" />
+          <cell :title="k.name"  v-for="(k,i) in allBrandObj[k]" :key="i" @click="$router.push({path:'/search?id='+k.id})"/>
         </index-anchor>
         <!-- <cell title="文本123" />
         <cell title="文本123" /> -->
@@ -65,7 +65,7 @@ export default {
     async getAllBrand(){
       let res = await api.getAllBrand()
       this.allBrandObj = res.result
-      this.allBrandKeys = Object.keys(res.result)
+      this.allBrandKeys = Object.keys(res.result).sort()
     }
   },
   created(){

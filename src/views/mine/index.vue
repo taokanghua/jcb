@@ -4,12 +4,13 @@
     <div class="top-info">
       <div class="info row sb ac">
         <div class="row">
-          <img src="../../assets/img/个人中心头像.png" alt="" />
-          <div class="user-info column sb">
-            <span class="name">每一个明天</span>
-            <router-link to="/memberGrade" tag="div" class="member row ac jc">
+          <img :src="userInfo.headPortrait" alt="" />
+          <div class="user-info column ac jc">
+            <span class="name">{{userInfo.nickname}}</span>
+            <!-- 暂时不用 -->
+            <!-- <router-link to="/memberGrade" tag="div" class="member row ac jc">
               一级会员 <i class="iconfont iconARROW"></i>
-            </router-link>
+            </router-link> -->
           </div>
         </div>
         <router-link to="/editInfo" tag="i" class="iconfont iconARROW strong"></router-link>
@@ -19,10 +20,11 @@
     <div class="mine-content">
       <!-- 数量卡片 -->
       <div class="card row">
-        <div class="item">
+        <!-- 暂未开放 -->
+        <!-- <div class="item">
           <span>4</span>
           <span class="word">优惠券</span>
-        </div>
+        </div> -->
         <router-link to="/collection?type=0" tag="div" class="item">
           <span>4</span>
           <span class="word">关注商品</span>
@@ -132,9 +134,20 @@ import myFooter from "../../components/common/my/footer";
 export default {
   name: "mine",
   data() {
-    return {};
+    return {
+      userInfo:{}
+    };
   },
-  methods: {},
+  methods: {
+    getInfo(){
+      //获取数据
+      this.userInfo = this.$store.state.user.info.memberUserInfoVo
+      //console.log(this.userInfo)
+    }
+  },
+  created(){
+    this.getInfo()
+  },
   components: {
     myFooter,
   },
@@ -176,6 +189,7 @@ export default {
     img {
       width: 0.81rem;
       height: 0.81rem;
+      border-radius: 50%;
     }
     .user-info {
       margin-left: 0.18rem;

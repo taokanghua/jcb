@@ -8,8 +8,9 @@
     </div>
     <div class="list">
       <div class="tab row sb ac">
-        <div :class="{active:tabIdx==0}" @click="tabIdx=0">平台</div>
-        <div :class="{active:tabIdx==1}" @click="tabIdx=1">店铺</div>
+        <div :class="{active:tabIdx==0}" @click="tabIdx=0">店铺</div>
+        <div :class="{active:tabIdx==1}" @click="tabIdx=1">一级</div>
+        <div :class="{active:tabIdx==2}" @click="tabIdx=2">二级</div>
       </div>
 
       <div class="order-list">
@@ -19,7 +20,7 @@
               <img src="../../../assets/img/推广中心-订单头像.png" alt="">
               <span class="name">用户姓名</span>
             </div>
-            <span class="way">购买商品</span>
+            <span class="way">{{tabIdx==0?'交易订单':'购买商品'}}</span>
           </div>
           <div class="right column sb">
             <span class="money">+67.5</span>
@@ -105,7 +106,7 @@ export default {
   width: 6.36rem;
 	height: 0.68rem;
   background-color: #ffffff;
-  padding: 0 2.29rem;
+  padding: 0 1.6rem;
   box-sizing: border-box;
   div{
     color: #1a1a1a;

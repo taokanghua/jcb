@@ -1,6 +1,6 @@
 <template>
   <div class="store-d-wrap">
-    <search-top :address="false"></search-top>
+    <search-top :address="false" :search="false"></search-top>
 
     <div class="bg-img">
       <img src="../../assets/img/店铺首页.png" alt="" />
@@ -24,7 +24,8 @@
         <div class="desc">
           五金商店经营品牌众多，价格成本低，质量有保证。五金商店精品荟萃，任你挑选。
         </div>
-        <div class="coupon-list row" @click="couponPop=true">
+        <!-- 暂时不做 -->
+        <!-- <div class="coupon-list row" @click="couponPop=true">
           <div class="coupon-item row sb">
             <div>￥10 满减券</div>
             <div>领</div>
@@ -33,7 +34,7 @@
             <div>9.8折 折扣券</div>
             <div>领</div>
           </div>
-        </div>
+        </div> -->
         <div class="bottom row sb ac">
           <span><i class="iconfont iconanquan"></i> 期货保证</span>
           <span><i class="iconfont iconzhengpinbaozhang"></i> 100%正品</span>
@@ -91,9 +92,15 @@
         </span>
       </div>
 
-      <div class="row sb" style="flex-wrap:wrap">
-        <home-good-card v-for="item in 3" :key="item"></home-good-card>
-      </div>
+      <waterfall
+              @afterFetch="mergeGoodsList"
+              :req="getStoreGoodsApi"
+              :params="storeParams"
+              ref="storeWaterFall">
+        <div class="row sb" style="flex-wrap:wrap">
+          <home-good-card v-for="item in goodsList" :key="item.id" :info="item"></home-good-card>
+        </div>
+      </waterfall>
     </div>
 
     <!-- 领取优惠券pop -->
@@ -122,7 +129,7 @@
             <div class="take took row ac jc">已领取</div>
           </div>
         </div>
-        <!-- 预留了一个position类 优惠券过多就浮动按钮 -->
+        <!-- 预留了一个position类 优惠券过多就不浮动按钮 -->
         <div class="close-btn row ac jc position" @click="couponPop=false">关闭</div> 
       </div>
     </action-sheet>
@@ -130,6 +137,8 @@
 </template>
 
 <script>
+import api from '../../api/store'
+import waterfall from '../../components/common/waterfall'
 import { ActionSheet } from 'vant';
 import searchTop from "@/components/common/my/search-top";
 import preparation from "@/components/common/my/preparation";
@@ -137,25 +146,68 @@ import homeGoodCard from '@/components/common/card/home-good-card'
 export default {
   data() {
     return {
-      conditionIdx: -1,
+      conditionIdx: 0,
       salesCondition: 0,
       couponPop:false, //领取优惠券pop
+      goodsList:[],
+      storeParams:{
+        //pageNo: 1,
+        //pageSize: 10,
+        priceSort: false,
+        //saleSort: false,
+        storeId: this.$route.query.id
+      }
     };
   },
   methods: {
-    changeCondition(i) {
-      if (this.conditionIdx == i) {
-        this.conditionIdx = -1;
-        return;
-      }
+    getStoreGoodsApi: api.getStoreGoods,
+    changeCondition(i) { //筛选 x_x 一坨一坨的
       this.conditionIdx = i;
+      if(this.conditionIdx == 0){
+        delete this.storeParams.priceSort
+        this.storeParams.saleSort = false
+      }
+      if(this.conditionIdx == 1){
+        delete this.storeParams.priceSort
+        this.storeParams.saleSort = true
+      }
+      if(this.conditionIdx==2){
+        //价格升序降序
+        this.storeParams.saleSort = false
+        if(this.salesCondition==0){
+          delete this.storeParams.priceSort
+        }else if(this.salesCondition==1){
+          this.storeParams.priceSort = true
+        }else{
+          this.storeParams.priceSort = false
+        }
+      }
+      this.goodsList = []
+      this.$refs.storeWaterFall.refresh()
     },
+  async getStoreDetail(){
+      let params ={
+        lat: 0,
+        lon: 0,
+        storeId: this.$route.query.id
+      }
+      let res = await api.getStoreDetail(params)
+      console.log(res)
+    },
+    //goods
+    mergeGoodsList(result){
+      this.goodsList = [...this.goodsList, ...result.lists]
+    }
+  },
+  created(){
+    this.getStoreDetail()
   },
   components: {
     searchTop,
     preparation,
     homeGoodCard,
-    ActionSheet
+    ActionSheet,
+    waterfall
   },
 };
 </script>
@@ -342,6 +394,9 @@ export default {
   margin-bottom: 0.21rem;
   span {
     margin-right: 0.68rem;
+  }
+  .active-text{
+    color: #2ecb62;
   }
 }
 

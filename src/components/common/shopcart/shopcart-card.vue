@@ -1,10 +1,7 @@
 <template>
   <div class="shopcart-card">
         <div class="shop-name row ac">
-          <div @click="checkAllChild">
-            <i class="iconfont iconxuanzhong" v-if="isSelectAll"></i>
-          <div class="circle" v-else ></div>
-          </div>
+          <radio-one v-model="test"></radio-one>
           
           <div style="margin-left:0.23rem">
             <i class="iconfont iconshangcheng"></i>
@@ -15,7 +12,7 @@
         </div>
         <!-- 卡片 -->
         <div class="goods-card row ac sb" v-for="item in 3" :key="item">
-          <div class="circle"></div>
+          <radio-one v-model="test"></radio-one>
           <img src="../../../assets/img/分类220x220.png" alt="">
           <div class="info column sb">
             <div class="name e2">博世 电动工具 3.6V锂电池充电起子 螺丝刀 IXO3</div>
@@ -31,20 +28,25 @@
 
 <script>
 import InputNumer from '../../common/my/input-number'
+import RadioOne from '../../common/my/radio-one'
 export default {
   data(){
     return{
+      test:true,
       num:1,
-      isSelectAll: false
     }
   },
   methods:{
-    checkAllChild(){
-      this.isSelectAll = !this.isSelectAll
+   
+  },
+  watch:{
+    test(n){
+      console.log(n)
     }
   },
   components:{
-    InputNumer
+    InputNumer,
+    RadioOne
   }
 }
 </script>
@@ -68,6 +70,8 @@ export default {
     margin-bottom: 0.23rem;
     .shop-name{
       font-size: 0.2rem;
+      // height: 0.3rem;
+      // overflow-y: hidden;
       i{
         font-size: 0.2rem;
       }

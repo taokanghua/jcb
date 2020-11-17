@@ -1,59 +1,97 @@
 <template>
   <div class="address-wrap">
-    <div class="address-card column sb" v-for="(item,i) in 3" :key="i">
+    <div class="address-card column sb" v-for="(item,i) in addressList" :key="i">
       <div class="top column sb">
         <div class="row ac">
-          <span class="name">张三</span>
-          <span class="phone">12345678900</span>
+          <span class="name">{{item.name}}</span>
+          <span class="phone">{{item.phone}}</span>
         </div>
         <div class="address row ac">
           <i class="iconfont icondizhi"></i>
-          <span>地球市地球镇地球村东南西北888号</span>
+          <span>{{item.addressName+item.address}}</span>
         </div>
       </div>
       <div class="bottom row sb ac">
-        <div class="radio row ac" @click="defaultIdx=i">
+        <div class="radio row ac" @click="setDefault(i, item)">
           <i class="iconfont iconxuanzhong" v-show="i==defaultIdx"></i>
           <i class="iconfont iconradiobuttonunselect" v-show="i!=defaultIdx"></i>
           <span style="margin-left:0.14rem">设为默认</span>
         </div>
         <div class="btns row">
-          <router-link to="/editaddress" tag="div" class="btn row ac jc edit">编辑</router-link>
-          <div class="btn row ac jc">删除</div>
+          <router-link :to="'/editaddress?id='+item.id" tag="div" class="btn row ac jc edit">编辑</router-link>
+          <div class="btn row ac jc" @click="deladdress(item)">删除</div>
         </div>
       </div>
     </div>
 
-    <router-link to="/editaddress" tag="div" class="add-address-btn position row ac jc">添加地址</router-link>
+    <router-link to="/editaddress" tag="div" :class="{position:positionBtn}" class="add-address-btn row ac jc">添加地址</router-link>
+
+    <empty description="暂无地址" v-if="isEmpty"/>
   </div>
 </template>
 
 <script>
 import api from '../../api/user'
+import { Empty } from 'vant';
 export default {
   data(){
     return{
-      defaultIdx:0
+      isEmpty:false,
+      defaultIdx:0,
+      addressList:[], //地址列表
+      positionBtn:true, //是否浮动添加按钮
     }
   },
   methods:{
     async getAddressList(){
-      let {data:res} = await api.getAddressList()
-      console.log(res)
+      let params = {
+          memberId:'1327867697540378625',
+          pageSize:999
+      }
+      let res = await api.getAddressList(params)
+      if(res.result.total==0){
+        this.isEmpty = true
+        return
+      }
+      this.addressList = res.result.records
+      this.defaultIdx = this.addressList.findIndex(v=>v.defaultUse==1)
+      if(this.addressList.length>3){
+        this.positionBtn = false
+      }
+    },
+    async setDefault(i, value){
+      //设置默认地址
+      let res = await api.setDefault({id:value.id, memberId:'1327867697540378625'})
+      if(res.success){       
+        this.defaultIdx = i
+      }else{
+        this.showToast('设置默认地址失败!', 2000)
+      }
+    },
+    async deladdress(value){
+      let res = await api.deleteAddress({ids:value.id})
+      if(res.success){
+        this.showToast('删除成功!')
+        this.getAddressList()
+      }
     }
   },
   created(){
     this.getAddressList()
+  },
+  components:{
+    Empty
   }
 }
 </script>
 
 <style lang="less" scoped>
+
 .address-wrap{
   padding: 0.23rem 0.27rem;
   background-color: #f6f6f6;
   height: 100vh;
-  overflow: scroll;
+  overflow: auto;
   position: relative;
 }
 .address-card{
@@ -97,14 +135,19 @@ export default {
 	height: 0.56rem;
 	background-color: #2ecb62;
   border-radius: 0.28rem;
-  left: 50%;
-  bottom: 0.71rem;
-  transform: translateX(-50%);
+  margin: 0.23rem auto;
+  //left: 50%;
+  //bottom: 0.71rem;
+  //transform: translateX(-50%);
   font-size: 0.21rem;
   color: #ffffff;
 }
 .position{
   position: absolute;
+  left: 50%;
+  bottom: 0.71rem;
+  margin: 0;
+  transform: translateX(-50%);
 }
 .radio{
     // margin-right: 0.14rem;

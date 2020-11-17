@@ -12,7 +12,7 @@
           <order-status-card>
             <span class="count-d">
               剩余时间 
-              <count-down endTime="2020/11/12" crowd color="#1a1a1a" fontSize="0.21rem"></count-down> 
+              <count-down endTime="2020/11/17" crowd color="#1a1a1a" fontSize="0.21rem"></count-down> 
             </span>
             <order-btn type="primary">立即支付</order-btn>
           </order-status-card>

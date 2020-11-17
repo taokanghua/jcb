@@ -1,22 +1,28 @@
 <template>
   <div class="edit-info-wrap">
     <div class="info-card">
-      <div class="feild row">
-        <span class="title">联系人</span>
-        <div class="column sb">
-          <input type="text" placeholder="用户名">
-          <div class="row ac">
+      <div class="feild row ac">
+        <span class="title">用户名</span>
+        <input type="text" placeholder="用户名" style="font-size:0.24rem">
+      </div>
+      <div class="feild row" style="margin-top:-0.15rem;margin-bottom:0.36rem">
+         <!-- <span class="title"></span> -->
+         <div class="row" style="margin-left:0.9rem">
             <div class="sex-btn" :class="{select:sex==0}" @click="sex=0">男</div>
             <div class="sex-btn" :class="{select:sex==1}" @click="sex=1">女</div>           
           </div>
-        </div>
       </div>
-      <div class="feild mb0 row ac sb" @click="isPop=true">
+      <!-- 暂时不要 -->
+      <!-- <div class="feild mb0 row ac sb" @click="isPop=true">
         <span class="title">生日</span>
         <div class="row ac sb">
           <input type="text" v-model="birthday" disabled>
           <i class="iconfont iconARROW"></i>
         </div>
+      </div> -->
+      <div class="feild row ac">
+        <span class="title">手机号</span>
+        <span>12345678900</span>
       </div>
     </div>
 
@@ -75,13 +81,14 @@ export default {
   padding: 0.23rem 0.27rem;
   position: relative;
 }
+
 .info-card{
   background-color: #ffffff;
   padding: 0.22rem;
   border-radius: 0.11rem;
 }
 .feild{
-    margin-bottom: .36rem;
+    // margin-bottom: .36rem;
     input{
       background-color: #ffffff;
     }
@@ -96,7 +103,7 @@ export default {
         width: 1.02rem;
         height: 0.41rem;
         background-color: #f6f6f6;
-        font-size: 0.21rem;
+        font-size: 0.24rem;
         color: #a8a8a8;
         margin-right: 0.23rem;
         margin-top: 0.23rem;

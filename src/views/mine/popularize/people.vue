@@ -9,20 +9,22 @@
 
     <div class="list">
       <div class="tab row sb ac">
-        <div :class="{active:tabIdx==0}" @click="tabIdx=0">一级</div>
-        <div :class="{active:tabIdx==1}" @click="tabIdx=1">二级</div>
+        <div :class="{active:tabIdx==0}" @click="tabIdx=0">店铺</div>
+        <div :class="{active:tabIdx==1}" @click="tabIdx=1">一级</div>
+        <div :class="{active:tabIdx==2}" @click="tabIdx=2">二级</div>
       </div>
       <div class="p-list">
         <div class="people-card row sb ac" v-for="item in 5" :key="item">
             <div class="left row ac">
               <img src="../../../assets/img/推广中心-人数头像.png" alt="">
-              <div class="column sb">
+              <div class="column" style="height:0.9rem;justify-content:space-around">
                 <span class="name">用户姓名</span>
+                <span class="date" v-show="tabIdx==2">邀请人:一级用户名称</span>
                 <span class="date">2020-10-30</span>
               </div>
             </div>
             <div class="right column sb">
-              <span>0人</span>
+              <span v-show="tabIdx!=2">0人</span>
               <span>0单</span>
               <span>0元</span>
             </div>
@@ -84,7 +86,7 @@ export default {
       .date{
         font-size: 0.18rem;
         color: #a8a8a8;
-        margin-top: 0.2rem;
+        // margin-top: 0.2rem;
       }
     }
     .right{

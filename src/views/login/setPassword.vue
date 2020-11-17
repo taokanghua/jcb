@@ -4,11 +4,11 @@
     <div class="form">
       <div class="filed bottom-border">
         <span>新密码</span>
-        <input placeholder="请输入新密码" v-model="oldPwd" />
+        <input placeholder="请输入新密码 (6 - 12 字母、数字)" type="password" v-model="oldPwd" />
       </div>
       <div class="filed">
         <span>再次输入</span>
-        <input type="text" placeholder="请再次输入新密码" v-model="newPwd" />
+        <input type="password" placeholder="请再次输入新密码" v-model="newPwd" />
       </div>
     </div>
 
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import { Toast } from 'vant';
+import api from '../../api/login'
 export default {
   data() {
     return {
@@ -26,9 +28,32 @@ export default {
     };
   },
   methods:{
-    confirm() {
-
+    async confirm() {
+      if(!this.oldPwd || !this.newPwd){
+        this.showToast('请输入密码')
+        return
+      }
+      if(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/.test(this.oldPwd)){
+        //格式验证通过
+        if(this.oldPwd == this.newPwd){
+          //修改密码
+          let params = {
+            password: this.newPwd,
+            phone:'',
+            voucher:''
+          }
+          let res = await api.update(params)
+          console.log(res)
+        }else{
+          this.showToast('两次密码不一致')
+        }
+      }else{
+        Toast('请输入6~12位字母加数字密码');
+      }
     },
+  },
+  created(){
+    
   }
 };
 </script>

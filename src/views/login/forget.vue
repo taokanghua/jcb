@@ -16,11 +16,12 @@
     </div>
 
     <div class="btn row ac jc" @click="nextStep">下一步</div>
-    <div class="btn btn-plain row ac jc" @click="$router.push({name:'login'})">返回</div>
+    <div class="btn btn-plain row ac jc" @click="$router.replace({name:'login'})">返回</div>
   </div>
 </template>
 
 <script>
+import api from '../../api/login'
 export default {
   data() {
     return {
@@ -37,19 +38,39 @@ export default {
       //发送请求
       // console.log('send msg')
       this.timer = setInterval(()=>{
-        if(this.second==0){
+        if(this.second<=0){
           clearInterval(this.timer)
           this.waitText = '获取验证码'
+          this.timer = null
+          this.second = 60
+          return
         }
         this.second -= 1
         this.waitText = `${this.second}S后重新获取`
       }, 1000)
+
+      let params ={
+            openId:'oM2fl5MDsV8pP-2WivrweUej5L5U',
+            phone: this.phone,
+            service:3 //1登录 2注册 3找回
+          }
+      api.getMsgCode(params)
     },
-    nextStep(){
+    async nextStep(){
       // 下一步
-      this.$router.push({name:'setPassword'})
+      let params = {
+        phone:this.phone,
+        code: this.verifyMsg
+      }
+      let res = await api.forget(params)
+      console.log(res)
+      //this.$router.push({name:'setPassword'})
     }
-  }
+  },
+  created(){
+    let {phone} = this.$route.query||''
+    this.phone = phone
+  },
 };
 </script>
 

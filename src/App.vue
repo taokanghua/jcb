@@ -1,5 +1,7 @@
 <template>
+<div>
   <router-view v-if="isReady"></router-view>
+</div>
 </template>
 <script>
 import { initWxConfig } from "./utils/wxFn.js";

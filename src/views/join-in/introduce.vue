@@ -1,5 +1,6 @@
 <template>
   <div class="introduce-wrap">
+    <img src="../../assets/img/招商banner.png" alt="">
     <img src="../../assets/img/关于我们.png" alt="">
     <img src="../../assets/img/遇到的问题.png" alt="">
     <img src="../../assets/img/摆脱困境.png" alt="">
@@ -18,6 +19,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.introduce-wrap{
+  height: 100vh;
+  overflow: auto;
+  box-sizing: border-box;
+  padding-bottom: 1rem;
+  position: relative;
+}
 .join-btn{
   width: 5.81rem;
 	height: 0.56rem;
@@ -26,5 +34,9 @@ export default {
   margin: 0.22rem auto;
   font-size: 0.21rem;
   color: #ffffff;
+  position: fixed;
+  bottom: 0.02rem;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>
