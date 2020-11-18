@@ -110,8 +110,8 @@
         <span class="cus">客服</span>
       </div>
       <div class="row ac">
-        <div class="btn add-shopcart" @click="pops.specs=true">加入购物车</div>
-        <div class="btn buy-now" @click="pops.specs=true">立即购买</div>
+        <div class="btn add-shopcart" @click="showSpecPop('add')">加入购物车</div>
+        <div class="btn buy-now" @click="showSpecPop('buy')">立即购买</div>
       </div>
     </div>
 
@@ -278,11 +278,12 @@
         </div>
         <div class="spec-wrap row sb">
           <span class="title">数量</span>
-          <input-number v-model="num"></input-number>
+          <input-number v-model="num" :max="sku_obj.stock"></input-number>
         </div>
         </div>
         <div class="useless" style="height:0.8rem"></div>
-        <div class="confirm-btn row ac jc" @click="buyNow">确定</div>
+        <div class="confirm-btn row ac jc" @click="addShopCart" v-if="pop_type='add'">加入购物车</div>
+        <div class="confirm-btn row ac jc" @click="buyNow" v-else>确定</div>
       </div>
     </action-sheet>
 
@@ -291,6 +292,7 @@
 
 <script>
 import api from '../../api/home'
+import storeApi from '../../api/store'
 import { Swipe, SwipeItem, ActionSheet } from 'vant';
 import hotRecomCard from '../../components/common/card/hot-recom-card'
 import homeGoodCard from '../../components/common/card/home-good-card'
@@ -305,7 +307,7 @@ export default {
       coupon:false,
       goodsParams:false,
       platform: false,
-      specs: true
+      specs: false
      },
      num:1, //商品数量
      pageInfo:{pics:'',comments:{records:[]}, productSubVo:{},productParameter:{}}, //详情
@@ -315,6 +317,7 @@ export default {
      sku_active_id:[],
      sku_obj:{}, // 筛选出来的obj 展示用
      sku_selected:'', //已选中的规格
+     pop_type:'add', //判断是添加购物车还是购买  add购物车  buy购买
    }
  },
  methods:{
@@ -352,20 +355,47 @@ export default {
        this.sku_list[fidx] = value
        this.sku_active_id[fidx]=idx
      }
-     let index = map.findIndex(v=>{
-       let rules = v.propertyList //数组
-       let res = rules.every(item=>this.sku_list.includes(item.value))
-       if(res) return v
+
+     let index = map.findIndex((v,i)=>{
+       let rules = v.propertyList.map(v=>v.value) //数组
+       return rules.every(v=>this.sku_list.includes(v))
+       
      })
+  
      if(index!=-1){ //找到了才给赋值
        this.sku_obj = map[index]
      }
-     
-     let flag = this.sku_list.some(v=>!v)
-     if(!flag) this.sku_list.length =0
+
      this.sku_selected = this.sku_list.join('、')
+     let flag = this.sku_list.every(v=>!v)
+     if(flag) this.sku_list.length = 0
     //  console.log(map)
      this.$forceUpdate() //强制更新组件
+   },
+   showSpecPop(type){
+     this.pops.specs=true;
+     this.pop_type=type
+    //  this.sku_list = []
+    //  this.sku_active_id = []
+   },
+   async addShopCart(){
+    if(!this.valid()){
+      this.showToast('请选中所有类别！')
+      return
+    }
+    let data = {
+      buyStores: this.pageInfo.storeHotProductVo.storeId,
+      count: this.num,
+      productId: this.$route.query.id,
+      skuId: this.sku_obj.id
+    }
+    let res = await storeApi.addShopcart(data)
+    if(res.success){
+      this.showToast('添加购物车成功！')
+      this.pops.specs = false
+    }else{
+      this.showToast(res.message)
+    }
    },
    async buyNow(){
      //console.log(this.sku_obj)
@@ -390,6 +420,16 @@ export default {
        this.showToast('获取订单失败！')
      }
      //console.log(res)
+   },
+   valid(){ //验证是否选择完
+    let length = this.pageInfo.propertyBoots.length
+    if(this.sku_list.length==0 || this.sku_list.length<length) return false
+    return !this.sku_list.some(v=>!v)
+   }
+ },
+ watch:{
+   $route(to){
+     this.getDetail()
    }
  },
  created(){

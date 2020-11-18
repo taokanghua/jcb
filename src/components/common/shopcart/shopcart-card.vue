@@ -1,24 +1,24 @@
 <template>
   <div class="shopcart-card">
         <div class="shop-name row ac">
-          <radio-one v-model="test"></radio-one>
+          <radio-one v-model="checkAll"></radio-one>
           
           <div style="margin-left:0.23rem">
             <i class="iconfont iconshangcheng"></i>
-            <span>豪迪五金店</span>
+            <router-link :to="'/store?id='+info.storeId" tag="span">{{info.storeName}}</router-link>
             <i class="iconfont iconARROW"></i>
           </div>
           <!-- <i class="iconfont "></i> -->
         </div>
         <!-- 卡片 -->
-        <div class="goods-card row ac sb" v-for="item in 3" :key="item">
-          <radio-one v-model="test"></radio-one>
-          <img src="../../../assets/img/分类220x220.png" alt="">
+        <div class="goods-card row ac sb" v-for="(item,i) in info.productVoList" :key="item.cartId">
+          <radio-one v-model="checkList[i]"></radio-one>
+          <img :src="item.pic" alt="">
           <div class="info column sb">
-            <div class="name e2">博世 电动工具 3.6V锂电池充电起子 螺丝刀 IXO3</div>
-            <span class="spec">规格:220V    颜色:黑色</span>
+            <div class="name e2">{{item.productName}}</div>
+            <span class="spec e2">{{item.prop}}</span>
             <div class="row sb">
-              <span class="price">￥298</span>
+              <span class="price">￥{{item.price||0}}</span>
               <InputNumer v-model="num"></InputNumer>
             </div>
           </div>
@@ -32,10 +32,12 @@ import RadioOne from '../../common/my/radio-one'
 export default {
   data(){
     return{
-      test:true,
+      checkAll:false,
       num:1,
+      checkList:[false]
     }
   },
+  props:['info'],
   methods:{
    
   },

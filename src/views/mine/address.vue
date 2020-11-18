@@ -33,6 +33,7 @@
 <script>
 import api from '../../api/user'
 import { Empty } from 'vant';
+import tokenHolder from '../../utils/tokenHolder';
 export default {
   data(){
     return{
@@ -40,12 +41,13 @@ export default {
       defaultIdx:0,
       addressList:[], //地址列表
       positionBtn:true, //是否浮动添加按钮
+      memberId:''
     }
   },
   methods:{
     async getAddressList(){
       let params = {
-          memberId:'1327867697540378625',
+          memberId:this.memberId,
           pageSize:999
       }
       let res = await api.getAddressList(params)
@@ -61,7 +63,7 @@ export default {
     },
     async setDefault(i, value){
       //设置默认地址
-      let res = await api.setDefault({id:value.id, memberId:'1327867697540378625'})
+      let res = await api.setDefault({id:value.id, memberId:this.memberId})
       if(res.success){       
         this.defaultIdx = i
       }else{
@@ -77,7 +79,9 @@ export default {
     }
   },
   created(){
+    this.memberId = this.$store.state.user.info.memberUserInfoVo.id
     this.getAddressList()
+    //console.log(this.memberId)
   },
   components:{
     Empty

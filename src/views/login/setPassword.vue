@@ -25,6 +25,8 @@ export default {
     return {
       oldPwd: "",
       newPwd: "",
+      phone:'',
+      voucher:''
     };
   },
   methods:{
@@ -39,11 +41,16 @@ export default {
           //修改密码
           let params = {
             password: this.newPwd,
-            phone:'',
-            voucher:''
+            phone:this.phone,
+            voucher:this.voucher
           }
           let res = await api.update(params)
-          console.log(res)
+          if(res.success){
+            this.showToast('修改成功！')
+            this.$router.replace({path:'/login'})
+          }else{
+            this.showToast(res.message)
+          }
         }else{
           this.showToast('两次密码不一致')
         }
@@ -53,7 +60,9 @@ export default {
     },
   },
   created(){
-    
+    let {phone, code } = this.$route.query
+    this.phone = phone
+    this.voucher = code
   }
 };
 </script>

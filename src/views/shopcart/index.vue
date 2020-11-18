@@ -1,19 +1,29 @@
 <template>
   <div class="shopcart-wrap">
-    <div class="top-control row ac sb">
+    <empty description="暂无商品" v-if="empty"></empty>
+    <div class="top-control row ac sb" v-if="!empty">
       <span>购物车(3)</span>
       <span>管理</span>
     </div>
     <div class="shopcart-content">
-      <shopcardGroup></shopcardGroup>
-
+      <!-- <shopcardGroup></shopcardGroup> -->
+      <shop-card v-for="item in shopcartList" :key="item.storeId" :info="item"></shop-card>
 
       <!-- 推荐产品 -->
-      <h3 class="title">推荐产品</h3>
-      <div class="row sb" style="flex-wrap:wrap">
-        <!-- <home-card v-for="item in 3" :key="item"></home-card> -->
+
+        <h3 class="title">推荐产品</h3>
+      
+        <waterFall
+          @afterFetch="handleFetchResult"
+          :req="searchGoods"
+          :params="goodsParams"
+          ref="waterFall"
+        >
+        <div class="row sb" style="flex-wrap:wrap">
+          <home-card v-for="item in goodsList" :key="item.id" :info="item"></home-card>
       </div>
-    </div>
+        </waterFall>
+      </div>
 
     
     <!-- 购物车底部 -->
@@ -36,26 +46,54 @@
 </template>
 
 <script>
+import homeApi from '../../api/home'
+import api from '../../api/shopcart'
+import { Empty } from 'vant';
 import myFooter from '../../components/common/my/footer'
-import shopcardGroup from '../../components/common/shopcart/shopcart-group'
+// import shopcardGroup from '../../components/common/shopcart/shopcart-group'
+import shopCard from '../../components/common/shopcart/shopcart-card'
 import HomeCard from '../../components/common/card/home-good-card'
+import waterFall from '../../components/common/waterfall'
 export default {
     name:'shoppingCar',
     data(){
       return{
-        
+        empty:false,
         isSelectAll:false,
+        shopcartList:[], //购物车列表
+
+
+        //推荐商品
+        searchGoods: homeApi.getGoodsList,
+        goodsList:[],
+        goodsParams:{type:2},
       }
     },
     methods:{
+      async getShopcartList(){
+        let res = await api.getList({shopType:1})
+        this.shopcartList = res.result
+        // res.result = []
+        if(res.result.length==0) this.empty = true
+      },
       selectAll(){
         this.isSelectAll = !this.isSelectAll
-      }
+      },
+      //推荐商品
+      handleFetchResult(result) {
+        this.goodsList = [...this.goodsList, ...result.lists];
+      },
+    },
+    created(){
+      this.getShopcartList()
     },
     components:{
       myFooter,
-      shopcardGroup,
-      HomeCard
+      // shopcardGroup,
+      HomeCard,
+      shopCard,
+      waterFall,
+      Empty
     }
 }
 </script>

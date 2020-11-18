@@ -20,7 +20,10 @@
         </router-link>
 
         <div class="shop-goods row sb">
-          <div class="goods-item column sb" v-for="item in info.productList" :key="item.productId">
+          <div class="goods-item column sb"
+           v-for="item in info.productList" 
+           :key="item.productId"
+           @click="goDetail(item)">
             <div class="img-show">
               <img :src="item.pic" alt="" />
               <div class="tag">热销</div>
@@ -48,6 +51,12 @@ export default {
     info:{
       type:Object,
       default:()=>({head:''})
+    }
+  },
+  methods:{
+    goDetail(info){
+      this.$router.push({path:'/goodsdetail?id='+info.productId})
+      //this.$forceUpdate()
     }
   }
 }

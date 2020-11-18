@@ -295,7 +295,7 @@ export default {
       width: 1.29rem;
       height: 1.02rem;
       background-color: #260109;
-      border-radius: 0.06rem;
+      border-radius: 0.05rem;
       margin-bottom: 0.23rem;
     }
   }

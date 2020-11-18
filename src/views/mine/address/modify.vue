@@ -80,13 +80,12 @@ export default {
         districtCode: 'string', //区
         //latitude: 0,
         //longitude: 0,
-        memberId: '1327867697540378625',
+        memberId: '',
         name: '',
         phone: '',
         provinceCode: 'string', //省
         sex: 0 //0 未知 1男 2女
       },
-
       //sex:-1,
       defaultAddress:false,
       type:'add', //判断是添加页面还是修改页面
@@ -186,6 +185,7 @@ export default {
       this.defaultAddress = data.defaultUse==1?true:false
       this.address = data.addressName.split(' ').join('/')
     }
+    this.form.memberId = this.$store.state.user.info.memberUserInfoVo.id
   },
   components:{
     vanSwitch,

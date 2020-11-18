@@ -7,6 +7,7 @@ module.exports = {
     devServer: {
         open: true, // 是否自动打开浏览器
         https: false,
+        disableHostCheck: true,
         // host:'lhxy.chengdajiaoyu.com',
         // port:80,
         // // proxy:baseUrl.domain,

@@ -59,7 +59,7 @@ export default {
             phone: this.phone,
             service:2 //1登录 2注册 3找回
       }
-      //api.getMsgCode(params)
+      api.getMsgCode(params)
     },
     async register() {
       let params ={

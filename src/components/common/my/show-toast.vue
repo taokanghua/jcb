@@ -46,6 +46,7 @@ export default {
   font-size: 0.22rem;
   // background-color: red;
   border-radius: 0.12rem;
+  z-index: 9999;
 }
 .on{
   opacity: 1;

@@ -63,8 +63,12 @@ export default {
         code: this.verifyMsg
       }
       let res = await api.forget(params)
-      console.log(res)
-      //this.$router.push({name:'setPassword'})
+      if(res.success){
+        let code = res.result
+        this.$router.push({name:'setPassword', query:{phone:this.phone, code}})
+      }else{
+        this.showToast(res.message)
+      }
     }
   },
   created(){

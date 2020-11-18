@@ -1,13 +1,13 @@
 <template>
   <div class="select1">
     <div
-      class="s-item"
+      class="s-item e1"
       :class="{ active: selectIndex == i }"
       v-for="(item, i) in info"
       :key="i"
       @click="checkIt(i)"
     >
-      {{ item.name }}
+      {{ item.name.length>4?item.name.substr(0,4)+'...':item.name }}
       <i class="iconfont iconxuanzhong4"></i>
     </div>
     <!-- <div class="s-item"><i class="iconfont iconxuanzhong4"></i></div> -->
@@ -61,14 +61,11 @@ export default {
   border-radius: 0.06rem;
   color: #a8a8a8;
   font-size: 0.21rem;
-  // line-height: 0.45rem;
-  // text-align: center;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  // margin-right: 0.2rem;
   position: relative;
-  // margin-bottom: 0.17rem;
   i {
     display: none;
     position: absolute;
