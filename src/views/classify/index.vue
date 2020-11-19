@@ -79,8 +79,8 @@
                 <preparation :status.sync="salesCondition" ref="prepa"></preparation>
               </span>
             </div>
-            <div class="row right" @click="isPop=true">
-              <i class="iconfont iconshaixuan"></i> 筛选
+            <div class="row right" >
+              <div class="row ac" @click="isPop=true"><i class="iconfont iconshaixuan"></i> 筛选</div>
             </div>
           </div>
 

@@ -4,9 +4,11 @@
     <div class="top-info">
       <div class="info row sb ac">
         <div class="row">
-          <img :src="userInfo.headPortrait" alt="" />
+          <img v-if="userInfo.headPortrait" :src="userInfo.headPortrait" alt="" />
+          <img v-else src="../../assets/img/mine/avatar.png" alt="">
           <div class="user-info column ac jc">
-            <span class="name">{{userInfo.nickname}}</span>
+            <span class="name" v-if="userInfo.nickname">{{userInfo.nickname}}</span>
+            <router-link to='/login' tag="span" class="name" v-else>授权登录</router-link>
             <!-- 暂时不用 -->
             <!-- <router-link to="/memberGrade" tag="div" class="member row ac jc">
               一级会员 <i class="iconfont iconARROW"></i>
@@ -94,31 +96,38 @@
             <span class="title">其他服务</span>
             <div class="other-wrap">
               <router-link to="/couponCenter" tag="div" class="other-item">
-                <i class="iconfont iconyouhuiquan"></i>
+                <!-- <i class="iconfont iconyouhuiquan"></i> -->
+                <img src="../../assets/img/mine/优惠券 (2)@3x.png" alt="">
                 <span>领券中心</span>
               </router-link>
               <router-link to="/address" tag="div" class="other-item">
-                <i class="iconfont icondizhi"></i>
+                <!-- <i class="iconfont icondizhi"></i> -->
+                <img src="../../assets/img/mine/地址 (2)@3x.png" alt="">
                 <span>收货地址</span>
               </router-link>
               <div class="other-item">
-                <i class="iconfont iconkefu_1"></i>
-                <span>联系我们</span>
+                <img src="../../assets/img/mine/咨询@3x.png" alt="">
+                <!-- <i class="iconfont iconkefu_1"></i> -->
+                <a href="https://yzf.qq.com/xv/web/static/chat/index.html?sign=37ef9b97d12053922516cbe91be6b36629bc194aa992ba81fe73fe6cdd14c7afc93d285b9ca0fe48b1b1344468d96832ed016ede">联系我们</a>
               </div>
               <router-link to="/feedback" tag="div" class="other-item">
-                <i class="iconfont iconxiaoxi"></i>
+              <img src="../../assets/img/mine/消息 (1)@3x.png" alt="">
+                <!-- <i class="iconfont iconxiaoxi"></i> -->
                 <span>意见反馈</span>
               </router-link>
               <div class="other-item">
-                <i class="iconfont iconeye"></i>
+                <img src="../../assets/img/mine/浏览@3x.png" alt="">
+                <!-- <i class="iconfont iconeye"></i> -->
                 <span>浏览记录</span>
               </div>
               <div class="other-item">
-                <i class="iconfont iconliaotian"></i>
+                <img src="../../assets/img/mine/评价@3x.png" alt="">
+                <!-- <i class="iconfont iconliaotian"></i> -->
                 <span>我的评价</span>
               </div>
               <div class="other-item">
-                <i class="iconfont iconqiehuan"></i>
+                <img src="../../assets/img/mine/切换身份@3x.png" alt="">
+                <!-- <i class="iconfont iconqiehuan"></i> -->
                 <span>切换店铺</span>
               </div>
             </div>
@@ -141,7 +150,7 @@ export default {
   methods: {
     getInfo(){
       //获取数据
-      this.userInfo = this.$store.state.user.info.memberUserInfoVo
+      this.userInfo = this.$store.state.user.info.memberUserInfoVo||{}
       //console.log(this.userInfo)
     }
   },
@@ -270,6 +279,7 @@ export default {
         align-items: center;
         border-radius: 50%;
       }
+
     }
   }
 }
@@ -301,9 +311,13 @@ export default {
       i{
         font-size: 0.4rem;
       }
-      span{
+      span, a{
         font-size: 0.24rem;
         margin-top: 0.1rem;
+      }
+      img{
+        width: 0.45rem;
+	      height: 0.45rem;
       }
     }
   }

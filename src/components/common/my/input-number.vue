@@ -67,6 +67,12 @@
 				// this.input = e.target.value
 				// console.log(e)
 				// this.$emit('input', e.target.value)
+			},
+			
+		},
+		watch:{
+			value(n){
+				this.$emit('change')
 			}
 		},
 		props:{

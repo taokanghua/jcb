@@ -1,13 +1,18 @@
 <template>
+  <!-- 这个页面html部分(其他有的页面也是:)注释都是暂时不用的东西(不代表没用，只是现在不做那功能！:) -->
   <div class="choose-methods-card">
-      <div class="goods row">
-        <img src="../../../assets/img/确认订单.png" alt="">
+    <div class="row ac shop-name">
+      <span class="iconfont iconshangcheng"></span>
+      <span>{{info.storeName}}</span>
+    </div>
+      <div class="goods row" v-for="item in info.productList" :key="item.skuId">
+        <img :src="item.productPic" alt="">
         <div class="column sb" style="margin-left:0.23rem">
-          <div class="name">博世 电动工具 3.6V锂电池充电起子 螺丝刀 IXO3</div>
-          <div class="sku">规格:220V     颜色:黑色</div>
+          <div class="name">{{item.productName}}</div>
+          <div class="sku">{{item.propertyName}}</div>
           <div class="footer row sb ac">
-            <span class="price">￥298</span>
-            <input-number v-model="form.num"></input-number>
+            <span class="price">￥{{item.skuPrice}}</span>
+            <input-number v-model="item.number"></input-number>
           </div>
         </div>
       </div>
@@ -46,17 +51,18 @@
         <span class="left">配送方式 <span class="desc">{{['快递配送','物流到付','自提'][form.deliverWayIdx]}}</span> </span>
         <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
       </div>
-      <div class="order-field row sb ac">
+      <!-- <div class="order-field row sb ac">
         <span class="left">运费险 <span class="desc">货物运输过程中有损，可赔</span> </span>
         <span class="right row ac" @click="form.insurance=!form.insurance">
           ￥10.00 
         <i class="iconfont insurance" :class="[{'iconradiobuttonunselect':!form.insurance}, {'iconxuanzhong':form.insurance}]"></i>
         </span>
-      </div>
-      <div class="order-field row sb ac">
+      </div> -->
+      <!-- 暂时没会员 -->
+      <!-- <div class="order-field row sb ac">
         <span class="left">会员折扣  <span class="desc">一级会员</span></span>
         <span>9.9折</span>
-      </div>
+      </div> -->
       <div class="order-field row sb ac">
         <span class="left">备注</span>
         <input type="text" placeholder="请输入您备注信息" v-model="form.message">
@@ -187,6 +193,10 @@ export default {
       contact: '12345678900', // 联系电话
     }
   },
+  props:{
+    info: Object,
+    default:{}
+  },
   methods:{
     editHandle(){
       if(this.editPhone) return
@@ -226,6 +236,16 @@ export default {
   background-color: #FFFFFF;
   border-radius: 0.11rem;
   margin-bottom: 0.23rem;
+  .shop-name{
+    display: block;
+    font-size: 0.18rem;
+    color: #1a1a1a;
+    margin-bottom: 0.2rem;
+    .iconfont{
+      font-size: 0.15rem;
+      margin-right: 0.15rem;
+    }
+  }
   .goods{
     margin-bottom: 0.2rem;
     img{

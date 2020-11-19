@@ -107,7 +107,7 @@
     <div class="tabbar row sb ac">
       <div class="column ac jc">
         <i class="iconfont iconkefu"></i>
-        <span class="cus">客服</span>
+        <a href="https://yzf.qq.com/xv/web/static/chat/index.html?sign=37ef9b97d12053922516cbe91be6b36629bc194aa992ba81fe73fe6cdd14c7afc93d285b9ca0fe48b1b1344468d96832ed016ede" class="cus">客服</a>
       </div>
       <div class="row ac">
         <div class="btn add-shopcart" @click="showSpecPop('add')">加入购物车</div>
@@ -282,8 +282,8 @@
         </div>
         </div>
         <div class="useless" style="height:0.8rem"></div>
-        <div class="confirm-btn row ac jc" @click="addShopCart" v-if="pop_type='add'">加入购物车</div>
-        <div class="confirm-btn row ac jc" @click="buyNow" v-else>确定</div>
+        <div class="confirm-btn row ac jc" @click="addShopCart" v-if="pop_type=='add'">加入购物车</div>
+        <div class="confirm-btn row ac jc" @click="buyNow" v-if="pop_type=='buy'">确定</div>
       </div>
     </action-sheet>
 
@@ -326,21 +326,29 @@ export default {
       productId:this.$route.query.id,
       storeId:'',
       lat:'',
-      lon:''
+      lon:'',
+      memberId:this.$store.state.user.info.memberUserInfoVo.id
     }
-     let res = await api.getGoodsDetail(params)
-     this.pageInfo = res.result
-     this.isCollect = res.result.collectState==1?true:false
-     this.takeDay = (res.result.deliveryDate||'').split('-')
-     // 给规格展示一个默认值
-     this.sku_obj = this.pageInfo.productSkuVos[0]
+     try {
+       let res = await api.getGoodsDetail(params)
+        this.pageInfo = res.result
+        this.isCollect = res.result.collectState==1?true:false
+        this.takeDay = (res.result.deliveryDate||'').split('-')
+        // 给规格展示一个默认值
+        this.sku_obj = this.pageInfo.productSkuVos[0]
+     } catch (error) {
+       this.showToast('获取商品详情失败', 2500)
+     }
    },
    async getRecomList(){ //获取推荐商品  暂时设定只加载30个
       let res = await api.getGoodsList({pageSize:30,pageNo:1, type:2})
       this.recomList = res.result.lists
    },
-   collectIt(){
+   async collectIt(){
      //收藏功能
+     let {id} = this.$route.query
+     let res = await storeApi.collectStore({commodityId:id})
+     this.showToast(res.result)
      this.isCollect = !this.isCollect
    },
    selectSku(value, idx, fidx){ //设置规格函数
@@ -375,6 +383,7 @@ export default {
    showSpecPop(type){
      this.pops.specs=true;
      this.pop_type=type
+     console.log(this.pop_type)
     //  this.sku_list = []
     //  this.sku_active_id = []
    },
@@ -399,6 +408,10 @@ export default {
    },
    async buyNow(){
      //console.log(this.sku_obj)
+     if(!this.valid()){
+      this.showToast('请选中所有类别！')
+      return
+    }
      let data = {
        productList: [
           {
@@ -406,12 +419,13 @@ export default {
             productNumber: 1,
             productPrice: this.sku_obj.price,
             productSkuId: this.sku_obj.id,
-            shelveId:'1324301545862070274',
-            shelveType:2,
+            shelveId:this.pageInfo.shelveId,
+            templateId:this.pageInfo.templateId
+            //shelveType:2,
           }
         ],
         sourceType:1,
-        sourceId:'1308242941815496705'
+        sourceId:this.$store.state.user.info.memberUserInfoVo.id
      }
      let res = await api.createOrder(data)
      if(res.success){

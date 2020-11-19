@@ -15,7 +15,7 @@ export default {
   props:['value'],
   methods:{
     clickHandle(){
-      this.checked = !this.checked
+      this.checked = !this.value
       this.$emit('input', this.checked)
     }
   },

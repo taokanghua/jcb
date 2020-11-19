@@ -1,6 +1,7 @@
 <template>
   <div class="preparation column" @click="changeStatus">
     <!-- <i class="iconfont iconshangxia"></i> -->
+    <slot></slot>
     <i class="iconfont iconshang" :class="{active:status==1}"></i>
     <i class="iconfont iconxia" :class="{active: status==2}"></i>
   </div>

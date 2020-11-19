@@ -1,17 +1,16 @@
 <template>
   <div class="edit-info-wrap">
     <div class="info-card">
-      <div class="feild row ac">
+      <div class="feild row ac sb">
         <span class="title">用户名</span>
-        <input type="text" placeholder="用户名" style="font-size:0.24rem">
+        <input type="text" placeholder="用户名" v-model="info.nickname" style="font-size:0.24rem;text-align:right" disabled>
       </div>
-      <div class="feild row" style="margin-top:-0.15rem;margin-bottom:0.36rem">
-         <!-- <span class="title"></span> -->
+      <!-- <div class="feild row" style="margin-top:-0.15rem;margin-bottom:0.36rem">
          <div class="row" style="margin-left:0.9rem">
             <div class="sex-btn" :class="{select:sex==0}" @click="sex=0">男</div>
             <div class="sex-btn" :class="{select:sex==1}" @click="sex=1">女</div>           
           </div>
-      </div>
+      </div> -->
       <!-- 暂时不要 -->
       <!-- <div class="feild mb0 row ac sb" @click="isPop=true">
         <span class="title">生日</span>
@@ -20,13 +19,15 @@
           <i class="iconfont iconARROW"></i>
         </div>
       </div> -->
-      <div class="feild row ac">
+      <div class="feild row ac sb">
         <span class="title">手机号</span>
-        <span>12345678900</span>
+        <span>{{info.phone}}</span>
       </div>
     </div>
 
-      <div class="save-btn row ac jc">保存</div>
+      <!-- 没啥可修改的 就不要了 -->
+      <!-- <div class="save-btn row ac jc">保存</div> -->
+      <div class="save-btn row ac jc" @click="$router.go(-1)">返回</div>
 
       <!-- 时间pop -->
       <popup v-model="isPop" position="bottom">
@@ -49,11 +50,13 @@ export default {
     return{
       sex:0,
       birthday:'',
+      //上面都暂时割掉了 :)
+      info:{},
 
       isPop:false,
       currentDate: new Date(2000,0,1),
       minDate: new Date(1950,0,1),
-      maxDate: new Date()
+      maxDate: new Date(),
     }
   },
   methods:{
@@ -65,6 +68,10 @@ export default {
       this.birthday = `${year}-${month.toString().padStart(2,0)}-${day.toString().padStart(2,0)}`
       this.isPop= false
     }
+  },
+
+  created(){
+    this.info = this.$store.state.user.info.memberUserInfoVo
   },
   components:{
     Popup,
@@ -88,7 +95,7 @@ export default {
   border-radius: 0.11rem;
 }
 .feild{
-    // margin-bottom: .36rem;
+    margin-bottom: .36rem;
     input{
       background-color: #ffffff;
     }
@@ -115,6 +122,9 @@ export default {
         color: #ffffff;
       }
     }
+  }
+  &.feild:last-child{
+    margin-bottom: 0;
   }
   .mb0{
     margin-bottom: 0;

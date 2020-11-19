@@ -6,14 +6,16 @@
             <div class="info col sb">
               <div class="row" style="align-item:base-line">
                 <span class="shop-name" style="flex-wrap:wrap">{{info.storeName}}</span>
-                <img src="../../../assets/img/等级一.png" alt="" v-show="info.level==1" />
-                <img src="../../../assets/img/等级二.png" alt="" v-show="info.level==2" />
-                <img src="../../../assets/img/等级三.png" alt="" v-show="info.level==3"/>
+                <span v-if="level">
+                  <img src="../../../assets/img/等级一.png" alt="" v-show="idx==1" />
+                  <img src="../../../assets/img/等级二.png" alt="" v-show="idx==2" />
+                  <img src="../../../assets/img/等级三.png" alt="" v-show="idx==3"/>
+                </span>
               </div>
               <div> <i class="iconfont iconstar" v-for="item in Number(info.score)" :key="item"></i> </div>
             </div>
           </div>
-          <router-link :to="'/store?id='+info.storeId" tag="div" class="right col sb">
+          <router-link :to="'/store?id='+info.storeId" tag="div" class="right">
             <div class="go-shop">进店</div>
             <div class="distance">{{info.displayDistance}}</div>
           </router-link>
@@ -51,6 +53,15 @@ export default {
     info:{
       type:Object,
       default:()=>({head:''})
+    },
+    level:{
+      type: Boolean,
+      default: false
+    },
+    idx:{
+      //配合首页的等级展示 配合上面的level 改来改去的 X_X
+      type: [String, Number],
+      default:-1
     }
   },
   methods:{
@@ -79,6 +90,7 @@ export default {
           width: 0.68rem;
           height: 0.68rem;
           border-radius: 50%;
+          flex-shrink: 0;
         }
         .info {
           margin-left: 0.12rem;
@@ -100,9 +112,10 @@ export default {
         }
       }
       .right {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        // display: flex;
+        // flex-direction: column;
+        // justify-content: space-between;
+        box-sizing: border-box;
         .go-shop {
           width: 0.96rem;
           height: 0.36rem;
@@ -112,11 +125,14 @@ export default {
           line-height: 0.36rem;
           color: #fff;
           font-size: 0.21rem;
+          margin-bottom: 0.1rem;
+          margin-left: 0.12rem;
         }
         .distance {
           color: #1a1a1a;
           font-size: 0.23rem;
           text-align: right;
+          // margin-top: 0.1rem;
         }
       }
     }

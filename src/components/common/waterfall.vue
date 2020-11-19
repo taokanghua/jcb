@@ -77,7 +77,7 @@ export default {
       if (!res.success) return (this.err = res.msg);
       let d = res.result;
       if (!d.lists.length) return (this.err = this.emptyMsg || "暂无数据");
-      console.log(d)
+      // console.log(d)
       this.$emit("afterFetch", d);
     },
     refresh() {

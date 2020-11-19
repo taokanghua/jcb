@@ -1,6 +1,6 @@
 <template>
   <div class="address-wrap">
-    <div class="address-card column sb" v-for="(item,i) in addressList" :key="i">
+    <div class="address-card column sb" v-for="(item,i) in addressList" :key="i" @click="orderToChoose(item)">
       <div class="top column sb">
         <div class="row ac">
           <span class="name">{{item.name}}</span>
@@ -12,14 +12,14 @@
         </div>
       </div>
       <div class="bottom row sb ac">
-        <div class="radio row ac" @click="setDefault(i, item)">
+        <div class="radio row ac" @click.stop="setDefault(i, item)">
           <i class="iconfont iconxuanzhong" v-show="i==defaultIdx"></i>
           <i class="iconfont iconradiobuttonunselect" v-show="i!=defaultIdx"></i>
           <span style="margin-left:0.14rem">设为默认</span>
         </div>
         <div class="btns row">
           <router-link :to="'/editaddress?id='+item.id" tag="div" class="btn row ac jc edit">编辑</router-link>
-          <div class="btn row ac jc" @click="deladdress(item)">删除</div>
+          <div class="btn row ac jc" @click.stop="deladdress(item)">删除</div>
         </div>
       </div>
     </div>
@@ -45,7 +45,13 @@ export default {
     }
   },
   methods:{
-    async getAddressList(){
+    orderToChoose(info){ //订单过来选择地址时候
+      let {orderId} = this.$route.query||false
+        //如果有orderId 表示是进来选择地址的 点击后直接获取id  然后返回订单页面
+      if(!orderId) return
+      this.$router.replace({path:'/confirmorder', query:{address:info.id, orderId}})
+    },
+    async getAddressList(){ //获取用户地址 筛默认地址
       let params = {
           memberId:this.memberId,
           pageSize:999

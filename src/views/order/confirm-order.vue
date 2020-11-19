@@ -3,21 +3,21 @@
     <!-- 心动我做得这么好的tabbar栏 改啥改  :( -->
     <div class="deliver">
           <!-- 无地址情况 -->
-      <!-- <div class="no-address row ac jc">+添加地址</div> -->
+      <router-link to="/editaddress" tag="div" class="no-address row ac jc" v-if="noAddress">+添加地址</router-link>
 
-      <div class="has-address row sb ac">
+      <router-link :to="'/address?orderId='+$route.query.orderId" class="has-address row sb ac" v-else>
         <div class="column">
           <div class="row ac top">
-            <span>张三</span>
-            <span class="phone">12345678900</span>
+            <span>{{address.name}}</span>
+            <span class="phone">{{address.phone}}</span>
           </div>
           <div class="row ac bottom">
             <i class="iconfont icondizhi"></i>
-            <p>地球市地球镇地球村东南西北888号</p>
+            <p>{{address.addressName.replace(/\s/g, '')}}{{address.address}}</p>
           </div>
         </div>
         <i class="iconfont iconARROW"></i>
-      </div>
+      </router-link>
 
     </div>
     
@@ -125,8 +125,12 @@
       </div>
     </div> -->
 
-    <chooseMethCard v-for="item in 2" :key="item"></chooseMethCard>
+    <chooseMethCard v-for="item in orderInfo" :key="item.id" :info="item"></chooseMethCard>
 
+    <div class="alone-feild row sb ac">
+      <span class="title">优惠</span>
+      <span class="shit">新人礼包 -5.00</span>
+    </div>
     <div class="alone-feild row sb ac">
       <span class="title">发票</span>
       <span class="shit">如需发票，请联系商家</span>
@@ -144,133 +148,33 @@
       <div class="buy-btn row ac jc">立即购买</div>
     </div>
 
-    <!-- 又是一堆弹框 x_x -->
-    <action-sheet v-model="pops.takeTime" title="选择自提时间">
-      <div class="take-time-content row">
-        <div class="date">
-          <!-- <div class="row ac jc active">10:10</div> -->
-          <div 
-          class="row ac jc" 
-          :class="{active:i==dayIdx}"
-          v-for="(item,i) in dateList" 
-          :key="i"
-          @click="dayIdx=i">
-          {{item.month}}-{{item.day}}
-        </div>
-        </div>
-        <div class="time">
-          <div class="row sb ac active-time" style="height:0.68rem">
-            <span>12:00</span>
-            <i class="iconfont iconxuanzhong2"></i>
-          </div>
-          <div class="row sb ac" style="height:0.68rem">
-            <span>12:30</span>
-            <i class="iconfont iconxuanzhong2"></i>
-          </div>
-        </div>
-      </div>
-    </action-sheet>
-
-    <action-sheet v-model="pops.way" title="配送方式">
-      <div class="way-content">
-        <div class="way-feild row ac sb" @click="form.deliverWayIdx=0;pops.way=false">
-          <span class="title">快递配送</span>
-          <div class="row ac">
-            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==0"></i>
-            <i class="iconfont iconradiobuttonunselect" v-else></i>
-          </div>
-        </div>
-        <div class="way-feild row ac sb" @click="form.deliverWayIdx=1;pops.way=false">
-          <span class="title">物流到付</span>
-          <div class="row ac">
-            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==1"></i>
-            <i class="iconfont iconradiobuttonunselect" v-else></i>
-          </div>
-        </div>
-        <div class="confirm-btn row ac jc position" @click="pops.way=false">确定</div>
-      </div>
-    </action-sheet>
-
-    <action-sheet v-model="pops.platform" title="平台优惠">
-      <div class="platform-content">
-        <!-- 下面开始 一张优惠券 -->
-        <div class="row ac mb26" v-for="(item,i) in 2" :key="i" @click="platformHandle(i)">
-          <div class="radio row ac">
-          <i class="iconfont iconxuanzhong" v-if="i==form.platformIdx"></i>
-          <i class="iconfont iconradiobuttonunselect" v-else></i>
-        </div>
-         <div class="platform-coupon row ac">
-            <div class="tag row ac jc">平台满减券</div>
-            <div class="left row jc">￥20</div>
-            <div class="mid column sb">
-              <span>满50减50</span>
-              <span>有效期至2020-10-20</span>
-               <span>可与店铺优惠叠加使用</span>
-            </div>
-          </div>
-        </div>
-        <div class="confirm-btn position row ac jc" @click="pops.platform=false">确定</div>
-      </div>
-    </action-sheet>
-
-    <action-sheet v-model="pops.shop" title="店铺优惠">
-      <div class="shop-content">
-        <div class="row ac mb26" v-for="(item,i) in 2" :key="i" @click="shopHandle(i)">
-          <div class="radio row ac">
-          <i class="iconfont iconxuanzhong" v-if="i==form.shopIdx"></i>
-          <i class="iconfont iconradiobuttonunselect" v-else></i>
-        </div>
-         <div class="coupon-item row ac">
-          <div class="left-top row ac jc">店铺满减券</div>
-          <div class="left row ac jc">￥20</div>
-          <div class="mid column sb">
-            <span>全场通用</span>
-            <span>有效期至2020-10-20</span>
-          </div>
-        </div>
-        </div>
-        <div class="confirm-btn position row ac jc" @click="pops.shop=false">确定</div>
-      </div>
-    </action-sheet>
   </div>
 </template>
 
 <script>
 import api from '../../api/home'
+import userApi from '../../api/user'
 import {ActionSheet} from 'vant'
+import {mapState} from 'vuex'
 import inputNumber from '../../components/common/my/input-number'
 import chooseMethCard from '../../components/common/card/order-goods-card'
 export default {
   data(){
     return{
+      noAddress:true,
+      address:{},
+      orderInfo:[],//订单数据
       // wayIdx:1, 
       //agreement: false, //同意协议
-      editPhone:false, //编辑手机号
-      dateList:[], //日期
-      dayIdx:0, //选中的日期索引
-      
-      contact: '12345678900', // 联系电话
-      form:{
-        platformIdx:-1, //平台优惠券索引
-        shopIdx:-1, //店铺优惠券索引
-        deliverWayIdx:0, //配送方式 两种
-        num:1,
-        insurance: false, //运费险
-        message:''
-      },
-      pops:{
-        takeTime:false,
-        way:false,
-        platform:false,
-        shop:false
-      }
+      dateList:[],//自提的日期表 
     }
   },
   methods:{
     async getOrderInfo(){
-      let ids = this.$route.query.orderId
-      let res = await api.getOrder({ids})
-      console.log(res)
+      let mergeOrderCode = this.$route.query.orderId
+      let res = await api.getOrder({mergeOrderCode})
+      if(!res.success) return this.showToast('获取订单失败！', 2000)
+      this.orderInfo = res.result
     },
     getMonthDay(){
       // let date = new Date()
@@ -290,36 +194,43 @@ export default {
       // console.log(days)
       this.dateList = days
     },
-    editHandle(){
-      if(this.editPhone) return
-      setTimeout(()=>{this.$refs.input.focus()},100) //必须要延时一下
-      this.editPhone = true
-    },
-    checkPhone(e){
-      this.editPhone = false
-    },
-    platformHandle(i){
-      // 店铺优惠切换
-      if(this.form.platformIdx == i){
-        this.form.platformIdx = -1
-        return
+    //地址操作
+    async getAddressList(){ //获取默认地址
+      
+      let params = {
+          memberId:this.info.id,
+          pageSize:999
       }
-      this.form.platformIdx = i
+      let res = await userApi.getAddressList(params)
+      if(!res.success) return this.showToast('获取地址失败！')
+      //res.result.total = 0
+      res.result.total>0?this.noAddress = false:''
+      this.address = res.result.records.find(v=>v.defaultUse==1)
     },
-    shopHandle(i){
-      // 店铺优惠切换
-      if(this.form.shopIdx == i){
-        this.form.shopIdx = -1
-        return
+    //根据id查地址（用户选择地址后）
+    async getAddress(){
+      let {address} = this.$route.query
+      let res = await userApi.getOneAddress(address)
+      if(res.success){
+        this.address = res.result
+        this.noAddress = false
+      }else{
+        this.showToast(res.message)
       }
-      this.form.shopIdx = i
     }
+  },
+  computed:{
+    ...mapState({info:state=>state.user.info.memberUserInfoVo})
   },
   mounted(){
     this.getMonthDay()
+    //console.log(this.info)
   },
   created(){
     this.getOrderInfo()
+    //判断url 来决定调用什么方式来获取地址
+    let {address} = this.$route.query||''
+    address?this.getAddress():this.getAddressList();
   },
   components:{
     ActionSheet,

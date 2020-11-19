@@ -14,5 +14,6 @@ export default {
     upgrade: data => req.post('/store', data),
     getUserInfo: () => req.get('member/loadMemberInfo'),
     getNewStore: () => req.get('store/listNewStore'),
-    takeFirstCoupon: id => req.put('/member/updateFirstCoupon/'+id)
+    takeFirstCoupon: id => req.put('/member/updateFirstCoupon/' + id),
+    getStoreType: () => req.get('store/level/options'), //集采/加盟
 }

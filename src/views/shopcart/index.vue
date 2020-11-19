@@ -2,12 +2,18 @@
   <div class="shopcart-wrap">
     <empty description="暂无商品" v-if="empty"></empty>
     <div class="top-control row ac sb" v-if="!empty">
-      <span>购物车(3)</span>
-      <span>管理</span>
+      <span>购物车({{shopcartList.length}})</span>
+      <span v-show="mode=='buy'" @click="mode='del'">管理</span>
+      <span v-show="mode=='del'" @click="mode='buy'">完成</span>
     </div>
     <div class="shopcart-content">
       <!-- <shopcardGroup></shopcardGroup> -->
-      <shop-card v-for="item in shopcartList" :key="item.storeId" :info="item"></shop-card>
+      <shop-card 
+      v-for="(item,i) in shopcartList" 
+      :key="item.storeId" 
+      :info="item"
+      :ref="refs[i]" 
+      @getData="getData"></shop-card>
 
       <!-- 推荐产品 -->
 
@@ -28,17 +34,19 @@
     
     <!-- 购物车底部 -->
     <div class="shop-bar row sb ac">
-      <div class="select-all row ac" @click="selectAll">
-        <i class="iconfont iconxuanzhong" v-if="isSelectAll"></i>
-        <div class="circle" v-else></div>
+      <div class="select-all row ac">
+        <radio-one v-model="isSelectAll" @click.native="selectAll"></radio-one>
         <span>全选</span>
       </div>
-      <div class="buy-info row ac">
+      <div class="buy-info row ac" v-show="mode=='buy'">
         <div class="info column">
-          <span>合计: <span class="price">￥298</span></span>
-          <span class="total">共计1个商品</span>
+          <span>合计: <span class="price">￥{{totalPirce}}</span></span>
+          <span class="total">共计{{quantity}}个商品</span>
         </div>
         <div class="btn-buy row ac jc" @click="showToast('hello', 5000)">立即购买</div>
+      </div>
+      <div class="buy-info row ac" v-show="mode=='del'">
+        <div class="btn-buy del row ac jc" @click="delShopcartGoods">删除</div>
       </div>
     </div>
     <my-footer></my-footer>
@@ -48,12 +56,13 @@
 <script>
 import homeApi from '../../api/home'
 import api from '../../api/shopcart'
-import { Empty } from 'vant';
+import { Empty, Toast } from 'vant';
 import myFooter from '../../components/common/my/footer'
 // import shopcardGroup from '../../components/common/shopcart/shopcart-group'
 import shopCard from '../../components/common/shopcart/shopcart-card'
 import HomeCard from '../../components/common/card/home-good-card'
 import waterFall from '../../components/common/waterfall'
+import radioOne from '../../components/common/my/radio-one'
 export default {
     name:'shoppingCar',
     data(){
@@ -61,7 +70,11 @@ export default {
         empty:false,
         isSelectAll:false,
         shopcartList:[], //购物车列表
-
+        quantity:0,//选中数量
+        totalPirce:0,//总价
+        refs:[], //全选用的
+        chooseData:[], //购物车选中的数据 算钱！ :(
+        mode: 'buy', //是购买还是删除 -> buy / del
 
         //推荐商品
         searchGoods: homeApi.getGoodsList,
@@ -74,15 +87,52 @@ export default {
         let res = await api.getList({shopType:1})
         this.shopcartList = res.result
         // res.result = []
+        //给每一个卡片一个ref值
+        this.refs.push(...this.shopcartList.map(v=>v.storeId))
         if(res.result.length==0) this.empty = true
       },
-      selectAll(){
-        this.isSelectAll = !this.isSelectAll
+      selectAll(){ //全选商品
+        this.refs.forEach(v=>{
+          this.$refs[v][0].checkAll = this.isSelectAll
+          this.$refs[v][0].chooseAll()
+        })
+        //console.log(this.isSelectAll)
       },
       //推荐商品
       handleFetchResult(result) {
         this.goodsList = [...this.goodsList, ...result.lists];
       },
+      getData(obj){//获取购物车的勾选数据
+        let storeId = obj.storeId
+        let index = this.chooseData.findIndex(v=>v.storeId == storeId)
+        if(index==-1){
+          this.chooseData.push(obj)
+        }else{
+          this.chooseData[index].productVoList = obj.productVoList
+        }
+        //计算总数量
+        let num = this.chooseData.map(v=>v.productVoList.length)
+        this.quantity = num.reduce((pre, cur)=> pre+cur)
+        //计算总价格
+        let list = []
+        this.chooseData.map(v=>list.push(...v.productVoList))
+        this.totalPirce = list.reduce((pre, cur)=>{return cur.price*cur.count + pre}, 0)
+      },
+      async delShopcartGoods(){
+        let list = []
+        this.chooseData.map(v=>{list.push(...v.productVoList)})
+        if(list.length==0){
+          Toast('请勾选需要删除的商品!')
+          return 
+        }
+        let ids = list.map(v=>v.cartId).join(',')
+        let res = await api.delGoods({id:ids})
+        if(res.success){
+          this.getShopcartList()
+        }else{
+          Toast('删除商品失败！')
+        }
+      }
     },
     created(){
       this.getShopcartList()
@@ -93,7 +143,8 @@ export default {
       HomeCard,
       shopCard,
       waterFall,
-      Empty
+      Empty,
+      radioOne
     }
 }
 </script>
@@ -177,6 +228,12 @@ h3{
     background-color: #2ecb62;
     border-radius: 0.28rem;
     color: #ffffff;
+  }
+  .del{
+    border-radius: 0.28rem;
+    border: solid 0.01rem #1a1a1a;
+    background-color: #ffffff;
+    color: #1a1a1a;
   }
 }
 </style>

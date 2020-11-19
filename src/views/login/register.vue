@@ -55,7 +55,7 @@ export default {
         this.waitText = `${this.second}S后重新获取`;
       }, 1000);
       let params = {
-            openId:'oM2fl5MDsV8pP-2WivrweUej5L5U',
+            openId:this.$route.query.openid,
             phone: this.phone,
             service:2 //1登录 2注册 3找回
       }
@@ -63,7 +63,7 @@ export default {
     },
     async register() {
       let params ={
-        openId: '',
+        openId: this.$route.query.openid,
         password:this.password,
         phone: this.phone,
         sourceCode: this.verifyMsg

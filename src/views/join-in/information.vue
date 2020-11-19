@@ -14,7 +14,7 @@
     <div class="class-feild row sb ac">
       <span class="title">店铺类型</span>
       <div class="row ac">
-        <div
+        <!-- <div
           class="btn row ac jc"
           :class="{ active: form.storeBase.level == 0 }"
           @click="form.storeBase.level = 0"
@@ -27,15 +27,18 @@
           @click="form.storeBase.level = 1"
         >
           加盟店
-        </div>
+        </div> -->
+        <div class="btn row ac jc" :class="{active:storeTypeIdx==i+1}" v-for="(item,i) in storeType" :key="item.id" @click="storeTypeIdx=i+1">{{item.name}}</div>
       </div>
     </div>
     <div class="desc">
-      {{
+      <!-- {{
         form.storeBase.level == 0
           ? "集采店：980元品牌使用费/年"
           : "加盟店：9800元品牌使用费（终身免年费）"
-      }}
+      }} -->
+      <span v-show="storeTypeIdx==1">加盟店：{{storeType[storeTypeIdx-1].enterPrice}}元品牌使用费（终身免年费）</span>
+      <span v-show="storeTypeIdx==2">集采店：{{storeType[storeTypeIdx-1].enterPrice}}元品牌使用费</span>
     </div>
     <div class="com-wrap column">
       <span class="title">店铺名称</span>
@@ -187,6 +190,8 @@ export default {
     return {
       isPop: false,
       allList: [],
+      storeType:[{enterPrice:0}],//店铺类型
+      storeTypeIdx:1,
       // areaList:areajs,
       areaList: {
         province_list: {},
@@ -225,6 +230,11 @@ export default {
     };
   },
   methods: {
+    async getStore(){
+      let res = await api.getStoreType()
+      if(!res.success)return this.showToast(res.message)
+      this.storeType = res.result
+    },
     async getProvice(num = 0) {
       let res = await api.geographic({ parentId: this.parentId });
       let datas = res.result || [];
@@ -292,6 +302,7 @@ export default {
   },
   created() {
     this.getProvice();
+    this.getStore()
   },
   components: {
     Uploader,

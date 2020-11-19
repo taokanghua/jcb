@@ -16,6 +16,7 @@
       <div class="qr-wrap column ac">
         <span class="shop-name">豪迪五金店取货码</span>
         <img src="../../assets/img/取货码.png" alt="" class="take-qr">
+        <div class="take-number">取货码：860438</div>
         <div class="tip">注意：上门自提时请出示取货码需要扫码取货以便完成交易</div>
         <i class="iconfont iconyishiyong took"></i>
       </div>
@@ -115,6 +116,12 @@ export default {
       width: 3.41rem;
       height: 3.46rem;
       margin-bottom: 0.23rem;
+    }
+    .take-number{
+      font-size: 0.27rem;
+      color: #1a1a1a;
+      font-weight: bold;
+      margin-bottom: 0.33rem;
     }
     .tip{
       width: 2.99rem;

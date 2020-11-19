@@ -34,7 +34,8 @@
       </tabs>
     </div>
 
-
+    
+    <!-- <div class="login-btn row ac jc" @click="clear">clear token</div> -->
     <div class="login-btn row ac jc" @click="loginIn">登录</div>
     <div class="footer-text">
       还没有账号?<router-link tag="span" :to="{name:'register'}">立即注册</router-link>
@@ -55,12 +56,15 @@ export default {
       timer:null,
       waitText:'获取验证码',
 
-      phone:'13409820341',
+      phone:'',
       password:'',
       verifyMsg:''
     }
   },
   methods:{
+    clear(){
+      tokenHolder.clear()
+    },
     getMessage(){
       if(this.timer) return
       //发送请求
@@ -78,7 +82,7 @@ export default {
       }, 1000)
       //发送请求
           let params ={
-            openId:'oM2fl5MDsV8pP-2WivrweUej5L5U',
+            openId:this.$route.query.openid,
             phone: this.phone,
             service:1 //1登录 2注册 3找回
           }
@@ -117,7 +121,7 @@ export default {
     },
     pwdWay(){ //密码登录
       let params = {
-          openId: 'oM2fl5MDsV8pP-2WivrweUej5L5U',
+          openId: this.$route.query.openid,
           password: this.password,
           phone: this.phone,
           type: 1 //1密码 2 验证码
@@ -126,7 +130,7 @@ export default {
     },
     verifyWay(){//验证码登录
       let params = {
-          openId: 'oM2fl5MDsV8pP-2WivrweUej5L5U',
+          openId: this.$route.query.openid,
           code: this.verifyMsg,
           phone: this.phone,
           type: 2 //1密码 2 验证码

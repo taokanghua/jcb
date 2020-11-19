@@ -84,7 +84,7 @@
     <!-- 品牌专区 -->
     <div class="active-wrap pr24">
       <div class="header row sb">
-        <span>大牌驾到</span>
+        <div class="row ac"><span>大牌驾到</span> <div class="tag">福利天天送</div></div>
         <router-link to="/brandzone" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
       </div>
       <div class="logo-list">
@@ -103,7 +103,7 @@
         <span>推荐店铺</span>
         <router-link to="/allstores" tag="div" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
       </div>
-      <hot-recom-card v-for="item in reconStoreList" :key="item.storeId" :info="item"></hot-recom-card>
+      <hot-recom-card v-for="item in reconStoreList" :key="item.storeId" :info="item" level :idx="i"></hot-recom-card>
     </div>
 
     <!-- 类型 -->
@@ -163,7 +163,7 @@ export default {
   data() {
     return {
       recomIndex:1,
-      goodsParams:{pageNo:1, pageSize:10, type:1},
+      goodsParams:{pageNo:1, pageSize:10, type:2},
       timer:null,
       userInfo:{},
       isRedpack:false, //红包遮罩
@@ -277,6 +277,18 @@ export default {
     span {
       font-size: 0.27rem;
       font-weight: bold;
+    }
+    .tag{
+      display: inline-block;
+      width: 1.47rem;
+      height: 0.21rem;
+      background-color: #fc0808;
+      font-size: 0.18rem;
+      color: #ffffff;
+      margin-left: 0.11rem;
+      border-radius: 0.11rem;
+      line-height: 0.21rem;
+      text-align: center;
     }
     .more {
       color: #a8a8a8;
