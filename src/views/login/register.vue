@@ -26,6 +26,7 @@
 
 <script>
 import api from '../../api/login'
+import tokenHolder from '../../utils/tokenHolder';
 export default {
   data() {
     return {
@@ -55,7 +56,7 @@ export default {
         this.waitText = `${this.second}S后重新获取`;
       }, 1000);
       let params = {
-            openId:this.$route.query.openid,
+            openId:this.$store.state.openid,
             phone: this.phone,
             service:2 //1登录 2注册 3找回
       }
@@ -63,13 +64,15 @@ export default {
     },
     async register() {
       let params ={
-        openId: this.$route.query.openid,
+        openId: this.$store.state.openid,
         password:this.password,
         phone: this.phone,
-        sourceCode: this.verifyMsg
+        code: this.verifyMsg
       }
       let res = await api.register(params)
-      console.log(res)
+      if(!res.success)return this.showToast(res.message)
+      tokenHolder.set(res.result)
+      this.$router.replace({path:'/home'})
     },
   },
 };

@@ -35,7 +35,7 @@
     </div>
 
     
-    <!-- <div class="login-btn row ac jc" @click="clear">clear token</div> -->
+    <div class="login-btn row ac jc" @click="clear">clear token</div>
     <div class="login-btn row ac jc" @click="loginIn">登录</div>
     <div class="footer-text">
       还没有账号?<router-link tag="span" :to="{name:'register'}">立即注册</router-link>
@@ -55,6 +55,7 @@ export default {
       second: 60,
       timer:null,
       waitText:'获取验证码',
+      openid:'',
 
       phone:'',
       password:'',
@@ -62,8 +63,9 @@ export default {
     }
   },
   methods:{
-    clear(){
-      tokenHolder.clear()
+    clear(){ //开发清除token专用
+      tokenHolder.remove()
+      this.showToast('清除token成功！🎉')
     },
     getMessage(){
       if(this.timer) return
@@ -82,7 +84,7 @@ export default {
       }, 1000)
       //发送请求
           let params ={
-            openId:this.$route.query.openid,
+            openId:this.openid,
             phone: this.phone,
             service:1 //1登录 2注册 3找回
           }
@@ -121,7 +123,7 @@ export default {
     },
     pwdWay(){ //密码登录
       let params = {
-          openId: this.$route.query.openid,
+          openId: this.openid,
           password: this.password,
           phone: this.phone,
           type: 1 //1密码 2 验证码
@@ -130,7 +132,7 @@ export default {
     },
     verifyWay(){//验证码登录
       let params = {
-          openId: this.$route.query.openid,
+          openId: this.openid,
           code: this.verifyMsg,
           phone: this.phone,
           type: 2 //1密码 2 验证码
@@ -140,6 +142,10 @@ export default {
   },
   watch:{
     // second()
+  },
+  created(){
+    this.openid = this.$store.state.openid
+    // console.log(this.openid)
   },
   components:{
     Tabs,

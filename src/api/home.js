@@ -16,4 +16,6 @@ export default {
     getNewStore: () => req.get('store/listNewStore'),
     takeFirstCoupon: id => req.put('/member/updateFirstCoupon/' + id),
     getStoreType: () => req.get('store/level/options'), //集采/加盟
+    getNotice: params => req.get('notice/get', { params }),
+    getBanner: data => req.post('carousel/get', data)
 }

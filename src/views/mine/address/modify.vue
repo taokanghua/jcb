@@ -96,6 +96,10 @@ export default {
       //验证输入是否合法
       let result = false
       let phone = /^1[0-9]{10}$/.test(this.form.phone)
+      if(!phone){
+        this.showToast('手机号不合法！')
+        return true
+      }
       let list = [this.form.name, this.form.sex, phone, this.address, this.form.address]
       result = list.some(v=>!v)
       // console.log(result, list)

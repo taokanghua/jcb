@@ -8,7 +8,7 @@
           <img v-else src="../../assets/img/mine/avatar.png" alt="">
           <div class="user-info column ac jc">
             <span class="name" v-if="userInfo.nickname">{{userInfo.nickname}}</span>
-            <router-link to='/login' tag="span" class="name" v-else>授权登录</router-link>
+            <router-link :to="'/login'" tag="span" class="name" v-else>授权登录</router-link>
             <!-- 暂时不用 -->
             <!-- <router-link to="/memberGrade" tag="div" class="member row ac jc">
               一级会员 <i class="iconfont iconARROW"></i>

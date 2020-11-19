@@ -43,7 +43,7 @@
           <span>合计: <span class="price">￥{{totalPirce}}</span></span>
           <span class="total">共计{{quantity}}个商品</span>
         </div>
-        <div class="btn-buy row ac jc" @click="showToast('hello', 5000)">立即购买</div>
+        <div class="btn-buy row ac jc" @click="buyNow">立即购买</div>
       </div>
       <div class="buy-info row ac" v-show="mode=='del'">
         <div class="btn-buy del row ac jc" @click="delShopcartGoods">删除</div>
@@ -132,6 +132,31 @@ export default {
         }else{
           Toast('删除商品失败！')
         }
+      },
+      //立即购买
+      async buyNow(){
+        let id = this.$store.state.user.info.memberUserInfoVo.id//获取用户id
+        let storeGoodsList = this.chooseData.map(v=>v.productVoList)//[ [array], [array] ]
+        let result = storeGoodsList.map((v,i)=>{
+          let wrap = {}
+          let foo = v.map(o=>{ //[obj,obj]
+            let obj = {}
+            obj.productId = o.productId
+            obj.productNumber = o.count
+            obj.productPrice = o.price
+            obj.productSkuId = o.skuId
+            obj.shelveId = this.chooseData[i].upBy
+            obj.templateId = o.templateId
+            return obj
+          })
+          wrap.productList = foo
+          wrap.sourceType = 1
+          wrap.sourceId=id
+          return wrap
+        })
+        let res = await homeApi.createOrder(result)
+        console.log(res)
+        // console.log(result)
       }
     },
     created(){

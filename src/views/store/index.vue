@@ -8,21 +8,21 @@
 
     <div class="store-content">
       <div class="odd-wrap column sb">
-        <div class="top row sb ac">
+        <div class="top row sb ">
           <div class="row">
             <div class="img-box">
-              <img src="../../assets/img/店铺街-新店推荐2.png" alt="" />
+              <img :src="storeInfo.head" alt="" />
             </div>
             <div class="shop-info">
-              <span>鑫方盛五金建材店</span>
+              <span>{{storeInfo.storeName.length>10?storeInfo.storeName.substr(0,10)+'...':storeInfo.storeName}}</span>
               <div class="row ac jc">热门门店</div>
             </div>
           </div>
           <div class="favo row ac jc">+关注</div>
         </div>
 
-        <div class="desc">
-          五金商店经营品牌众多，价格成本低，质量有保证。五金商店精品荟萃，任你挑选。
+        <div class="desc e2">
+          {{storeInfo.introduce}}
         </div>
         <!-- 暂时不做 -->
         <!-- <div class="coupon-list row" @click="couponPop=true">
@@ -45,7 +45,7 @@
       <div class="address row ac sb">
         <div class="row">
           <i class="iconfont icondizhi"></i>
-          <div class="e1 text">广东省佛山市广佛新干线</div>
+          <div class="e1 text">{{storeInfo.address.replace(/\s/g,'')}}</div>
         </div>
         <i class="iconfont iconARROW"></i>
       </div>
@@ -53,20 +53,18 @@
       <!-- 热销产品 -->
       <div class="active-wrap">
         <div class="header row sb">
-          <span>限时活动</span>
-          <!-- <div class="more">更多 <i class="iconfont icongengduo"></i></div> -->
+          <span>热销产品</span>
         </div>
         <div class="content">
-          <div class="active-card col" v-for="item in 5" :key="item">
+          <router-link :to="'/goodsdetail?id='+item.productId" class="active-card col" v-for="item in storeInfo.productList" :key="item.productId">
             <div class="img-wrap">
-              <img src="../../assets/img/活动图片.png" alt="" />
-              <!-- <div class="active-tag">拼团</div> -->
+              <img :src="item.pic" alt="" />
             </div>
             <div class="col sb ac" style="padding: 0 0.17rem; flex: 1">
-              <div class="name">得力高档活动扳手可调扳</div>
-              <div class="price">￥199</div>
+              <div class="name e2">{{item.productName}}</div>
+              <div class="price">￥{{item.paymentPrice}}</div>
             </div>
-          </div>
+          </router-link>
         </div>
       </div>
 
@@ -148,6 +146,7 @@ export default {
     return {
       conditionIdx: 0,
       salesCondition: 0,
+      storeInfo:{address:''},
       couponPop:false, //领取优惠券pop
       goodsList:[],
       storeParams:{
@@ -191,8 +190,11 @@ export default {
         lon: 0,
         storeId: this.$route.query.id
       }
+      if(this.$store.state.user.info.memberUserInfoVo){
+        params.memberId = this.$store.state.user.info.memberUserInfoVo.id||null
+      }
       let res = await api.getStoreDetail(params)
-      console.log(res)
+      this.storeInfo = res.result
     },
     //goods
     mergeGoodsList(result){
@@ -235,7 +237,7 @@ export default {
   background-color: #ffffff;
   border-radius: 0.11rem;
   transform: translateY(-50%);
-  margin-bottom: -1.1rem;
+  margin-bottom: -0.72rem;
   padding: 0.17rem 0.23rem;
   // margin-bottom: 0.23rem;
   .top {
@@ -258,6 +260,7 @@ export default {
       height: 0.25rem;
       margin-left: 0.11rem;
       font-size: 0.27rem;
+      line-height: 1;
       div {
         width: 0.85rem;
         height: 0.24rem;
@@ -368,6 +371,7 @@ export default {
       position: relative;
       img {
         height: 1.69rem;
+        flex-shrink: 0;
       }
     }
     .name {

@@ -7,9 +7,9 @@
               <div class="row" style="align-item:base-line">
                 <span class="shop-name" style="flex-wrap:wrap">{{info.storeName}}</span>
                 <span v-if="level">
-                  <img src="../../../assets/img/等级一.png" alt="" v-show="idx==1" />
-                  <img src="../../../assets/img/等级二.png" alt="" v-show="idx==2" />
-                  <img src="../../../assets/img/等级三.png" alt="" v-show="idx==3"/>
+                  <img src="../../../assets/img/等级一.png" alt="" v-show="idx==0" />
+                  <img src="../../../assets/img/等级二.png" alt="" v-show="idx==1" />
+                  <img src="../../../assets/img/等级三.png" alt="" v-show="idx==2"/>
                 </span>
               </div>
               <div> <i class="iconfont iconstar" v-for="item in Number(info.score)" :key="item"></i> </div>

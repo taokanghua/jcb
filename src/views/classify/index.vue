@@ -86,16 +86,16 @@
 
           <!-- 筛选出来的商品 -->
             <div class="searched-goods" ref="resultBox" :style="`height:${dynamicHeight}px`">
-              <div class="goods-card row" v-for="item in 8" :key="item">
-                <img src="../../assets/img/分类220x220.png" alt="" />
+              <router-link :to="'/goodsdetail?id='+item.productId" class="goods-card row" v-for="item in goodsList" :key="item.productId">
+                <img :src="item.pic" alt="" />
                 <div class="right-info column sb">
-                  <span class="name e2">得力(deli) 10.8V无线单锂电电钻18+1电钻……</span>
+                  <span class="name e2">{{item.productName}}</span>
                   <div class="price row">
-                    <div class="now">￥199</div>
-                    <div class="old">￥200</div>
+                    <div class="now">￥{{item.price}}</div>
+                    <div class="old">￥{{item.saleCount}}</div>
                   </div>
                 </div>
-              </div>
+              </router-link>
               <div if="!iphoneX" style="height:0.82rem"></div>
             </div>
         </div>
@@ -171,7 +171,7 @@ export default {
   methods: {
     async getGoodList(){
       let res = await api.getGoods(this.searchParams)
-      //this.goodsList = [...this.goodsList, ...res.result]
+      this.goodsList = res.result.lists
     },
     changeOne(i){ //一级
       this.second = this.allList[i].children
@@ -278,9 +278,6 @@ export default {
     
   },
   watch: {
-    salesCondition(n) {
-      console.log(n);
-    },
     isThrid(n){
     setTimeout(this.updateDynamicHeight,0)
     }
@@ -290,7 +287,7 @@ export default {
     preparation,
     popUp,
     preparationInner,
-    list
+    list,
   },
 };
 </script>
@@ -351,7 +348,9 @@ export default {
     color: #2ecb62;
   }
   .left-menu {
-    width: 1.81rem;
+    //flex: 1;
+    // width: 1.81rem;
+    //width: 100%;
     height: 9.4rem;
     padding-bottom: 0.4rem;
     box-sizing: border-box;
@@ -368,7 +367,7 @@ export default {
     }
   }
   .right-content {
-    //flex: 1;
+    flex: 1;
     //height: 100%;
     background-color: #ffffff;
     overflow: hidden;

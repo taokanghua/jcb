@@ -129,7 +129,7 @@
 
     <div class="alone-feild row sb ac">
       <span class="title">优惠</span>
-      <span class="shit">新人礼包 -5.00</span>
+      <span class="shit">新人礼包  -￥5.00</span>
     </div>
     <div class="alone-feild row sb ac">
       <span class="title">发票</span>

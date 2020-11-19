@@ -50,7 +50,7 @@ export default {
       }, 1000)
 
       let params ={
-            openId:this.$route.query.openid,
+            openId:this.$store.state.openid,
             phone: this.phone,
             service:3 //1登录 2注册 3找回
           }

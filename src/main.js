@@ -65,18 +65,18 @@ router.beforeEach((to, from, next) => {
     //         clearInterval(scrollToptimer);
     //     }
     // }, 30);
-    // let whiteList = ['/home', '/classify', '/search', '/mall', '/store', '/goodsdetail', '/mine', '/register', '/forget', '/setPassword']
-    // if (to.path == '/login') return next()
-    // let token = tokenHolder.get() || false
-    // if (!token) {
-    //     if (whiteList.includes(to.path)) {
-    //         //console.log('while list')
-    //         return next()
-    //     } else {
-    //         _this.showToast('请登录后查看', 2000)
-    //         return next('/login')
-    //     }
-    // }
+    let whiteList = ['/home', '/classify', '/search', '/mall', '/store', '/goodsdetail', '/mine', '/register', '/forget', '/setPassword']
+    if (to.path == '/login') return next()
+    let token = tokenHolder.get() || false
+    if (!token) {
+        if (whiteList.includes(to.path)) {
+            //console.log('while list')
+            return next()
+        } else {
+            _this.showToast('请登录后查看', 2000)
+            return next('/login')
+        }
+    }
 
     next()
 })

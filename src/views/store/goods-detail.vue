@@ -327,7 +327,10 @@ export default {
       storeId:'',
       lat:'',
       lon:'',
-      memberId:this.$store.state.user.info.memberUserInfoVo.id
+      //memberId:
+    }
+    if(this.$store.state.user.info.memberUserInfoVo){
+      params.memberId = this.$store.state.user.info.memberUserInfoVo.id||null
     }
      try {
        let res = await api.getGoodsDetail(params)
@@ -431,7 +434,7 @@ export default {
      if(res.success){
        this.$router.push({name:'confirmorder', query:{orderId:res.result}})
      }else{
-       this.showToast('获取订单失败！')
+       this.showToast(res.message)
      }
      //console.log(res)
    },

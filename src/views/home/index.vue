@@ -13,28 +13,14 @@
     <!-- 轮播图 -->
     <div class="tools-wrap">
       <swipe autoplay="5000" loop style="height: 2.3rem">
-        <swipe-item
-          ><img
-            class="swipe-img"
-            src="../../assets/img/banner拷贝.png"
-            alt=""
-        /></swipe-item>
-        <swipe-item
-          ><img
-            class="swipe-img"
-            src="../../assets/img/banner拷贝.png"
-            alt=""
-        /></swipe-item>
-        <swipe-item
-          ><img
-            class="swipe-img"
-            src="../../assets/img/店铺街-新店推荐3.png"
-            alt=""
-        /></swipe-item>
+        <swipe-item v-for="(item,i) in carousel" :key="i">
+          <img class="swipe-img" :src="item.pic" alt="" @click="carouselToPage(item)" />
+        </swipe-item>
       </swipe>
       <div class="notify row ac">
         <img src="../../assets/img/金材宝资讯.png" alt="" />
-        <span>特大喜讯，今天购物全场商品8折！！！</span>
+        <!-- <span>{{notice.content}}</span> -->
+        <NoticeBar style="flex:1">{{notice}}</NoticeBar>
       </div>
 
       <div class="menu row sb">
@@ -103,7 +89,7 @@
         <span>推荐店铺</span>
         <router-link to="/allstores" tag="div" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
       </div>
-      <hot-recom-card v-for="item in reconStoreList" :key="item.storeId" :info="item" level :idx="i"></hot-recom-card>
+      <hot-recom-card v-for="(item,i) in reconStoreList" :key="item.storeId" :info="item" level :idx="i"></hot-recom-card>
     </div>
 
     <!-- 类型 -->
@@ -151,7 +137,7 @@
 
 <script>
 import api from '../../api/home'
-import { Swipe, SwipeItem, Rate, Tab, Tabs, List, Overlay } from "vant";
+import { Swipe, SwipeItem, Rate, Tab, Tabs, List, Overlay, NoticeBar } from "vant";
 import countDown from '../../components/common/count-down'
 import myFooter from "../../components/common/my/footer";
 import HomeCard from '../../components/common/card/home-good-card'
@@ -170,7 +156,10 @@ export default {
 
       goodsList:[],
       reconBrandList:[],
-      reconStoreList:[]
+      reconStoreList:[],
+
+      notice:{}, //咨询
+      carousel:[], //轮播图
     };
   },
   methods:{
@@ -199,7 +188,9 @@ export default {
         this.showToast('获取商品失败!', 2500)
         return
       }
+      //if(res.result==null) res.result = []
       this.goodsList = [...this.goodsList, ...res.result.lists]
+      //this.goodsList.concat(res.result.lists)
     },
     async takeRedpack(){
       //领取红包
@@ -233,6 +224,33 @@ export default {
     waitOpen(){
       //暂未开放弹框
       this.showToast('暂未开放!', 2000)
+    },
+    //获取咨询
+    async getNote(){
+      let res = await api.getNotice({source:1, type:2})
+      let content  = res.result.map(v=>v.content)
+      this.notice = content.join('   ')
+      // this.notice = '12312312312'
+      //console.log(this.notice)
+    },
+    //获取轮播图
+    async getCarousel(){
+      //feild   source:1 //公众号 type:2 //c端
+      let res = await api.getBanner({field:1,source:1,type:2})
+      if(!res.success)return this.showToast(res.message)
+      this.carousel = res.result
+    },
+    carouselToPage(info){
+      //urltype  1 商品 2店铺 3活动页 
+      let {url:id, urlType:type} = info
+      switch(type){
+        case 1:
+          this.$router.push({path:'/goodsdetail', query:{id}})
+          break
+        case 2:
+          this.$router.push({path:'/store', query:{id}})
+          break
+      }
     }
   },
   created(){
@@ -240,6 +258,11 @@ export default {
     this.getRecomBrand()
     this.getRecomStore()
     this.getUserInfo()
+    this.getNote()
+    this.getCarousel()
+
+    //保存openid
+    this.$store.state.openid = this.$route.query.openid
   },
   components: {
     myFooter,
@@ -253,7 +276,8 @@ export default {
     searchTop,
     hotRecomCard,
     List,
-    Overlay
+    Overlay,
+    NoticeBar
   },
 };
 </script>
@@ -479,4 +503,11 @@ export default {
     font-size: 0.24rem;
   }
 }
+/deep/ .van-notice-bar{
+  padding: 0;
+  height: 0.62rem;
+  color: #1a1a1a;
+  background-color: #ffffff!important;
+}
+
 </style>
