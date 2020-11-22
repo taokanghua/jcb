@@ -16,7 +16,7 @@
           <img :src="item.pic" alt="">
           <div class="info column sb">
             <div class="name e2">{{item.productName}}</div>
-            <span class="spec e2">{{item.prop}}--{{i}}</span>
+            <span class="spec e2">{{item.prop}}</span>
             <div class="row sb">
               <span class="price">￥{{item.price||0}}</span>
               <InputNumer v-model="list[i].count" @change="changeNum(i, item.cartId)"></InputNumer>

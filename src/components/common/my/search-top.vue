@@ -17,6 +17,11 @@ export default {
     }
   },
   props:{
+    info:{
+      //定位信息
+      type:Object,
+      default: () => {}
+    },
     address:{
       // 是否显示定位 
       type: Boolean,
@@ -38,6 +43,11 @@ export default {
     },
     blurHandle(){
       this.$emit('blur')
+    }
+  },
+  watch:{
+    info(n){
+      console.log(n)
     }
   }
 }

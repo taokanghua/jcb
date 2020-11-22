@@ -30,7 +30,7 @@
       </div>
     </div>
 
-    <router-link to="/editaddress" tag="div" class="add-btn position">添加地址</router-link>
+    <router-link to="/editaddress" tag="div" class="add-btn" :class="{position}">添加地址</router-link>
   </div>
 </template>
 
@@ -48,6 +48,11 @@ export default {
       if(!id) return
       let res = await userApi.getAddressList({memberId:id, pageSize:999})
       this.addressList = res.result.records
+    }
+  },
+  computed:{
+    position(){
+      return this.addressList.length<=6
     }
   },
   created(){

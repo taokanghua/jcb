@@ -354,6 +354,7 @@ export default {
      //收藏功能
      let {id} = this.$route.query
      let res = await storeApi.collectStore({commodityId:id})
+     if(!res.success) return this.showToast(res.message)
      this.showToast(res.result)
      this.isCollect = !this.isCollect
    },
@@ -413,6 +414,8 @@ export default {
     }
    },
    async buyNow(){
+     let memberId = this.$store.state.user.info.memberUserInfoVo||false
+     if(!memberId)return this.showToast('请登录后再操作')
      //console.log(this.sku_obj)
      if(!this.valid()){
       this.showToast('请选中所有类别！')

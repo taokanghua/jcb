@@ -92,7 +92,7 @@
                   <span class="name e2">{{item.productName}}</span>
                   <div class="price row">
                     <div class="now">￥{{item.price}}</div>
-                    <div class="old">￥{{item.saleCount}}</div>
+                    <div class="old" v-if="item.paymentPrice">￥{{item.paymentPrice||0}}</div>
                   </div>
                 </div>
               </router-link>

@@ -143,6 +143,7 @@ export default {
       },
       //立即购买
       async buyNow(){
+        if(this.quantity==0) return Toast('请勾选商品！')
         let id = this.$store.state.user.info.memberUserInfoVo.id//获取用户id
         let storeGoodsList = this.chooseData.map(v=>v.productVoList)//[ [array], [array] ]
         let result = storeGoodsList.map((v,i)=>{

@@ -250,6 +250,7 @@ export default {
         obj.productNumber = v.number
         obj.productPrice = v.skuPrice
         obj.productSkuId = v.skuId
+        obj.templateId = v.templateId
         return obj
       })
       let data = {
@@ -257,8 +258,8 @@ export default {
           orderProductList: list,
           receiveAddressId: this.address.id
       }
-      // let res = await api.getDeliveryPrice(data)
-      // console.log(res)
+      let res = await api.getDeliveryPrice(data)
+      console.log(res)
       //假设运费 11块
       this.deliveryPrice = 11
       this.calcPacking()
@@ -284,6 +285,7 @@ export default {
     address:{
       handler(n){
         this.getDeliverPrice()
+        //console.log('address')
       },
       immediate:true,//为啥不加这个就监听不到 屮
     }
