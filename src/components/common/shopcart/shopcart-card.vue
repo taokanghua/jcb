@@ -48,9 +48,10 @@ export default {
    chooseAll(){ //选中所有
       // console.log(this.info.storeName)
 
-      for(let i=0;i<this.child;i++){
-          if(this.list[i].state!=1) continue
-          this.checkList[i] = this.checkAll
+      for(let i=0;i<this.list.length;i++){
+          if(this.list[i].state==1){
+            this.checkList[i] = this.checkAll
+          }
       }
       this.$forceUpdate()
       if(this.checkAll){
