@@ -21,11 +21,11 @@
     <!-- 收货地址 -->
     <div class="address-wrap com">
       <span class="title">收货地址</span>
-      <div class="address-item" v-for="item in 4" :key="item">
-        <span class="address">地球市地球镇地球村东南西北888号</span>
+      <div class="address-item" v-for="item in addressList" :key="item.id">
+        <span class="address">{{item.addressName.replace(/\s/g,'')}}{{item.address}}</span>
         <div class="row ac info">
-          <span class="name">张三</span>
-          <span>12345778900</span>
+          <span class="name">{{item.name}}</span>
+          <span>{{item.phone}}</span>
         </div>
       </div>
     </div>
@@ -35,11 +35,24 @@
 </template>
 
 <script>
+import userApi from '../../../api/user'
 export default {
   data(){
     return{
-
+      addressList:[]
     }
+  },
+  methods:{
+   async getAddress(){
+     let id = this.$store.state.user.info.memberUserInfoVo.id || ''
+      if(!id) return
+      let res = await userApi.getAddressList({memberId:id, pageSize:999})
+      this.addressList = res.result.records
+    }
+  },
+  created(){
+    
+    this.getAddress()
   }
 }
 </script>

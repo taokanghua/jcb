@@ -3,7 +3,7 @@
   <div class="choose-methods-card">
     <div class="row ac shop-name">
       <span class="iconfont iconshangcheng"></span>
-      <span>{{info.storeName}}</span>
+      <span>{{info.getApiVo.name}}</span>
     </div>
       <div class="goods row" v-for="item in info.productList" :key="item.skuId">
         <img :src="item.productPic" alt="">
@@ -12,7 +12,7 @@
           <div class="sku">{{item.propertyName}}</div>
           <div class="footer row sb ac">
             <span class="price">￥{{item.skuPrice}}</span>
-            <input-number v-model="item.number"></input-number>
+            <input-number v-model="item.number" @change="changeHandle(item)"></input-number>
           </div>
         </div>
       </div>
@@ -22,17 +22,17 @@
             <span class="take-info">取货信息</span>
             <div class="shop-address">
               <i class="iconfont icondizhi"></i>
-              <span>地球市地球镇地球村东南西北888号 </span>
+              <span>{{info.getApiVo.addressName.replace(/\s/g,'')}}</span>
             </div>
             <div class="user-select row">
               <div class="take-time column sb" @click="pops.takeTime=true">
                 <span class="title">自提时间</span>
-                <div class="row">10-30 18:00 <i class="iconfont iconARROW"></i></div>
+                <div class="row">{{dateList[dayIdx].month+'-'+dateList[dayIdx].day}} 18:00 <i class="iconfont iconARROW"></i></div>
               </div>
               <div class="phone column sb" @click="editHandle">
                 <span class="title">联系电话</span>
-                <input ref="input" type="phone" class="edit-phone" v-model="contact" v-show="editPhone" @blur="checkPhone">
-                <div class="row" v-show="!editPhone">{{contact}}<i class="iconfont iconbianji"></i></div>
+                <input ref="input" type="phone" class="edit-phone" v-model="info.createByName" v-show="editPhone" @blur="checkPhone">
+                <div class="row" v-show="!editPhone">{{info.createByName}}<i class="iconfont iconbianji"></i></div>
               </div>
             </div>
           </div>
@@ -49,7 +49,7 @@
       </div> -->
       <div class="order-field row sb ac" @click="pops.way=true">
         <span class="left">配送方式 <span class="desc">{{['快递配送','物流到付','自提'][form.deliverWayIdx]}}</span> </span>
-        <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
+        <span class="right row ac"><span v-show="form.deliverWayIdx==0">￥10.00</span> <i class="iconfont iconARROW"></i></span>
       </div>
       <!-- <div class="order-field row sb ac">
         <span class="left">运费险 <span class="desc">货物运输过程中有损，可赔</span> </span>
@@ -167,6 +167,7 @@
 </template>
 
 <script>
+import api from '../../../api/home'
 import {ActionSheet} from 'vant'
 import inputNumber from '../my/input-number'
 export default {
@@ -187,15 +188,28 @@ export default {
         shop:false
       },
       editPhone:false, //编辑手机号
-      dateList:[], //日期
       dayIdx:0, //选中的日期索引
+      packObj:{}, //发给父的对象
+      deliveryPrice:0, //运费
       
-      contact: '12345678900', // 联系电话
+      //contact: '12345678900', // 联系电话
     }
   },
   props:{
-    info: Object,
-    default:{}
+    info: {
+      type: Object,
+      default:{getApiVo:{addressName:''}}
+    },
+    dateList:{
+      //自提日期
+      type: Array,
+      default:[]
+    },
+    address:{
+      //地址
+      type: Object,
+      default: ()=>{}
+    }
   },
   methods:{
     editHandle(){
@@ -206,8 +220,9 @@ export default {
     checkPhone(e){
       this.editPhone = false
     },
+    //下两个暂时无用
     platformHandle(i){
-      // 店铺优惠切换
+      // 平台优惠切换
       if(this.form.platformIdx == i){
         this.form.platformIdx = -1
         return
@@ -221,7 +236,64 @@ export default {
         return
       }
       this.form.shopIdx = i
+    },
+    //商品数量变化时候
+    changeHandle(obj){
+      // console.log(obj.number)
+      this.calcPacking()
+    },
+    //获取快递价格
+    async getDeliverPrice(){
+      let list = this.info.productList.map((v,i)=>{
+        let obj = {}
+        obj.orderProductId = v.orderProductId
+        obj.productNumber = v.number
+        obj.productPrice = v.skuPrice
+        obj.productSkuId = v.skuId
+        return obj
+      })
+      let data = {
+          orderId: this.info.orderCode,
+          orderProductList: list,
+          receiveAddressId: this.address.id
+      }
+      // let res = await api.getDeliveryPrice(data)
+      // console.log(res)
+      //假设运费 11块
+      this.deliveryPrice = 11
+      this.calcPacking()
+    },
+    //计算并处理对象方法
+    calcPacking(){
+      let way = {0:2, 1:'3', 2:'1'}
+      this.packObj.freightAmount = this.deliveryPrice
+      this.packObj.note = this.form.message
+      this.packObj.orderId = this.form.orderCode
+      this.packObj.productList = []
+      this.packObj.selfCarry= way[this.form.deliverWayIdx]
+      this.packObj.selfPhone = this.info.createByName
+      this.packObj.selfTime = ''
+      let total = this.info.productList.reduce((pre,cur)=>cur.number*cur.skuPrice+pre,0)
+      //这里暂时没做判断 
+      this.packObj.total = total + this.deliveryPrice
+
+      this.$emit('getData', this.packObj)
     }
+  },
+  watch:{
+    address:{
+      handler(n){
+        this.getDeliverPrice()
+      },
+      immediate:true,//为啥不加这个就监听不到 屮
+    }
+  },
+  created(){
+    // console.log('==^^^==')
+    // console.log(this.address)
+    //获取收货地址 --> 请求获取价格 --> 发送对象到父组件 计算价格
+    // this.getDeliverPrice()
+    this.packObj = JSON.parse(JSON.stringify(this.info))
   },
   components:{
     ActionSheet,

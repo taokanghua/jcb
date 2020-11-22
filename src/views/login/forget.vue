@@ -67,6 +67,7 @@ export default {
         let code = res.result
         this.$router.push({name:'setPassword', query:{phone:this.phone, code}})
       }else{
+        console.log('fail')
         this.showToast(res.message)
       }
     }

@@ -3,7 +3,12 @@
     <search-top :address="false" :search="false"></search-top>
 
     <div class="bg-img">
-      <img src="../../assets/img/店铺首页.png" alt="" />
+      <!-- <img src="../../assets/img/店铺首页.png" alt="" /> -->
+      <swipe autoplay="5000" loop style="height:100%">
+        <swipe-item v-for="(item,i) in storeInfo.detailsPic.split(',')" :key="i">
+          <img class="swipe-img" :src="item" alt="" @click="carouselToPage(item)" />
+        </swipe-item>
+      </swipe>
     </div>
 
     <div class="store-content">
@@ -18,7 +23,10 @@
               <div class="row ac jc">热门门店</div>
             </div>
           </div>
-          <div class="favo row ac jc">+关注</div>
+          <div @click="focusStoreFn">
+            <div class="favo row ac jc" v-show="!isCollect">+关注</div>
+            <div class="favo row ac jc collect" v-show="isCollect">已关注</div>
+          </div>
         </div>
 
         <div class="desc e2">
@@ -86,7 +94,7 @@
           @click="changeCondition(2)"
         >
           价格
-          <preparation :status.sync="salesCondition"></preparation>
+          <preparation :status.sync="salesCondition" ref="price"></preparation>
         </span>
       </div>
 
@@ -131,28 +139,33 @@
         <div class="close-btn row ac jc position" @click="couponPop=false">关闭</div> 
       </div>
     </action-sheet>
+
+     <!-- 加载动画 -->
+    <loading ref="loading"></loading>
   </div>
 </template>
 
 <script>
 import api from '../../api/store'
 import waterfall from '../../components/common/waterfall'
-import { ActionSheet } from 'vant';
+import { ActionSheet, Swipe, SwipeItem } from 'vant';
 import searchTop from "@/components/common/my/search-top";
 import preparation from "@/components/common/my/preparation";
 import homeGoodCard from '@/components/common/card/home-good-card'
+import loading from '../../components/common/my/loading'
 export default {
   data() {
     return {
+      isCollect:false, //是否收藏店铺
       conditionIdx: 0,
       salesCondition: 0,
-      storeInfo:{address:''},
+      storeInfo:{address:'',storeName:'',detailsPic:''},
       couponPop:false, //领取优惠券pop
       goodsList:[],
       storeParams:{
         //pageNo: 1,
         //pageSize: 10,
-        priceSort: false,
+        //priceSort: false,
         //saleSort: false,
         storeId: this.$route.query.id
       }
@@ -163,10 +176,12 @@ export default {
     changeCondition(i) { //筛选 x_x 一坨一坨的
       this.conditionIdx = i;
       if(this.conditionIdx == 0){
+        this.$refs.price.reset()
         delete this.storeParams.priceSort
         this.storeParams.saleSort = false
       }
       if(this.conditionIdx == 1){
+        this.$refs.price.reset()
         delete this.storeParams.priceSort
         this.storeParams.saleSort = true
       }
@@ -195,6 +210,22 @@ export default {
       }
       let res = await api.getStoreDetail(params)
       this.storeInfo = res.result
+      this.$refs.loading.hide()
+      //判断是否收藏了店铺
+      res.result.state==0?this.isCollect=false:this.isCollect=true
+    },
+    async focusStoreFn(){
+      let params = {
+        storeId: this.$route.query.id
+      }
+      if(this.$store.state.user.info.memberUserInfoVo){
+        params.memberId = this.$store.state.user.info.memberUserInfoVo.id||null
+      }
+      let res = await api.focusStore(params)
+      if(res.success){
+        this.isCollect = !this.isCollect
+      }
+        this.showToast(res.result)
     },
     //goods
     mergeGoodsList(result){
@@ -203,13 +234,25 @@ export default {
   },
   created(){
     this.getStoreDetail()
+    
+    this.$nextTick(()=>{
+     this.$refs.loading.load()
+   })
   },
+  watch:{
+   $route(to){
+     this.getStoreDetail()
+   }
+ },
   components: {
     searchTop,
     preparation,
     homeGoodCard,
     ActionSheet,
-    waterfall
+    waterfall,
+    Swipe, 
+    SwipeItem,
+    loading
   },
 };
 </script>
@@ -280,6 +323,10 @@ export default {
     border-radius: 0.14rem;
     color: #ffffff;
     font-size: 0.18rem;
+  }
+  .collect{
+    background-color: #dddddd;
+    color: #a8a8a8;
   }
   .desc {
     font-size: 0.21rem;

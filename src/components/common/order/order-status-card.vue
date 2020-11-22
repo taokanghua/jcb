@@ -5,7 +5,7 @@
         <i class="iconfont iconshangcheng"></i>
         <span>豪迪五金店</span>
       </div>
-      <span>已完成</span>
+      <span :class="{blue}">{{status}}</span>
     </div>
     <!-- 商品 -->
     <div class="goods-item row ac" v-for="item in 2" :key="item">
@@ -32,7 +32,22 @@
 
 <script>
 export default {
+  data(){
+    return{
 
+    }
+  },
+  props:{
+    blue:{
+      // 状态文字颜色
+      type: Boolean,
+      default: false
+    },
+    status:{
+      type: String,
+      default: '待支付'
+    }
+  }
 }
 </script>
 
@@ -99,5 +114,8 @@ export default {
 .btn-wrap{
   margin-top: 0.37rem;
   justify-content: flex-end;
+}
+.blue{
+  color: #2ecb62;
 }
 </style>

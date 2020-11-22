@@ -175,8 +175,8 @@ export default {
         this.timer = setTimeout(()=>{
           clearTimeout(this.timer)
           this.timer = null
-          this.goodsParams.pageNo += 1
           this.getHomeGoodsList()
+          this.goodsParams.pageNo += 1
           }, 2000)
         // console.log(1)
       }
@@ -407,6 +407,7 @@ export default {
       width: 1.06rem;
       height: 0.2rem;
       margin-left: 0.16rem;
+      margin-right: 0.16rem;
     }
     span {
       font-size: 0.21rem;

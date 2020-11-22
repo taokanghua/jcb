@@ -1,36 +1,55 @@
 <template>
   <div class="feedback-wrap column">
     <span class="title">问题内容描述</span>
-    <textarea name="" id="" cols="30" rows="10"></textarea>
+    <textarea name="" id="" cols="30" rows="10" v-model="content"></textarea>
     
     <span class="title">上传图片</span>
     <div class="img-wrap row">
-      <Uploader :after-read="afterRead" multiple></Uploader>
-      <!-- <div class="choose-box row jc ac"> <i class="iconfont icontianjia"></i></div> -->
-      <div style="position:relative" v-for="item in 6" :key="item">
-        <img src="https://img.yzcdn.cn/vant/sand.jpg" alt="">
-        <div class="close row ac jc"><i class="iconfont iconguanbi"></i></div>
+      <div style="position:relative" v-for="(item,i) in imgs" :key="item">
+        <img :src="item" alt="">
+        <div class="close row ac jc" @click="remove(i)"><i class="iconfont iconguanbi"></i></div>
       </div>
+      <Uploader :after-read="afterRead" :show-upload="upbtn"></Uploader>
     </div>
 
     <span class="title">联系电话</span>
-    <input type="phone" placeholder="请输入联系电话" class="contact">
+    <input type="phone" placeholder="请输入联系电话" class="contact" v-model="phone">
 
-    <div class="submit-btn row ac jc">提交</div>
+    <div class="submit-btn row ac jc" @click="submit">提交</div>
   </div>
 </template>
 
 <script>
 import { Uploader } from 'vant';
+import homeApi from '../../api/home'
 export default {
   data(){
     return{
-      // fileList:[{url:'https://img.yzcdn.cn/vant/leaf.jpg'}]
+      upbtn:true,
+      imgs:[],
+      content:'',
+      phone:'',
     }
   },
   methods:{
-    afterRead(file){
-      console.log(file)
+    async afterRead(file){
+      let formData = new FormData()
+      formData.append('file', file.file)
+      let res = await homeApi.upload(formData)
+      if(!res.success) return this.showToast('图片上传失败！')
+      this.imgs.push(res.message)
+    },
+    remove(i){
+      this.imgs.splice(i, 1)
+    },
+    submit(){
+      //提交
+      
+    }
+  },
+  watch:{
+    imgs(n){
+      n.length>=6?this.upbtn=false:this.upbtn=true
     }
   },
   components:{

@@ -11,17 +11,19 @@
           <!-- <i class="iconfont "></i> -->
         </div>
         <!-- 卡片 -->
-        <div class="goods-card row ac sb" v-for="(item,i) in info.productVoList" :key="item.cartId">
+        <div class="goods-card row ac sb" :style="{opacity:item.state!=1?'0.4':''}" v-for="(item,i) in info.productVoList" :key="item.cartId">
           <radio-one v-model="checkList[i]" @click.native="selectOne(i)"></radio-one>
           <img :src="item.pic" alt="">
           <div class="info column sb">
             <div class="name e2">{{item.productName}}</div>
-            <span class="spec e2">{{item.prop}}</span>
+            <span class="spec e2">{{item.prop}}--{{i}}</span>
             <div class="row sb">
               <span class="price">￥{{item.price||0}}</span>
               <InputNumer v-model="list[i].count" @change="changeNum(i, item.cartId)"></InputNumer>
             </div>
           </div>
+          <!-- //商品无效时候展示  z主要阻止用户点击其他-->
+          <div class="enable-box" v-if="item.state!=1"></div>
         </div>
       </div>
 </template>
@@ -36,7 +38,7 @@ export default {
       checkAll:false,
       num:1,
       checkList:[], //选中数组
-      child:0,
+      child:0,//该店下商品总数
       list:[], //存储对象 给数量绑定用
       selectedObj:{}, //发送给父的对象
     }
@@ -44,15 +46,16 @@ export default {
   props:['info'],
   methods:{
    chooseAll(){ //选中所有
-      // console.log(this.checkAll)
+      // console.log(this.info.storeName)
 
       for(let i=0;i<this.child;i++){
+          if(this.list[i].state!=1) continue
           this.checkList[i] = this.checkAll
       }
       this.$forceUpdate()
       if(this.checkAll){
         // this.selectedObj.productVoList = JSON.parse(JSON.stringify(this.info.productVoList))
-        this.selectedObj.productVoList = this.list
+        this.selectedObj.productVoList = JSON.parse(JSON.stringify(this.list.filter(v=>v.state==1)))
       }else{
         this.selectedObj.productVoList = []
       }
@@ -69,13 +72,15 @@ export default {
       let index = this.selectedObj.productVoList.findIndex(v=>v.cartId==obj.cartId)
       this.selectedObj.productVoList.splice(index, 1)
      }
+     //判断是否选中了所有的
+     this.selectedObj.productVoList.length == this.child? this.checkAll=true:this.checkAll=false
      this.$emit('getData', this.selectedObj)
    },
    changeNum(i, id){
      //如果没选中 就不触发
-     let res = this.selectedObj.productVoList.some(v=>v.cartId==id)
-     //console.log(res)
-     if(!res) return
+     let res = this.selectedObj.productVoList.findIndex(v=>v.cartId==id)
+     if(res==-1) return
+     this.selectedObj.productVoList[res].count = this.list[i].count
      this.$emit('getData', this.selectedObj)
    }
   },
@@ -83,9 +88,10 @@ export default {
 
   },
   created(){
-      this.list = this.info.productVoList
-     this.child = this.info.productVoList.length
+     this.list = this.info.productVoList
+     this.child = this.info.productVoList.filter(v=>v.state==1).length
      for(let i=0;i<this.child;i++){
+       if(this.list[i].state!=1) continue
        this.checkList[i] = false
      }
      //
@@ -129,6 +135,7 @@ export default {
     }
     .goods-card{
       margin-top: 0.4rem;
+      position: relative;
       img{
         width: 1.41rem;
 	      height: 1.41rem;
@@ -151,6 +158,13 @@ export default {
           font-size: 0.27rem;
           color: #fc0808;
         }
+      }
+      .enable-box{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
       }
     }
   }

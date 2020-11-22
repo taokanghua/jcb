@@ -7,36 +7,20 @@
     <div class="logo-feild row ac sb">
       <span class="title">店铺LOGO</span>
       <div style="position: relative">
-        <div class="add row ac jc"><i class="iconfont iconjia"></i></div>
+        <div class="add row ac jc">
+          <i class="iconfont iconjia" v-if="!form.storeBase.head"></i>
+          <img :src="form.storeBase.head" v-else alt="">
+        </div>
         <input type="file" class="my-upload" @change="logoUp" />
       </div>
     </div>
     <div class="class-feild row sb ac">
       <span class="title">店铺类型</span>
       <div class="row ac">
-        <!-- <div
-          class="btn row ac jc"
-          :class="{ active: form.storeBase.level == 0 }"
-          @click="form.storeBase.level = 0"
-        >
-          集采店
-        </div>
-        <div
-          class="btn row ac jc"
-          :class="{ active: form.storeBase.level == 1 }"
-          @click="form.storeBase.level = 1"
-        >
-          加盟店
-        </div> -->
         <div class="btn row ac jc" :class="{active:storeTypeIdx==i+1}" v-for="(item,i) in storeType" :key="item.id" @click="storeTypeIdx=i+1">{{item.name}}</div>
       </div>
     </div>
     <div class="desc">
-      <!-- {{
-        form.storeBase.level == 0
-          ? "集采店：980元品牌使用费/年"
-          : "加盟店：9800元品牌使用费（终身免年费）"
-      }} -->
       <span v-show="storeTypeIdx==1">加盟店：{{storeType[storeTypeIdx-1].enterPrice}}元品牌使用费（终身免年费）</span>
       <span v-show="storeTypeIdx==2">集采店：{{storeType[storeTypeIdx-1].enterPrice}}元品牌使用费</span>
     </div>
@@ -93,11 +77,13 @@
     </div>
     <div class="id-card row ac sb">
       <div style="position: relative">
-        <img src="../../assets/img/身份证.png" alt="" />
+        <img src="../../assets/img/身份证.png" alt="" v-if="!form.storeAuth.certificatePics[0]"/>
+        <img :src="form.storeAuth.certificatePics[0]" alt="" v-else>
         <input type="file" class="my-upload" @change="idCardL" />
       </div>
       <div style="position: relative">
-        <img src="../../assets/img/身份证反面.png" alt="" />
+        <img src="../../assets/img/身份证反面.png" alt="" v-if="!form.storeAuth.certificatePics[1]"/>
+        <img :src="form.storeAuth.certificatePics[1]" alt="" v-else>
         <input type="file" class="my-upload" @change="idCardR" />
       </div>
     </div>
@@ -105,13 +91,13 @@
       <span class="title">营业执照</span>
       <div class="up-img row">
         <div class="img-wrap row">
-          <div style="position: relative" v-for="item in 3" :key="item">
-            <img src="https://img.yzcdn.cn/vant/sand.jpg" alt="" />
-            <div class="close row ac jc">
+          <div style="position: relative" v-for="(item,i) in form.storeAuth.businessLicensePic" :key="item">
+            <img :src="item" alt=""/>
+            <div class="close row ac jc" @click="removeImg('business', i)">
               <i class="iconfont iconguanbi"></i>
             </div>
           </div>
-          <Uploader :after-read="afterRead" multiple></Uploader>
+          <Uploader :after-read="afterReadBun" :show-upload="upBtn.bunsiness"></Uploader>
         </div>
       </div>
     </div>
@@ -119,16 +105,15 @@
       <span class="title">门店照片(最多4张)</span>
       <div class="up-img row">
         <div class="img-wrap row">
-          <div style="position: relative" v-for="item in 3" :key="item">
-            <img src="https://img.yzcdn.cn/vant/sand.jpg" alt="" />
-            <div class="close row ac jc">
+          <div style="position: relative" v-for="(item,i) in form.storeAuth.detailsPic" :key="item">
+            <img :src="item" alt="" />
+            <div class="close row ac jc" @click="removeImg('store', i)">
               <i class="iconfont iconguanbi"></i>
             </div>
           </div>
           <Uploader
             :after-read="afterRead"
-            multiple
-            :show-upload="true"
+            :show-upload="upBtn.store"
           ></Uploader>
         </div>
       </div>
@@ -183,6 +168,7 @@
 
 <script>
 import api from "../../api/home";
+import {mapState} from 'vuex'
 import { Uploader, Popup, Area as vanArea } from "vant";
 //import areajs from '../../assets/area'
 export default {
@@ -211,25 +197,48 @@ export default {
         storeAuth: {
           address: "", //营业制造 s
           asLegalPerson: "", //法人姓名
-          businessLicensePic: "", // 营业执照
+          businessLicensePic: [], // 营业执照 ----> 要求字符串
           certificateNo: "", // 法人身份证号
-          detailsPic: "", //门店详情图,
+          detailsPic: [], //门店详情图, ----> 要求字符串
+          certificatePics:[],//身份证照片 ----> 要求字符串
         },
         storeBase: {
           head: "", // logo
           introduce: "", //简洁
           name: "", //点名
           phone: "",
-          level: 0, //0 集采 1加盟
-          memberId:'1308242941815496705'
+          //level: 0, //0 集采 1加盟
+          memberId:''
         },
         // joinType:0, //0 集采  1 加盟
         // agree:false, //同意协议
       },
       parentId: null,
+      //上传图片按钮控制:
+      upBtn:{
+        bunsiness:true,
+        store:true
+      }
     };
   },
   methods: {
+    //处理图片公共方法
+    async formateImg(file){
+      let formData = new FormData()
+      formData.append('file',file)
+      let res = await api.upload(formData)
+      if(!res.success) return this.showToast('图片上传失败!')
+      return res.message
+    },
+    //检验输入合法性
+    valid(){
+      this.form.storeBase.memberId = this.memberId
+      // let list = this.form.map(v=>Object.values(v))
+      let list = []
+      Object.values(this.form).map(v=>{list.push(...Object.values(v))})
+      console.log(list)
+      return list.some(v=>!v) //true 表示不合格
+    },
     async getStore(){
       let res = await api.getStoreType()
       if(!res.success)return this.showToast(res.message)
@@ -280,25 +289,57 @@ export default {
       this.form.storeAddress.districtCode = objs[2].code;
       this.isPop = false;
     },
-    logoUp(file) {
-      console.log(file.target.files[0]);
+    async logoUp(files) {//店铺图标上传
+      let file = files.target.files[0]
+      let url =await this.formateImg(file)
+      this.form.storeBase.head = url
     },
-    afterRead(file) {
-      console.log(file);
+    async afterReadBun(file) {//营业执照上传
+      let url =await this.formateImg(file.file)
+      if(!url) return
+      this.form.storeAuth.businessLicensePic.push(url)
     },
-    idCardL(file) {
+    async afterRead(file){
+      let url =await this.formateImg(file.file)
+      if(!url) return
+      this.form.storeAuth.detailsPic.push(url)
+    },
+    removeImg(type, index){//删除上传图片
+      if(type=='business'){
+        this.form.storeAuth.businessLicensePic.splice(index, 1)
+      }else if(type='store'){
+        this.form.storeAuth.detailsPic.splice(index, 1)
+      }
+    },
+    async idCardL(file) {
       //身份证正面
-      console.log(file.target.files[0]);
+      let url = await this.formateImg(file.target.files[0])
+      this.form.storeAuth.certificatePics[0] = url
+      this.$forceUpdate()
     },
-    idCardR(file) {
+    async idCardR(file) {
       //身份证反面
-      console.log(file.target.files[0]);
+      let url =await this.formateImg(file.target.files[0])
+      this.form.storeAuth.certificatePics[1] = url
+      this.$forceUpdate()
     },
     async submitForm() {
-      let res = await api.upgrade(this.form)
-      console.log(res)
+      console.log(this.valid())
+      // let res = await api.upgrade(this.form)
+      // console.log(res)
       //console.log(this.form);
     },
+  },
+  watch:{
+    'form.storeAuth.businessLicensePic'(n){//监听图片 超过4张隐藏上传按钮
+      n.length>=4?this.upBtn.bunsiness = false:this.upBtn.bunsiness=true
+    },
+    'form.storeAuth.detailPic'(n){
+      n.length>=4?this.upBtn.detailsPic = false:this.upBtn.detailsPic=true
+    }
+  },
+  computed:{
+    ...mapState({memberId:state=>state.user.info.memberUserInfoVo.id})
   },
   created() {
     this.getProvice();
@@ -336,10 +377,11 @@ export default {
   .add {
     width: 0.81rem;
     height: 0.81rem;
-    background-color: #dddddd;
     border-radius: 50%;
     color: #ffffff;
+    background-color: #dddddd;
   }
+
 }
 .class-feild {
   margin-top: 0.45rem;

@@ -255,7 +255,7 @@
           <img :src="sku_obj.preview" alt="">
           <div class="column sb">
             <div class="row price-wrap">
-              <span class="symbol">￥</span><span class="price">{{sku_obj.price}}</span>
+              <span class="symbol">￥</span><span class="price">{{sku_obj.paymentPrice}}</span>
             </div>
             <span class="stock">库存：{{sku_obj.stock}}</span>
             <span class="select-params" v-show="sku_list.length>0">已选：{{sku_selected}}</span>
@@ -286,7 +286,8 @@
         <div class="confirm-btn row ac jc" @click="buyNow" v-if="pop_type=='buy'">确定</div>
       </div>
     </action-sheet>
-
+    <!-- 加载动画 -->
+    <loading ref="loading"></loading>
   </div>
 </template>
 
@@ -298,6 +299,7 @@ import hotRecomCard from '../../components/common/card/hot-recom-card'
 import homeGoodCard from '../../components/common/card/home-good-card'
 import inputNumber from '../../components/common/my/input-number'
 import evaluateCard from '../../components/common/card/evaluate-card'
+import loading from '../../components/common/my/loading'
 export default {
  data(){
    return{
@@ -342,6 +344,7 @@ export default {
      } catch (error) {
        this.showToast('获取商品详情失败', 2500)
      }
+     this.$refs.loading.hide()
    },
    async getRecomList(){ //获取推荐商品  暂时设定只加载30个
       let res = await api.getGoodsList({pageSize:30,pageNo:1, type:2})
@@ -416,10 +419,11 @@ export default {
       return
     }
      let data = {
+       
        productList: [
           {
             productId: this.$route.query.id,
-            productNumber: 1,
+            productNumber: this.num,
             productPrice: this.sku_obj.price,
             productSkuId: this.sku_obj.id,
             shelveId:this.pageInfo.shelveId,
@@ -430,13 +434,12 @@ export default {
         sourceType:1,
         sourceId:this.$store.state.user.info.memberUserInfoVo.id
      }
-     let res = await api.createOrder(data)
+     let res = await api.createOrder([data])
      if(res.success){
        this.$router.push({name:'confirmorder', query:{orderId:res.result}})
      }else{
        this.showToast(res.message)
      }
-     //console.log(res)
    },
    valid(){ //验证是否选择完
     let length = this.pageInfo.propertyBoots.length
@@ -452,6 +455,10 @@ export default {
  created(){
    this.getDetail()
    this.getRecomList()
+
+   this.$nextTick(()=>{
+     this.$refs.loading.load()
+   })
  },
  components:{
    Swipe,
@@ -460,7 +467,8 @@ export default {
    hotRecomCard,
    homeGoodCard,
    inputNumber,
-   evaluateCard
+   evaluateCard,
+   loading
  }
 }
 </script>

@@ -8,6 +8,7 @@ export default {
     setDefault: data => req.put('member/address/defaultUse', data),
     getOneAddress: id => req.get('member/address/' + id),
     editAddress: data => req.put('member/address/' + data.id, data),
-    deleteAddress: params => req.delete('member/address/deleteBatch', {params})
+    deleteAddress: params => req.delete('member/address/deleteBatch', { params }),
+    getCollectList: data => req.post('memberSubApi/listCollectCommodity', data)
         //getOrderList:()=>req.get('')
 }

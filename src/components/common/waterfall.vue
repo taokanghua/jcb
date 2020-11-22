@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ height: height, overflow: 'scroll' }" @scroll="handleScroll">
+  <div :style="{ maxHeight: height, overflow: 'scroll' }" @scroll="handleScroll">
     <div>
       <slot />
       <div class="tips" v-show="err">{{ err }}</div>

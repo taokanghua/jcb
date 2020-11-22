@@ -27,6 +27,7 @@
 
       <!-- 没啥可修改的 就不要了 -->
       <!-- <div class="save-btn row ac jc">保存</div> -->
+      <div class="save-btn row ac jc login-out" @click="loginOut">退出登录</div>
       <div class="save-btn row ac jc" @click="$router.go(-1)">返回</div>
 
       <!-- 时间pop -->
@@ -45,6 +46,7 @@
 
 <script>
 import { Popup, DatetimePicker } from 'vant'
+import tokenHolder from '../../utils/tokenHolder'
 export default {
   data(){
     return{
@@ -67,6 +69,11 @@ export default {
       let day = d.getDate()
       this.birthday = `${year}-${month.toString().padStart(2,0)}-${day.toString().padStart(2,0)}`
       this.isPop= false
+    },
+    loginOut(){
+      tokenHolder.remove()
+      this.$store.state.user.info = {}
+      this.$router.push({path:'/mine'})
     }
   },
 
@@ -136,9 +143,16 @@ export default {
   border-radius: 0.28rem;
   position: absolute;
   left: 50%;
-  bottom: 0.7rem;
+  bottom: 2.2rem;
   transform: translateX(-50%);
   font-size: 0.21rem;
   color: #ffffff;
+}
+.login-out{
+  bottom: 1.5rem;
+  background-color: #f6f6f6;
+  // border: 0.02rem solid #dddddd;
+  box-sizing: border-box;
+  color: #a8a8a8;
 }
 </style>

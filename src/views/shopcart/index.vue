@@ -70,6 +70,7 @@ export default {
         empty:false,
         isSelectAll:false,
         shopcartList:[], //购物车列表
+        totalNum:1, //总商品数 判断是否全选
         quantity:0,//选中数量
         totalPirce:0,//总价
         refs:[], //全选用的
@@ -90,13 +91,18 @@ export default {
         //给每一个卡片一个ref值
         this.refs.push(...this.shopcartList.map(v=>v.storeId))
         if(res.result.length==0) this.empty = true
+        //获取购物车总商品数(仅有效商品)
+        let s = []
+        this.shopcartList.map(v=>s.push(...v.productVoList.filter(s=>s.state==1)))
+        this.totalNum = s.length
       },
       selectAll(){ //全选商品
         this.refs.forEach(v=>{
+          //console.log('index -> '+this.isSelectAll)
           this.$refs[v][0].checkAll = this.isSelectAll
           this.$refs[v][0].chooseAll()
         })
-        //console.log(this.isSelectAll)
+        //console.log(this.$refs)
       },
       //推荐商品
       handleFetchResult(result) {
@@ -113,10 +119,12 @@ export default {
         //计算总数量
         let num = this.chooseData.map(v=>v.productVoList.length)
         this.quantity = num.reduce((pre, cur)=> pre+cur)
+        //判断是否全选了商品
+        //this.totalNum == this.quantity? this.isSelectAll=true:this.isSelectAll=false
         //计算总价格
         let list = []
         this.chooseData.map(v=>list.push(...v.productVoList))
-        this.totalPirce = list.reduce((pre, cur)=>{return cur.price*cur.count + pre}, 0)
+        this.totalPirce = list.reduce((pre, cur)=>cur.price*cur.count + pre, 0)
       },
       async delShopcartGoods(){
         let list = []
@@ -155,8 +163,18 @@ export default {
           return wrap
         })
         let res = await homeApi.createOrder(result)
-        console.log(res)
+        if(!res.success) return this.showToast(res.message)
+        this.$router.push({path:'/confirmorder?orderId='+res.result})
         // console.log(result)
+      }
+    },
+    watch:{
+      quantity(n){
+        if(n==this.totalNum){
+          this.isSelectAll = true
+        }else{
+          this.isSelectAll = false
+        }
       }
     },
     created(){

@@ -233,8 +233,8 @@ export default {
       //点击筛选后返回的
       // console.log(value, price)
       this.goodsList=[]
-      this.goodsParams.type = value[0]
-      this.goodsParams.brandId = value[1].id
+      this.goodsParams.type = value[0]||null
+      this.goodsParams.brandId = value[1].id||null
       this.goodsParams.startPrice = price.start
       this.goodsParams.endPrice = price.end
       this.$refs.waterFall.refresh()

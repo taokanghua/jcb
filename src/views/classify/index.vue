@@ -349,7 +349,7 @@ export default {
   }
   .left-menu {
     //flex: 1;
-    // width: 1.81rem;
+    width: 1.81rem;
     //width: 100%;
     height: 9.4rem;
     padding-bottom: 0.4rem;

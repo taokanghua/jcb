@@ -35,7 +35,7 @@
     </div>
 
     
-    <div class="login-btn row ac jc" @click="clear">clear token</div>
+    <!-- <div class="login-btn row ac jc" @click="clear">clear token</div> -->
     <div class="login-btn row ac jc" @click="loginIn">登录</div>
     <div class="footer-text">
       还没有账号?<router-link tag="span" :to="{name:'register'}">立即注册</router-link>
@@ -67,7 +67,7 @@ export default {
       tokenHolder.remove()
       this.showToast('清除token成功！🎉')
     },
-    getMessage(){
+    async getMessage(){
       if(this.timer) return
       //发送请求
       // console.log('send msg')
@@ -88,7 +88,10 @@ export default {
             phone: this.phone,
             service:1 //1登录 2注册 3找回
           }
-          api.getMsgCode(params)
+          let res = await api.getMsgCode(params)
+          if(!res.success){
+            this.showToast(res.message)
+          }
     },
     forget(){ //忘记密码
       this.$router.push({name:'forget', query:{phone:this.phone}})

@@ -6,34 +6,59 @@
     </div>
 
     <div class="goods-wrap row sb" style="flex-wrap:wrap" v-show="tabIdx==0">
-      <home-good-card v-for="item in 5" :key="item"></home-good-card>
+      <home-good-card v-for="(item,i) in list" :key="i" :info="item"></home-good-card>
     </div>
 
     <!-- 店铺 -->
     <div class="shop-wrap" v-show="tabIdx==1">
-      <hot-recom-card v-for="item in 3" :key="item"></hot-recom-card>
+      <hot-recom-card v-for="item in list" :key="item.storeId" :info="item"></hot-recom-card>
     </div>
+    <empty image="error" description="暂无收藏" v-show="list.length==0"></empty>
 
   </div>
 </template>
 
 <script>
+import {Empty} from 'vant'
+import api from '../../api/user'
 import homeGoodCard from '../../components/common/card/home-good-card'
 import hotRecomCard from '../../components/common/card/hot-recom-card'
 export default {
   data(){
     return{
-      tabIdx:0
+      tabIdx:0,
+      list:[]
     }
   },
-  methods:{},
+  methods:{
+    async getCollectList(){
+      let params = {
+        pageNo: 1,
+        pageSize: 1000,
+        type: parseInt(this.tabIdx)+1,
+        userLat: 0,
+        userLng: 0
+      }
+      let res = await api.getCollectList(params)
+      // console.log(res)
+      this.list = res.result.lists
+    }
+  },
   components:{
     homeGoodCard,
-    hotRecomCard
+    hotRecomCard,
+    Empty
+  },
+  watch:{
+    tabIdx(n){
+      this.getCollectList()
+    }
   },
   created(){
     let {type} = this.$route.query
     this.tabIdx = type
+
+    this.getCollectList()
   }
 }
 </script>

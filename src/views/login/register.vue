@@ -40,7 +40,7 @@ export default {
     };
   },
   methods: {
-    getMessage() {
+    async getMessage() {
       if (this.timer) return;
       //发送请求
       // console.log('send msg')
@@ -60,7 +60,10 @@ export default {
             phone: this.phone,
             service:2 //1登录 2注册 3找回
       }
-      api.getMsgCode(params)
+      let res = await api.getMsgCode(params)
+      if(!res.success){
+        this.showToast(res.message)
+      }
     },
     async register() {
       let params ={

@@ -1,6 +1,6 @@
 <template>
   <div class="confirm-order">
-    <!-- 心动我做得这么好的tabbar栏 改啥改  :( -->
+    <!-- 心疼我做得这么好的tabbar栏 改啥改  :( -->
     <div class="deliver">
           <!-- 无地址情况 -->
       <router-link to="/editaddress" tag="div" class="no-address row ac jc" v-if="noAddress">+添加地址</router-link>
@@ -125,7 +125,13 @@
       </div>
     </div> -->
 
-    <chooseMethCard v-for="item in orderInfo" :key="item.id" :info="item"></chooseMethCard>
+    <chooseMethCard 
+      v-for="item in orderInfo" 
+      :key="item.id" 
+      :dateList="dateList"
+      :address="address"
+      @getData="getData"
+      :info="item"></chooseMethCard>
 
     <div class="alone-feild row sb ac">
       <span class="title">优惠</span>
@@ -145,9 +151,10 @@
         <span class="word">合计:</span>
         <span class="money">￥316.8</span>
       </div>
-      <div class="buy-btn row ac jc">立即购买</div>
+      <div class="buy-btn row ac jc" @click="pay">立即购买</div>
     </div>
-
+  <!-- 加载动画 -->
+    <loading ref="loading">加载订单中...</loading>
   </div>
 </template>
 
@@ -158,11 +165,13 @@ import {ActionSheet} from 'vant'
 import {mapState} from 'vuex'
 import inputNumber from '../../components/common/my/input-number'
 import chooseMethCard from '../../components/common/card/order-goods-card'
+import loading from '../../components/common/my/loading'
+const defoAddr={addressName:''}
 export default {
   data(){
     return{
       noAddress:true,
-      address:{},
+      address:defoAddr,
       orderInfo:[],//订单数据
       // wayIdx:1, 
       //agreement: false, //同意协议
@@ -175,6 +184,7 @@ export default {
       let res = await api.getOrder({mergeOrderCode})
       if(!res.success) return this.showToast('获取订单失败！', 2000)
       this.orderInfo = res.result
+      this.$refs.loading.hide()
     },
     getMonthDay(){
       // let date = new Date()
@@ -205,7 +215,7 @@ export default {
       if(!res.success) return this.showToast('获取地址失败！')
       //res.result.total = 0
       res.result.total>0?this.noAddress = false:''
-      this.address = res.result.records.find(v=>v.defaultUse==1)
+      this.address = res.result.records.find(v=>v.defaultUse==1)||defoAddr
     },
     //根据id查地址（用户选择地址后）
     async getAddress(){
@@ -217,6 +227,33 @@ export default {
       }else{
         this.showToast(res.message)
       }
+    },
+    async pay(){
+      let data = {
+        "orderList": [
+          {
+            "orderId": "string",
+            "productList": [
+              {
+                "productId": "string",
+                "productNumber": 0,
+                "productPrice": 0,
+                "productSkuId": "string",
+                "note": "string",
+              }
+            ],
+            "receiveAddressId": "string"
+          }
+        ],
+        "paymentMethods": 0,
+        "receiveAddressId": "string"
+      }
+      // let res = await api.payment(data)
+      // console.log(res)
+    },
+    //获取商品卡片的值
+    getData(obj){
+      console.log(obj)
     }
   },
   computed:{
@@ -231,11 +268,16 @@ export default {
     //判断url 来决定调用什么方式来获取地址
     let {address} = this.$route.query||''
     address?this.getAddress():this.getAddressList();
+    //加载动画
+    this.$nextTick(()=>{
+      this.$refs.loading.load()
+    })
   },
   components:{
     ActionSheet,
     inputNumber,
-    chooseMethCard
+    chooseMethCard,
+    loading
   }
 }
 </script>
