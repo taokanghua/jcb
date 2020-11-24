@@ -41,7 +41,10 @@ export default {
       }
       let res = await api.getCollectList(params)
       // console.log(res)
-      this.list = res.result.lists
+      this.list = res.result.lists.map(v=>{
+        v.productId = v.commodityId
+        return v
+      })
     }
   },
   components:{

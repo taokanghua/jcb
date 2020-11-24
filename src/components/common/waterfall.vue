@@ -1,5 +1,5 @@
 <template>
-  <div :style="{ maxHeight: height, overflow: 'scroll' }" @scroll="handleScroll">
+  <div :style="{ height: height, overflow: 'auto' }" @scroll="handleScroll">
     <div>
       <slot />
       <div class="tips" v-show="err">{{ err }}</div>
@@ -48,7 +48,9 @@ export default {
   methods: {
     handleScroll(e) {
       let el = e.target;
-      if (el.scrollTop + el.clientHeight < el.scrollHeight) return;
+      let { scrollTop, clientHeight, scrollHeight } = el;
+      let dis = scrollHeight - (scrollTop + clientHeight);
+      if (dis < 50) return;
       this.tryFetch();
     },
 

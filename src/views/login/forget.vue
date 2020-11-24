@@ -33,7 +33,7 @@ export default {
     };
   },
   methods:{
-     getMessage(){
+     async getMessage(){
       if(this.timer) return
       //发送请求
       // console.log('send msg')
@@ -50,11 +50,12 @@ export default {
       }, 1000)
 
       let params ={
-            openId:this.$store.state.openid,
+            openId: sessionStorage.getItem('openid')||'',
             phone: this.phone,
             service:3 //1登录 2注册 3找回
           }
-      api.getMsgCode(params)
+      let res = await api.getMsgCode(params)
+      if(!res.success) return this.showToast(res.message)
     },
     async nextStep(){
       // 下一步

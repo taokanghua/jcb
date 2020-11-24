@@ -13,6 +13,7 @@
       :key="item.storeId" 
       :info="item"
       :ref="refs[i]" 
+      @updateList="updateShopList"
       @getData="getData"></shop-card>
 
       <!-- 推荐产品 -->
@@ -96,6 +97,10 @@ export default {
         this.shopcartList.map(v=>s.push(...v.productVoList.filter(s=>s.state==1)))
         this.totalNum = s.length
       },
+      updateShopList(status){
+        if(!status) return
+        this.getShopcartList()
+      },
       selectAll(){ //全选商品
         this.refs.forEach(v=>{
           //console.log('index -> '+this.isSelectAll)
@@ -151,9 +156,9 @@ export default {
           let foo = v.map(o=>{ //[obj,obj]
             let obj = {}
             obj.productId = o.productId
-            obj.productNumber = o.count
-            obj.productPrice = o.price
-            obj.productSkuId = o.skuId
+            obj.number = o.count
+            obj.skuPrice = o.price
+            obj.skuId = o.skuId
             obj.shelveId = this.chooseData[i].upBy
             obj.templateId = o.templateId
             return obj

@@ -18,7 +18,7 @@ export default {
     // this.fetchUser().then((isOk) => {
     //   if (!isOk) return;
     //   this.isReady=true
-    //   initWxConfig();
+      // initWxConfig();
     //   iosPositionIssue();
     // });
   },

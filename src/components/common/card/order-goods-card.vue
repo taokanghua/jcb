@@ -17,7 +17,7 @@
         </div>
       </div>
       <!-- x_x -->
-      <div class="selftake-wrap row" v-show="form.deliverWayIdx==2">
+      <div class="selftake-wrap row" v-show="form.deliverWayIdx==1">
           <div class="info column sb">
             <span class="take-info">取货信息</span>
             <div class="shop-address">
@@ -27,7 +27,7 @@
             <div class="user-select row">
               <div class="take-time column sb" @click="pops.takeTime=true">
                 <span class="title">自提时间</span>
-                <div class="row">{{dateList[dayIdx].month+'-'+dateList[dayIdx].day}} 18:00 <i class="iconfont iconARROW"></i></div>
+                <div class="row">{{dateList[dayIdx].month+'-'+dateList[dayIdx].day}} {{time_options[timeIdx]}} <i class="iconfont iconARROW"></i></div>
               </div>
               <div class="phone column sb" @click="editHandle">
                 <span class="title">联系电话</span>
@@ -48,7 +48,7 @@
         <span class="right row ac">-￥10.00 <i class="iconfont iconARROW"></i></span>
       </div> -->
       <div class="order-field row sb ac" @click="pops.way=true">
-        <span class="left">配送方式 <span class="desc">{{['快递配送','物流到付','自提'][form.deliverWayIdx]}}</span> </span>
+        <span class="left">配送方式 <span class="desc">{{[0,'自提','快递配送','物流到付'][form.deliverWayIdx]}}</span> </span>
         <span class="right row ac"><span v-show="form.deliverWayIdx==0">￥10.00</span> <i class="iconfont iconARROW"></i></span>
       </div>
       <!-- <div class="order-field row sb ac">
@@ -65,7 +65,7 @@
       </div> -->
       <div class="order-field row sb ac">
         <span class="left">备注</span>
-        <input type="text" placeholder="请输入您备注信息" v-model="form.message">
+        <input type="text" placeholder="请输入您备注信息" v-model="form.message" @blur="blurNote">
       </div>
 
       <!-- 又是一堆弹框 x_x -->
@@ -83,38 +83,42 @@
         </div>
         </div>
         <div class="time">
-          <div class="row sb ac active-time" style="height:0.68rem">
-            <span>12:00</span>
-            <i class="iconfont iconxuanzhong2"></i>
+          <div 
+          class="row sb ac" 
+          style="height:0.68rem" 
+          :class="{'active-time':timeIdx==i}"
+          v-for="(item,i) in time_options" :key="item" @click="timeIdx=i">
+            <span>{{item}}</span>
+            <i class="iconfont iconxuanzhong2" v-show="timeIdx==i"></i>
           </div>
-          <div class="row sb ac" style="height:0.68rem">
+          <!-- <div class="row sb ac" style="height:0.68rem">
             <span>12:30</span>
             <i class="iconfont iconxuanzhong2"></i>
-          </div>
+          </div> -->
         </div>
       </div>
     </action-sheet>
 
     <action-sheet v-model="pops.way" title="配送方式">
       <div class="way-content">
-        <div class="way-feild row ac sb" @click="form.deliverWayIdx=0;pops.way=false">
+        <!-- <div class="way-feild row ac sb" @click="form.deliverWayIdx=0;pops.way=false">
           <span class="title">快递配送</span>
           <div class="row ac">
             <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==0"></i>
             <i class="iconfont iconradiobuttonunselect" v-else></i>
           </div>
-        </div>
-        <div class="way-feild row ac sb" @click="form.deliverWayIdx=1;pops.way=false">
+        </div> -->
+        <div class="way-feild row ac sb" @click="form.deliverWayIdx=3;pops.way=false">
           <span class="title">物流到付</span>
           <div class="row ac">
-            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==1"></i>
+            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==3"></i>
             <i class="iconfont iconradiobuttonunselect" v-else></i>
           </div>
         </div>
-        <div class="way-feild row ac sb" @click="form.deliverWayIdx=2;pops.way=false">
+        <div class="way-feild row ac sb" @click="form.deliverWayIdx=1;pops.way=false">
           <span class="title">自提</span>
           <div class="row ac">
-            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==2"></i>
+            <i class="iconfont iconxuanzhong" v-if="form.deliverWayIdx==1"></i>
             <i class="iconfont iconradiobuttonunselect" v-else></i>
           </div>
         </div>
@@ -173,10 +177,11 @@ import inputNumber from '../my/input-number'
 export default {
   data(){
     return{
+      time_options:[],
       form:{
         platformIdx:-1, //平台优惠券索引
         shopIdx:-1, //店铺优惠券索引
-        deliverWayIdx:0, //配送方式 3种
+        deliverWayIdx:3, //配送方式 3种
         num:1,
         insurance: false, //运费险
         message:''
@@ -189,6 +194,7 @@ export default {
       },
       editPhone:false, //编辑手机号
       dayIdx:0, //选中的日期索引
+      timeIdx:0,
       packObj:{}, //发给父的对象
       deliveryPrice:0, //运费
       
@@ -218,7 +224,15 @@ export default {
       this.editPhone = true
     },
     checkPhone(e){
+      let phone = /^1[0-9]{10}$/.test(this.info.createByName)
+      if(!phone) return this.showToast('手机号无效！')
       this.editPhone = false
+      this.calcPacking()
+      //this.$emit('getData', this.packObj)
+    },
+    blurNote(){
+      this.packObj.note = this.form.message
+      this.$emit('getData', this.packObj)
     },
     //下两个暂时无用
     platformHandle(i){
@@ -237,13 +251,28 @@ export default {
       }
       this.form.shopIdx = i
     },
+    calcTime(){
+      // let openHours = '2020-11-22 08:30:00'
+      // let closeHours = '2020-11-22 18:30:00'
+      let {openHours, closeHours} = this.info.getApiVo
+      let [min, max] = [openHours, closeHours].map(v => new Date(v) * 1)
+      const halfHours = 30 * 60 * 1000
+      let cur = min;
+      let arr = [];
+      while (cur <= max) {
+          arr.push(cur)
+          cur += halfHours
+      }
+      this.time_options = arr.map(s => new Date(s).toTimeString().substr(0, 5))
+    },
     //商品数量变化时候
     changeHandle(obj){
       // console.log(obj.number)
+      //this.getDeliverPrice()
       this.calcPacking()
     },
     //获取快递价格
-    async getDeliverPrice(){
+    async getDeliverPrice(){ //暂时砍掉
       let list = this.info.productList.map((v,i)=>{
         let obj = {}
         obj.orderProductId = v.orderProductId
@@ -259,35 +288,59 @@ export default {
           receiveAddressId: this.address.id
       }
       let res = await api.getDeliveryPrice(data)
-      console.log(res)
-      //假设运费 11块
-      this.deliveryPrice = 11
-      this.calcPacking()
+      this.deliveryPrice = res.result
+      //this.calcPacking()
     },
     //计算并处理对象方法
     calcPacking(){
-      let way = {0:2, 1:'3', 2:'1'}
-      this.packObj.freightAmount = this.deliveryPrice
+      let d = new Date()
+      let year = d.getFullYear()
+      let o = this.dateList[this.dayIdx]
+      let selfTakeTime = `${year}-${o.month}-${o.day} ${this.time_options[this.timeIdx]}:00`
+      let list = this.info.productList.map(v=>{
+        return {
+          number: v.number,
+          orderProductId: v.orderProductId,
+          skuId: v.skuId,
+          skuPrice: v.skuPrice,
+        }
+      })
+      this.packObj.id = this.info.id
+      this.packObj.freightAmount = 0
       this.packObj.note = this.form.message
-      this.packObj.orderId = this.form.orderCode
-      this.packObj.productList = []
-      this.packObj.selfCarry= way[this.form.deliverWayIdx]
+      this.packObj.orderId = this.info.id
+      this.packObj.productList = list
+      this.packObj.selfCarry= this.form.deliverWayIdx
       this.packObj.selfPhone = this.info.createByName
-      this.packObj.selfTime = ''
+      this.packObj.selfTime = selfTakeTime
       let total = this.info.productList.reduce((pre,cur)=>cur.number*cur.skuPrice+pre,0)
-      //这里暂时没做判断 
-      this.packObj.total = total + this.deliveryPrice
-
+      //这里暂时没做判断 这里预留为后面扩展优惠券计算价格
+      // this.packObj.total = total + this.deliveryPrice
+      if(this.deliverWayIdx==0){
+        //快递配送
+        this.packObj.total = total + this.deliveryPrice
+      }else{
+        this.packObj.total = total
+      }
+      //console.log(this.packObj)
       this.$emit('getData', this.packObj)
     }
   },
   watch:{
     address:{
       handler(n){
-        this.getDeliverPrice()
+        //this.getDeliverPrice()
         //console.log('address')
       },
       immediate:true,//为啥不加这个就监听不到 屮
+    },
+    'pops.takeTime'(n){
+      if(!n){ //自提时间 
+        this.calcPacking()
+      }
+    },
+    'form.deliverWayIdx'(n){
+      this.calcPacking()
     }
   },
   created(){
@@ -295,7 +348,9 @@ export default {
     // console.log(this.address)
     //获取收货地址 --> 请求获取价格 --> 发送对象到父组件 计算价格
     // this.getDeliverPrice()
-    this.packObj = JSON.parse(JSON.stringify(this.info))
+   this.calcTime()
+    // this.packObj = JSON.parse(JSON.stringify(this.info))
+   this.calcPacking()
   },
   components:{
     ActionSheet,

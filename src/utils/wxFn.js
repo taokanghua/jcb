@@ -16,22 +16,23 @@ export const initWxConfig = async function(entity) {
     if (!res.success) return console.error(res.msg)
     wxconfig(res.result, wx)
     wx.ready(function() {
-        // wx.getLocation({
-        //     type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-        //     success: function(res) {
-        //         localStorage.setItem('location', JSON.stringify(res))
-        //         store.commit('home/LOCATION_DATA', res);
-        //         store.dispatch('home/getStore');
-        //     },
-        //     cancel: function(res) {
-        //         console.error('getLocation-cancel', res)
-        //     },
-        //     fail: function(res) {
-        //         localStorage.setItem('location', JSON.stringify({ latitude: 135, longitude: 246 }))
-        //         store.commit('home/LOCATION_DATA', { latitude: 135, longitude: 246 });
-        //         console.error('getLocation-fail', res)
-        //     }
-        // })
+        wx.getLocation({
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+            success: function(res) {
+                localStorage.setItem('location', JSON.stringify(res))
+                // store.commit('home/LOCATION_DATA', res);
+                // store.dispatch('home/getStore');
+                console.log(res)
+            },
+            cancel: function(res) {
+                console.error('getLocation-cancel', res)
+            },
+            fail: function(res) {
+                localStorage.setItem('location', JSON.stringify({ latitude: 135, longitude: 246 }))
+                // store.commit('home/LOCATION_DATA', { latitude: 135, longitude: 246 });
+                // console.error('getLocation-fail', res)
+            }
+        })
         initShareConfig(entity);
     })
 }

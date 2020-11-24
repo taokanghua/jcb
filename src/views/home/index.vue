@@ -22,7 +22,7 @@
       <div class="notify row ac">
         <img src="../../assets/img/金材宝资讯.png" alt="" />
         <!-- <span>{{notice.content}}</span> -->
-        <NoticeBar style="flex:1">{{notice}}</NoticeBar>
+        <NoticeBar style="flex:1" v-if="notice.length>0">{{notice}}</NoticeBar>
       </div>
 
       <div class="menu row sb">
@@ -131,7 +131,7 @@
     <myFooter></myFooter>
     <!-- 红包展示栏 -->
     <overlay :show="isRedpack" class="redpack" @touchmove.native="e=>e.preventDefault()">
-      <img src="../../assets/img/新手红包.png" alt="" @click="takeRedpack">
+      <img src="../../assets/img/redpack.png" alt="" @click="takeRedpack">
       <div class="close row ac jc" @click="isRedpack=false"><i class="iconfont iconguanbi"></i></div>
     </overlay>
   </div>
@@ -255,7 +255,8 @@ export default {
           break
       }
     },
-    getLocal(){
+    async getLocal(){
+      let _this = this
       let mapObj = new AMap.Map('map');
       mapObj.plugin('AMap.Geolocation', function () {
     let geolocation = new AMap.Geolocation({
@@ -274,11 +275,14 @@ export default {
     mapObj.addControl(geolocation);
     geolocation.getCurrentPosition();
     AMap.event.addListener(geolocation, 'complete', function(e){
-      this.mapInfo = e
+      _this.mapInfo = e
+      // _this.$forceUpdate()
+      console.log(e)
     });//返回定位信息
     AMap.event.addListener(geolocation, 'error', function(err){
       console.log('error')
       console.log(err)
+      _this.mapInfo = err
     });      //返回定位出错信息
 });
     }
@@ -291,7 +295,8 @@ export default {
     this.getNote()
     this.getCarousel()
     //保存openid
-    this.$store.state.openid = this.$route.query.openid
+    // this.$store.state.openid = this.$route.query.openid
+    sessionStorage.setItem('openid', this.$route.query.openid)
   },
   mounted(){
     this.getLocal()

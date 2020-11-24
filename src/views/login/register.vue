@@ -15,7 +15,7 @@
       </div>
       <div class="filed bottom-border">
         <span>密码</span>
-        <input type="text" placeholder="请输入密码" v-model="password" />
+        <input type="text" placeholder="请输入密码 (6 - 12 字母、数字)" v-model="password" />
       </div>
     </div>
 
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import {Toast} from 'vant'
 import api from '../../api/login'
 import tokenHolder from '../../utils/tokenHolder';
 export default {
@@ -66,6 +67,10 @@ export default {
       }
     },
     async register() {
+      let isPwd = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/.test(this.password)
+      if(!isPwd) return Toast('密码格式错误!')
+      let r = [this.phone, this.password, this.verifyMsg].some(v=>!v)
+      if(r) return Toast('请按要求填写内容')
       let params ={
         openId: this.$store.state.openid,
         password:this.password,

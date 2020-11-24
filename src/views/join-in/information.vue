@@ -218,7 +218,7 @@ export default {
       upBtn:{
         bunsiness:true,
         store:true
-      }
+      } 
     };
   },
   methods: {

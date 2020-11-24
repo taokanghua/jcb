@@ -11,24 +11,33 @@
           <!-- <i class="iconfont "></i> -->
         </div>
         <!-- 卡片 -->
-        <div class="goods-card row ac sb" :style="{opacity:item.state!=1?'0.4':''}" v-for="(item,i) in info.productVoList" :key="item.cartId">
-          <radio-one v-model="checkList[i]" @click.native="selectOne(i)"></radio-one>
-          <img :src="item.pic" alt="">
-          <div class="info column sb">
-            <div class="name e2">{{item.productName}}</div>
-            <span class="spec e2">{{item.prop}}</span>
-            <div class="row sb">
-              <span class="price">￥{{item.price||0}}</span>
-              <InputNumer v-model="list[i].count" @change="changeNum(i, item.cartId)"></InputNumer>
+        <swipe-cell v-for="(item,i) in info.productVoList" :key="item.cartId">
+          <div class="goods-card row ac sb" :style="{opacity:item.state!=1?'0.4':''}" >
+            <radio-one v-model="checkList[i]" @click.native="selectOne(i)"></radio-one>
+            <img :src="item.pic" alt="">
+            <div class="info column sb">
+              <div class="name e2">{{item.productName}}</div>
+              <span class="spec e2">{{item.prop}}</span>
+              <div class="row sb">
+                <span class="price">￥{{item.price||0}}</span>
+                <InputNumer v-model="list[i].count" @change="changeNum(i, item.cartId)" v-if="item.state==1"></InputNumer>
+              </div>
             </div>
+            <!-- //商品无效时候展示  z主要阻止用户点击其他-->
+            <div class="enable-box" v-if="item.state!=1"></div>
           </div>
-          <!-- //商品无效时候展示  z主要阻止用户点击其他-->
-          <div class="enable-box" v-if="item.state!=1"></div>
-        </div>
+          <template #right>
+            <div class="del-scoll row ac jc" @click="delOne(item)">
+              <span>删除</span>
+            </div>
+          </template>
+        </swipe-cell>
       </div>
 </template>
 
 <script>
+import { SwipeCell } from 'vant';
+import api from '../../../api/shopcart'
 import InputNumer from '../../common/my/input-number'
 import RadioOne from '../../common/my/radio-one'
 export default {
@@ -83,6 +92,12 @@ export default {
      if(res==-1) return
      this.selectedObj.productVoList[res].count = this.list[i].count
      this.$emit('getData', this.selectedObj)
+   },
+   async delOne(obj){
+     //console.log(obj)
+     let res = await api.delGoods({id:[obj.cartId]})
+     if(!res.success) return this.showToast('删除失败!')
+     this.$emit('updateList', true)
    }
   },
   watch:{
@@ -101,7 +116,8 @@ export default {
   },
   components:{
     InputNumer,
-    RadioOne
+    RadioOne,
+    SwipeCell
   }
 }
 </script>
@@ -169,4 +185,13 @@ export default {
       }
     }
   }
+.del-scoll{
+  height: 100%;
+  width: 0.8rem;
+  background-color: #fc0808;
+  span{
+    color:white;
+    font-size:0.24rem;
+  }
+}
 </style>

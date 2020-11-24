@@ -65,7 +65,7 @@ router.beforeEach((to, from, next) => {
     //         clearInterval(scrollToptimer);
     //     }
     // }, 30);
-    let whiteList = ['/home', '/classify', '/search', '/mall', '/store', '/goodsdetail', '/mine', '/register', '/forget', '/setPassword']
+    let whiteList = ['/home', '/classify', '/search', '/mall', '/store', '/goodsdetail', '/mine', '/register', '/forget', '/setPassword', '/introduce', '/brandzone']
     if (to.path == '/login') return next()
     let token = tokenHolder.get() || false
     if (!token) {

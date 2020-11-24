@@ -1,6 +1,6 @@
 <template>
   <div class="shop-card">
-        <router-link to="/store" tag="div" class="shop-header row sb">
+        <router-link :to="'/store?id='+info.storeId" tag="div" class="shop-header row sb">
           <div class="left row">
             <img class="shop-img" :src="info.head" alt="" />
             <div class="info col sb">
@@ -15,10 +15,10 @@
               <div> <i class="iconfont iconstar" v-for="item in Number(info.score)" :key="item"></i> </div>
             </div>
           </div>
-          <router-link :to="'/store?id='+info.storeId" tag="div" class="right">
+          <div class="right">
             <div class="go-shop">进店</div>
             <div class="distance">{{info.displayDistance}}</div>
-          </router-link>
+          </div>
         </router-link>
 
         <div class="shop-goods row sb">
@@ -141,14 +141,18 @@ export default {
       margin-top: 0.25rem;
       flex-wrap: wrap;
       // grid-column: 0.2rem;
+      box-sizing: border-box;
       .goods-item {
+        overflow: hidden;
         width: 1.71rem;
         //height: 100%;
         border-radius: 0.06rem;
         border: solid 0.01rem #c8c8c8;
+        // border: solid 0.02rem red;
         .img-show {
           position: relative;
           img {
+            // width: 1.6rem;
             height: 1.36rem;
           }
           .tag {

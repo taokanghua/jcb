@@ -342,12 +342,12 @@ export default {
         // 给规格展示一个默认值
         this.sku_obj = this.pageInfo.productSkuVos[0]
      } catch (error) {
-       this.showToast('获取商品详情失败', 2500)
+       this.showToast('商品已下架...', 2500)
      }
      this.$refs.loading.hide()
    },
-   async getRecomList(){ //获取推荐商品  暂时设定只加载30个
-      let res = await api.getGoodsList({pageSize:30,pageNo:1, type:2})
+   async getRecomList(){ //获取推荐商品  暂时设定只加载100个
+      let res = await api.getGoodsList({pageSize:100,pageNo:1, type:2})
       this.recomList = res.result.lists
    },
    async collectIt(){
@@ -403,7 +403,8 @@ export default {
       buyStores: this.pageInfo.storeHotProductVo.storeId,
       count: this.num,
       productId: this.$route.query.id,
-      skuId: this.sku_obj.id
+      skuId: this.sku_obj.id,
+      type:1
     }
     let res = await storeApi.addShopcart(data)
     if(res.success){
@@ -426,9 +427,9 @@ export default {
        productList: [
           {
             productId: this.$route.query.id,
-            productNumber: this.num,
-            productPrice: this.sku_obj.price,
-            productSkuId: this.sku_obj.id,
+            number: this.num,
+            skuPrice: this.sku_obj.price,
+            skuId: this.sku_obj.id,
             shelveId:this.pageInfo.shelveId,
             templateId:this.pageInfo.templateId
             //shelveType:2,

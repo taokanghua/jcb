@@ -125,6 +125,7 @@
       </div>
     </div> -->
 
+    <!-- end -->
     <chooseMethCard 
       v-for="item in orderInfo" 
       :key="item.id" 
@@ -133,7 +134,7 @@
       @getData="getData"
       :info="item"></chooseMethCard>
 
-    <div class="alone-feild row sb ac">
+    <div class="alone-feild row sb ac" v-if="info.firstCouponStatus==2">
       <span class="title">优惠</span>
       <span class="shit">新人礼包  -￥5.00</span>
     </div>
@@ -149,7 +150,7 @@
     <div class="tabbar row sb ac">
       <div class="left row ac">
         <span class="word">合计:</span>
-        <span class="money">￥316.8</span>
+        <span class="money">￥{{totalPrice}}</span>
       </div>
       <div class="buy-btn row ac jc" @click="pay">立即购买</div>
     </div>
@@ -176,6 +177,8 @@ export default {
       // wayIdx:1, 
       //agreement: false, //同意协议
       dateList:[],//自提的日期表 
+      storeOrderList:[],
+      totalPrice:0
     }
   },
   methods:{
@@ -229,31 +232,30 @@ export default {
       }
     },
     async pay(){
+      if(this.noAddress) return this.showToast('请添加收货地址!')
       let data = {
-        "orderList": [
-          {
-            "orderId": "string",
-            "productList": [
-              {
-                "productId": "string",
-                "productNumber": 0,
-                "productPrice": 0,
-                "productSkuId": "string",
-                "note": "string",
-              }
-            ],
-            "receiveAddressId": "string"
-          }
-        ],
-        "paymentMethods": 0,
-        "receiveAddressId": "string"
+        firstCouponStatus:this.info.firstCouponStatus==2?1:0,
+        orderList:this.storeOrderList,
+        paymentMethods:1,
+        receiveAddressId:this.address.id
       }
-      // let res = await api.payment(data)
-      // console.log(res)
+      // console.log(data)
+      let res = await api.payment(data)
+      console.log(res)
     },
     //获取商品卡片的值
     getData(obj){
-      console.log(obj)
+      //console.log(obj)
+      let index = this.storeOrderList.findIndex( v=>v.id == obj.id)
+      if(index==-1){
+        this.storeOrderList.push(obj)
+      }else{
+        this.storeOrderList[index] = obj
+      }
+      this.totalPrice = this.storeOrderList.reduce((pre,cur)=>cur.total+pre,0)
+      if(this.info.firstCouponStatus==2){ //计算是否有首单优惠
+        this.totalPrice-5<=0?0:this.totalPrice-=5
+      }
     }
   },
   computed:{

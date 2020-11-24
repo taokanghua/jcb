@@ -225,7 +225,7 @@ export default {
       if(res.success){
         this.isCollect = !this.isCollect
       }
-        this.showToast(res.result)
+        this.showToast(res.message)
     },
     //goods
     mergeGoodsList(result){

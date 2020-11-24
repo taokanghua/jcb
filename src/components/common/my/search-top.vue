@@ -3,24 +3,33 @@
     <div class="header-top row sb ac">
       <input type="search" placeholder="请输入商品名称或店铺名称搜索" @focus="checkEnv" @blur="blurHandle"/>
       <div class="address" v-if="address" @click="$router.push({name:'chooseAddress'})">
-        <i class="iconfont icondizhi"></i>
-        <span>佛山</span>
+        <div v-if="type=='complete'">
+          <i class="iconfont icondizhi"></i>
+          <span>{{info.addressComponent.district}}</span>
+        </div>
+        <div v-show="type=='load'">
+          <loading type="circular" size="0.22rem"> <span style="font-size:0.15rem">定位中</span> </loading>
+        </div>
+        <div v-show="type=='error'">
+          <span>定位失败</span>
+        </div>
       </div>
     </div>
 </template>
 
 <script>
+import { Loading } from 'vant';
 export default {
   data(){
     return{
-
+      type:'load'
     }
   },
   props:{
     info:{
       //定位信息
       type:Object,
-      default: () => {}
+      default:()=>({type:'load',addressComponent:{district:''}})
     },
     address:{
       // 是否显示定位 
@@ -46,9 +55,15 @@ export default {
     }
   },
   watch:{
-    info(n){
-      console.log(n)
+    info:{
+      handler(n){
+        this.type = n.type
+      },
+      // immediate:true
     }
+  },
+  components:{
+    Loading
   }
 }
 </script>
@@ -76,7 +91,7 @@ export default {
       font-size: 0.28rem;
     }
     span {
-      font-size: 0.24rem;
+      font-size: 0.22rem;
       color: #1a1a1a;
     }
   }
