@@ -98,12 +98,8 @@ export default {
      let res = await api.delGoods({id:[obj.cartId]})
      if(!res.success) return this.showToast('删除失败!')
      this.$emit('updateList', true)
-   }
-  },
-  watch:{
-
-  },
-  created(){
+   },
+   init(){
      this.list = this.info.productVoList
      this.child = this.info.productVoList.filter(v=>v.state==1).length
      for(let i=0;i<this.child;i++){
@@ -113,6 +109,16 @@ export default {
      //
      this.selectedObj = JSON.parse(JSON.stringify(this.info))
      this.selectedObj.productVoList = []
+     this.$emit('getData', this.selectedObj)
+   }
+  },
+  watch:{
+    info(n){
+      this.init()
+    }
+  },
+  created(){
+     this.init()
   },
   components:{
     InputNumer,
@@ -163,6 +169,7 @@ export default {
       .info{
         margin-left: 0.2rem;
         height: 1.48rem;
+        flex:1;
         .name{
           color: #1a1a1a;
           font-size: 0.21rem;

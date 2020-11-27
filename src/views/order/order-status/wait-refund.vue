@@ -1,16 +1,17 @@
 <template>
   <div class="wait-consignment-wrap">
-    <top-header status="退款中">
-      <span>等待商家确认，剩余 <count-down endTime="2020/11/12" crowd colonColor="#fff"></count-down></span>
+    <top-header status="退款中" :info="orderInfo">
+      <span>等待商家确认，剩余 <count-down :endTime="new Date(orderInfo.returnApplyTime||'').valueOf()+86400000" crowd colonColor="#fff"></count-down></span>
+      <!-- <span>等待商家确认，剩余 <count-down :endTime="new Date('2020/11/27').valueOf()+86400000" crowd colonColor="#fff"></count-down></span> -->
     </top-header>
 
     <div class="content">
       <!-- 内容区 padding -->
-      <goods-info></goods-info>
+      <goods-info :info="orderInfo"></goods-info>
       <!-- 结算 -->
-      <settlement></settlement>
+      <settlement :info="orderInfo"></settlement>
       <!-- 物流信息 -->
-      <other-info plus></other-info>
+      <other-info plus :info="orderInfo"></other-info>
     </div>
     <div class="footer">
       <order-btn type="primary">撤销退款</order-btn>
@@ -19,6 +20,7 @@
 </template>
 
 <script>
+import statusMix from '../../../minix/order-status'
 import topHeader from '../../../components/common/order/top-header'
 import goodsInfo from '../../../components/common/order/goods-info'
 import settlement from '../../../components/common/order/settlement'
@@ -31,6 +33,7 @@ export default {
 
     }
   },
+  mixins:[statusMix],
   methods:{},
   components:{
     topHeader,

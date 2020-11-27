@@ -55,7 +55,7 @@ export default {
     reset(){
       this.$refs.group1.reset()
       this.$refs.group2.reset()
-      this.$emit('close')
+      // this.$emit('close')
       this.$emit('reset')
     },
     confirm(){

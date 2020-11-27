@@ -1,18 +1,18 @@
 <template>
   <div class="wait-consignment-wrap">
-    <top-header status="已取消">
+    <top-header status="已取消" :info="orderInfo">
       <!-- 这里两种 要么超时 要么不显示 -->
-      <span>取消原因:超时未支付</span>
+      <span v-if="orderInfo.timeout==1">取消原因:超时未支付</span>
       <span></span>
     </top-header>
 
     <div class="content">
       <!-- 内容区 padding -->
-      <goods-info></goods-info>
+      <goods-info :info="orderInfo"></goods-info>
       <!-- 结算 -->
-      <settlement></settlement>
+      <settlement :info="orderInfo"></settlement>
       <!-- 物流信息 -->
-      <other-info cancel></other-info>
+      <other-info cancel :info="orderInfo"></other-info>
     </div>
     <!-- <div class="footer">
       <order-btn type="plain">申请退款</order-btn>
@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import api from '../../../api/order'
 import topHeader from '../../../components/common/order/top-header'
 import goodsInfo from '../../../components/common/order/goods-info'
 import settlement from '../../../components/common/order/settlement'
@@ -29,10 +30,21 @@ import otherInfo from '../../../components/common/order/other-info'
 export default {
   data(){
     return{
-
+      orderId:'',
+      orderInfo:{}
     }
   },
-  methods:{},
+  methods:{
+    async getOrderInfo(){
+      let res = await api.getOrder(this.orderId)
+      this.orderInfo = res.result
+      this.endTime = new Date(this.orderInfo.commitTime).valueOf()+86400000
+    },
+  },
+  created(){
+    this.orderId = this.$route.query.orderId
+    this.getOrderInfo()
+  },
   components:{
     topHeader,
     goodsInfo,

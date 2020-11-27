@@ -9,7 +9,7 @@
       <div style="position: relative">
         <div class="add row ac jc">
           <i class="iconfont iconjia" v-if="!form.storeBase.head"></i>
-          <img :src="form.storeBase.head" v-else alt="">
+          <img :src="form.storeBase.head" v-else alt="" class="logo">
         </div>
         <input type="file" class="my-upload" @change="logoUp" />
       </div>
@@ -17,12 +17,12 @@
     <div class="class-feild row sb ac">
       <span class="title">店铺类型</span>
       <div class="row ac">
-        <div class="btn row ac jc" :class="{active:storeTypeIdx==i+1}" v-for="(item,i) in storeType" :key="item.id" @click="storeTypeIdx=i+1">{{item.name}}</div>
+        <div class="btn row ac jc" :class="{active:storeTypeIdx==i}" v-for="(item,i) in storeType" :key="item.id" @click="storeTypeIdx=i">{{item.name}}</div>
       </div>
     </div>
     <div class="desc">
-      <span v-show="storeTypeIdx==1">加盟店：{{storeType[storeTypeIdx-1].enterPrice}}元品牌使用费（终身免年费）</span>
-      <span v-show="storeTypeIdx==2">集采店：{{storeType[storeTypeIdx-1].enterPrice}}元品牌使用费</span>
+      <span v-show="storeTypeIdx==0">{{storeType[storeTypeIdx].name}}：{{storeType[storeTypeIdx].enterPrice}}元品牌使用费（终身免年费）</span>
+      <span v-show="storeTypeIdx==1">{{storeType[storeTypeIdx].name}}：{{storeType[storeTypeIdx].enterPrice}}元品牌使用费</span>
     </div>
     <div class="com-wrap column">
       <span class="title">店铺名称</span>
@@ -137,18 +137,19 @@
     <div class="com-wrap column">
       <span class="title">验证码</span>
       <div class="row">
-        <input type="text" placeholder="请输入验证码" />
-        <div class="sendmsg-btn row ac jc">获取验证码</div>
+        <input type="text" placeholder="请输入验证码" v-model="form.storeBase.code"/>
+        <div class="sendmsg-btn row ac jc" @click="getMessage">{{waitText}}</div>
       </div>
     </div>
 
     <div class="agree row ac">
-      <div class="row" @click="form.agree = !form.agree">
+      <!-- <div class="row" @click="form.agree = !form.agree">
         <i class="iconfont iconxuanzhong" v-show="form.agree"></i>
         <i class="iconfont iconradiobuttonunselect" v-show="!form.agree"></i>
-      </div>
+      </div> -->
+      <radio-one v-model="form.agree"></radio-one>
       <span class="word"
-        >我已阅读且同意 <span class="rule">《金材宝商家加盟协议》</span></span
+        >我已阅读且同意 <span class="rule" @click="agreement">《金材宝商家加盟协议》</span></span
       >
     </div>
 
@@ -169,7 +170,8 @@
 <script>
 import api from "../../api/home";
 import {mapState} from 'vuex'
-import { Uploader, Popup, Area as vanArea } from "vant";
+import { Uploader, Popup, Area as vanArea, Field, Dialog } from "vant";
+import RadioOne from '../../components/common/my/radio-one.vue';
 //import areajs from '../../assets/area'
 export default {
   data() {
@@ -177,7 +179,7 @@ export default {
       isPop: false,
       allList: [],
       storeType:[{enterPrice:0}],//店铺类型
-      storeTypeIdx:1,
+      storeTypeIdx:0,
       // areaList:areajs,
       areaList: {
         province_list: {},
@@ -195,7 +197,7 @@ export default {
           name: "", //联系人
         },
         storeAuth: {
-          address: "", //营业制造 s
+          //address: "", //营业制造 s
           asLegalPerson: "", //法人姓名
           businessLicensePic: [], // 营业执照 ----> 要求字符串
           certificateNo: "", // 法人身份证号
@@ -207,18 +209,23 @@ export default {
           introduce: "", //简洁
           name: "", //点名
           phone: "",
-          //level: 0, //0 集采 1加盟
-          memberId:''
+          code: '', //验证码
+          level: 1, //0 集采 1加盟
+          //memberId:'',
         },
-        // joinType:0, //0 集采  1 加盟
-        // agree:false, //同意协议
+        //joinType:0, //0 集采  1 加盟
+        agree:false, //同意协议
       },
       parentId: null,
       //上传图片按钮控制:
       upBtn:{
         bunsiness:true,
         store:true
-      } 
+      } ,
+
+      waitText:'获取验证码',
+      timer:null,
+      second: 60,
     };
   },
   methods: {
@@ -232,12 +239,36 @@ export default {
     },
     //检验输入合法性
     valid(){
-      this.form.storeBase.memberId = this.memberId
-      // let list = this.form.map(v=>Object.values(v))
+      //表单校验  true 表示不通过
+      if(![15, 18].includes(this.form.storeAuth.certificateNo.length)){
+        this.showToast('身份证号码错误')
+        return true
+      }
+      if(this.form.storeAuth.businessLicensePic.length==0){
+        this.showToast('请上传营业执照')
+        return true
+      }
+      if(this.form.storeAuth.detailsPic.length==0){
+        this.showToast('请上传门店详情图')
+        return true
+      }
+      if(this.form.storeAuth.certificatePics.length==0){
+        this.showToast('请上传身份证照片')
+        return true
+      }
+      if(!this.form.agree){
+        this.showToast('请勾选加盟协议!')
+        return true
+      }
+      //this.form.storeBase.memberId = this.memberId
       let list = []
       Object.values(this.form).map(v=>{list.push(...Object.values(v))})
-      console.log(list)
-      return list.some(v=>!v) //true 表示不合格
+      //console.log(list)
+      let res = list.some(v=>!v)
+      if(res){
+        this.showToast('请完整填写表单数据!')
+        return res
+      }
     },
     async getStore(){
       let res = await api.getStoreType()
@@ -324,11 +355,63 @@ export default {
       this.$forceUpdate()
     },
     async submitForm() {
-      console.log(this.valid())
-      // let res = await api.upgrade(this.form)
+      this.form.storeBase.level = this.storeType[this.storeTypeIdx].id
+      if(this.valid()) return //验证不通过 不
+      let copy = JSON.parse(JSON.stringify(this.form))
+      copy.storeAuth.businessLicensePic = this.form.storeAuth.businessLicensePic.join(',')
+      copy.storeAuth.detailsPic = this.form.storeAuth.detailsPic.join(',')
+      copy.storeAuth.certificatePics = this.form.storeAuth.certificatePics.join(',')
+      let res = await api.upgrade(copy)
       // console.log(res)
-      //console.log(this.form);
+      // console.log(this.form);
+      let {router} = this.$route.query||false
+      if(res.success){
+        Dialog.alert({
+          title: '申请结果',
+          message: '申请成功!',
+        }).then(() => {
+          // on close
+          if(router){
+            //单独进来 返回上页
+            this.$router.replace('/introduce')
+          }else{
+            this.$router.replace('/home')
+          }
+        });
+      }else{
+        //this.showToast(res.message, 3000)
+        Dialog.alert({
+          message: res.message,
+        })
+      }
     },
+
+    async getMessage() {
+      let phone = /^1[0-9]{10}$/.test(this.form.storeBase.phone)
+      if(!phone) return this.showToast('请输入有效手机号')
+      if (this.timer) return;
+      //发送请求
+      // console.log('send msg')
+      this.timer = setInterval(() => {
+        if (this.second <= 0) {
+          clearInterval(this.timer);
+          this.waitText = "获取验证码";
+          this.timer = null
+          this.second = 60
+          return
+        }
+        this.second -= 1;
+        this.waitText = `${this.second}S`;
+      }, 1000);
+
+      let res = await api.getJoinCode({phone:this.form.storeBase.phone})
+      if(!res.success){
+        this.showToast(res.message)
+      }
+    },
+    agreement(){
+      this.$router.push({path:'/agreement', query:{type:0}})
+    }
   },
   watch:{
     'form.storeAuth.businessLicensePic'(n){//监听图片 超过4张隐藏上传按钮
@@ -349,6 +432,8 @@ export default {
     Uploader,
     Popup,
     vanArea,
+    Field,
+    RadioOne
   },
 };
 </script>
@@ -480,6 +565,11 @@ export default {
     content: "*";
     color: #fc0808;
   }
+}
+.logo{
+  width: 0.81rem;
+  height: 0.81rem;
+  border-radius: 50%;
 }
 .sendmsg-btn {
   width: 1.69rem;

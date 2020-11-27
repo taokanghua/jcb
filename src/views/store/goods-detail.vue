@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-detail-wrap" indicator-color="#c5c5c5">
+  <div class="goods-detail-wrap" indicator-color="#c5c5c5" ref="wrap">
     <swipe autoplay="5000" class="swipe">
       <swipe-item class="swipe-item" v-for="(item,i) in pageInfo.pics.split(',')" :key="i">
         <img :src="item" alt="">
@@ -84,10 +84,9 @@
     </div>
 
     <!-- 商品详情图 -->
-    <div class="detail-img column plr" style="margin-bottom:0.23rem" v-html="pageInfo.productSubVo.detail">
-      <!-- <img src="../../assets/img/商品详情图.png" alt="">
-      <img src="../../assets/img/商品详情图2.png" alt="">
-      <img src="../../assets/img/商品详情图3.png" alt=""> -->
+    <div class="goods-detail">
+      <h3>商品详情</h3>
+      <div class="detail-img column" style="margin-bottom:0.23rem" v-html="pageInfo.productSubVo.detail"></div>
     </div>
 
     <!-- 权利说明 -->
@@ -105,9 +104,15 @@
 
     <!-- 底部tabbar -->
     <div class="tabbar row sb ac">
-      <div class="column ac jc">
+      <div class="row ac ">
+        <div class="column ac jc" style="margin-right:0.5rem">
         <i class="iconfont iconkefu"></i>
         <a href="https://yzf.qq.com/xv/web/static/chat/index.html?sign=37ef9b97d12053922516cbe91be6b36629bc194aa992ba81fe73fe6cdd14c7afc93d285b9ca0fe48b1b1344468d96832ed016ede" class="cus">客服</a>
+      </div>
+      <div class="column ac jc">
+        <i class="iconfont iconshouye"></i>
+        <router-link to="/home" class="cus">首页</router-link>
+      </div>
       </div>
       <div class="row ac">
         <div class="btn add-shopcart" @click="showSpecPop('add')">加入购物车</div>
@@ -452,11 +457,16 @@ export default {
    }
  },
  watch:{
-   $route(to){
-     this.getDetail()
+   '$route'(from, to){
+     //console.log(from, to)
+     if(to.path=="/goodsdetail"){
+       this.getDetail()
+  
+       this.$refs.wrap.scrollTo(0,0)
+     }
    }
  },
- created(){
+ mounted(){
    this.getDetail()
    this.getRecomList()
 
@@ -478,6 +488,16 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.goods-detail{
+  padding: 0 0.27rem;
+ h3{
+  background-color: #ffffff;
+  //  margin-left: 0.27rem;
+  //  margin-bottom: 0.22rem;
+  padding: 0.22rem 0.22rem;
+   font-size: 0.26rem;
+ }
+}
 .plr{
   padding: 0 0.27rem;
   border-radius:0.11rem;

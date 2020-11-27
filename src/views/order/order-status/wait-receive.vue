@@ -1,26 +1,29 @@
 <template>
   <div class="wait-consignment-wrap">
-    <top-header status="待收货">
+    <top-header status="待收货" :info="orderInfo">
       <span>商家已发货，等待送货上门</span>
     </top-header>
 
     <div class="content">
       <!-- 内容区 padding -->
-      <goods-info></goods-info>
+      <goods-info :info="orderInfo"></goods-info>
       <!-- 结算 -->
-      <settlement></settlement>
+      <settlement :info="orderInfo"></settlement>
       <!-- 物流信息 -->
-      <other-info plus></other-info>
+      <other-info plus :info="orderInfo"></other-info>
     </div>
     <div class="footer">
-      <order-btn type="plain">查看物流</order-btn>
-      <order-btn type="plain">申请退款</order-btn>
-      <order-btn type="primary">确认收货</order-btn>
+      <!-- <order-btn type="plain">查看物流</order-btn> -->
+      <order-btn type="plain" @click="goRefund">申请退款</order-btn>
+      <order-btn type="primary" @click="confirm">确认收货</order-btn>
     </div>
   </div>
 </template>
 
 <script>
+import api from '../../../api/order'
+import {Dialog} from 'vant'
+import statusMix from '../../../minix/order-status'
 import topHeader from '../../../components/common/order/top-header'
 import goodsInfo from '../../../components/common/order/goods-info'
 import settlement from '../../../components/common/order/settlement'
@@ -32,13 +35,21 @@ export default {
 
     }
   },
-  methods:{},
+  mixins:[statusMix],
+  methods:{
+    goRefund(){
+      this.$router.push({path:'/refund/money', query:{orderId:this.orderInfo.orderCode}})
+    },
+    
+  },
+
   components:{
     topHeader,
     goodsInfo,
     settlement,
     otherInfo,
-    orderBtn
+    orderBtn,
+    // Dialog
   }
 }
 </script>

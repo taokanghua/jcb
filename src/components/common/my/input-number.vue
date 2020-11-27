@@ -117,7 +117,8 @@
 			background-color: #f7f7f7;
 			text-align: center;
       font-size: 0.21rem;
-      margin: 0 0.06rem;
+			margin: 0 0.06rem;
+			color: #1a1a1a;
 		}
 	}
 </style>

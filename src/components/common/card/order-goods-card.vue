@@ -7,12 +7,12 @@
     </div>
       <div class="goods row" v-for="item in info.productList" :key="item.skuId">
         <img :src="item.productPic" alt="">
-        <div class="column sb" style="margin-left:0.23rem">
+        <div class="column sb" style="margin-left:0.23rem;width:100%">
           <div class="name">{{item.productName}}</div>
           <div class="sku">{{item.propertyName}}</div>
           <div class="footer row sb ac">
             <span class="price">￥{{item.skuPrice}}</span>
-            <input-number v-model="item.number" @change="changeHandle(item)"></input-number>
+            <input-number v-model="item.number" :max="item.stock" @change="changeHandle(item)"></input-number>
           </div>
         </div>
       </div>
@@ -31,8 +31,8 @@
               </div>
               <div class="phone column sb" @click="editHandle">
                 <span class="title">联系电话</span>
-                <input ref="input" type="phone" class="edit-phone" v-model="info.createByName" v-show="editPhone" @blur="checkPhone">
-                <div class="row" v-show="!editPhone">{{info.createByName}}<i class="iconfont iconbianji"></i></div>
+                <input ref="input" type="phone" class="edit-phone" v-model="info.phone" v-show="editPhone" @blur="checkPhone">
+                <div class="row" v-show="!editPhone">{{info.phone}}<i class="iconfont iconbianji"></i></div>
               </div>
             </div>
           </div>

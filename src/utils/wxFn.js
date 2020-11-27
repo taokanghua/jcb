@@ -8,29 +8,34 @@ import webConfig from '../web.config'
 const domain = location.origin; //用于分享
 
 const firstUrl = location.href.split('#')[0]
-const GetWXConfig = () => request.get(`/wechat/getWxConfig`, { params: { url: firstUrl } })
+// const firstUrl = 'http://192.168.2.139'
+const GetWXConfig = () => request.get(`/login/${webConfig.appid}/getJsapiSignature`, { params: { url: encodeURIComponent(firstUrl) } })
 const defaultShare = { targetUrl: '', imgUrl: webConfig.domain + '/upload/image/202091178562234.png', title: '城大陆和学院', desc: '城大陆和学院师资的培训经历是包括国家认可的相关证书、城大陆和学院培训合格证书。' }
     /** 注入微信配置 */
 export const initWxConfig = async function(entity) {
     let res = await GetWXConfig()
+        //alert(JSON.stringify(res.result))
     if (!res.success) return console.error(res.msg)
     wxconfig(res.result, wx)
     wx.ready(function() {
+        // alert(location.href)
         wx.getLocation({
             type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
             success: function(res) {
                 localStorage.setItem('location', JSON.stringify(res))
-                // store.commit('home/LOCATION_DATA', res);
-                // store.dispatch('home/getStore');
-                console.log(res)
+                    // store.commit('home/LOCATION_DATA', res);
+                    // store.dispatch('home/getStore');
+                alert(JSON.stringify(res))
             },
             cancel: function(res) {
                 console.error('getLocation-cancel', res)
             },
             fail: function(res) {
                 localStorage.setItem('location', JSON.stringify({ latitude: 135, longitude: 246 }))
-                // store.commit('home/LOCATION_DATA', { latitude: 135, longitude: 246 });
-                // console.error('getLocation-fail', res)
+                    // store.commit('home/LOCATION_DATA', { latitude: 135, longitude: 246 });
+                    // console.error('getLocation-fail', res)
+                // alert(location.href)
+                // alert(JSON.stringify(res))
             }
         })
         initShareConfig(entity);
@@ -88,7 +93,9 @@ const initShareConfig = function(e = {}) {
  */
 export const invokeWxPay = (c) => {
     //坑--》 chooseWXPay接受对象 timestamp s小写
-    let e = {...c, timestamp: c.timeStamp, signType: 'MD5' }
+    // let e = {...c, timestamp: c.timeStamp, signType: 'MD5', 'package': c.packageValue }
+    let e = { ...c, timestamp: c.timeStamp, 'package': c.packageValue}
+    //alert(JSON.stringify(e))
     wx.chooseWXPay(e)
 }
 

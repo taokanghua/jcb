@@ -3,25 +3,26 @@
     <div class="top row ac sb">
       <div class="row ac">
         <i class="iconfont iconshangcheng"></i>
-        <span>豪迪五金店</span>
+        <span>{{info.getApiVo&&info.getApiVo.name||'xx店铺'}}</span>
       </div>
       <span :class="{blue}">{{status}}</span>
     </div>
     <!-- 商品 -->
-    <div class="goods-item row ac" v-for="item in 2" :key="item">
-        <img src="../../../assets/img/确认订单.png" alt="">
+    <div class="goods-item row ac" v-for="item in info.productList" :key="item.productId">
+        <img :src="item.productPic" alt="">
         <div class="right column sb">
           <div class="column">
-            <span class="name">世 电动工具 3.6V锂电池充电起子 螺丝刀 IXO3</span>
-            <span class="sku">规格:220V    <span class="color">颜色:黑色</span></span>
+            <span class="name">{{item.productName}}</span>
+            <!-- <span class="sku">规格:220V    <span class="color">颜色:黑色</span></span> -->
+            <span class="sku">{{item.propertyName}}</span>
           </div>
-          <span class="num">x1</span>
+          <span class="num">x{{item.number}}</span>
         </div>
     </div>
     <!-- 数量 -->
     <div class="footer row ac">
-      <span class="count">共2件</span>
-      <span class="price row ac"><span class="word">合计:</span>￥694</span>
+      <span class="count">共{{info.productList&&info.productList.length}}件</span>
+      <span class="price row ac"><span class="word">合计:</span>￥{{info.totalAmount}}</span>
     </div>
     <!-- 按钮 -->
     <div class="btn-wrap row ac">
@@ -38,6 +39,10 @@ export default {
     }
   },
   props:{
+    info:{
+      type: Object,
+      default: ()=>({getApiVo:{},productList:[]})
+    },
     blue:{
       // 状态文字颜色
       type: Boolean,

@@ -57,14 +57,18 @@ export default {
           pageSize:999
       }
       let res = await api.getAddressList(params)
+      this.addressList = res.result.records
       if(res.result.total==0){
         this.isEmpty = true
         return
+      }else{
+        this.isEmpty = false
       }
-      this.addressList = res.result.records
       this.defaultIdx = this.addressList.findIndex(v=>v.defaultUse==1)
       if(this.addressList.length>3){
         this.positionBtn = false
+      }else{
+        this.positionBtn = true
       }
     },
     async setDefault(i, value){
@@ -81,7 +85,15 @@ export default {
       if(res.success){
         this.showToast('删除成功!')
         this.getAddressList()
+
+      }else{
+        this.showToast(res.message)
       }
+    }
+  },
+  watch:{
+    '$route'(to){
+      this.getAddressList()
     }
   },
   created(){

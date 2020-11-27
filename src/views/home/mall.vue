@@ -45,14 +45,19 @@
           <span>热门店铺</span>
           <router-link to="/allstores" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
         </div>
-        <waterFall
+        <!-- <waterFall
               @afterFetch="storeListData"
               :req="searchStore"
               :params="storeParams"
             >
         <hot-recom-card v-for="(item,i) in storeList" :key="i" :info="item"></hot-recom-card>
-        <!-- <hot-recom-card v-for="(item,i) in storeList" :key="i" :info="item"></hot-recom-card> -->
-        </waterFall>
+        </waterFall> -->
+        <listEnhands
+          :req="searchStore"
+          :params="storeParams"
+          @reachBottom="storeListData">
+          <hot-recom-card v-for="(item,i) in storeList" :key="i" :info="item"></hot-recom-card>
+        </listEnhands>
       </div>
 
     </div>
@@ -68,6 +73,7 @@ import { Swipe, SwipeItem } from 'vant';
 import searchTop from '../../components/common/my/search-top'
 import hotRecomCard from '../../components/common/card/hot-recom-card'
 import waterFall from '../../components/common/waterfall'
+import listEnhands from '../../components/common/my/list-enhands'
 export default {
   data(){
     return{
@@ -115,7 +121,8 @@ export default {
     SwipeItem,
     searchTop,
     hotRecomCard,
-    waterFall
+    waterFall,
+    listEnhands
   }
 }
 </script>

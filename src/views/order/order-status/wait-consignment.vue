@@ -1,25 +1,27 @@
 <template>
   <div class="wait-consignment-wrap">
-    <top-header status="待发货">
+    <top-header status="待发货" :info="orderInfo">
       <span>等待商家发货</span>
     </top-header>
 
     <div class="content">
       <!-- 内容区 padding -->
-      <goods-info></goods-info>
+      <goods-info :info="orderInfo"></goods-info>
       <!-- 结算 -->
-      <settlement></settlement>
+      <settlement :info="orderInfo"></settlement>
       <!-- 物流信息 -->
-      <other-info></other-info>
+      <other-info :info="orderInfo"></other-info>
     </div>
     <div class="footer">
-      <order-btn type="plain">申请退款</order-btn>
-      <order-btn type="primary">确认收货</order-btn>
+      <order-btn type="plain" @click="refund(orderInfo.orderCode)">申请退款</order-btn>
+      <order-btn type="primary" @click="confirm">确认收货</order-btn>
     </div>
   </div>
 </template>
 
 <script>
+import api from '../../../api/order'
+import statusMix from '../../../minix/order-status'
 import topHeader from '../../../components/common/order/top-header'
 import goodsInfo from '../../../components/common/order/goods-info'
 import settlement from '../../../components/common/order/settlement'
@@ -28,10 +30,14 @@ import orderBtn from '../../../components/common/order/order-btn'
 export default {
   data(){
     return{
-
     }
   },
-  methods:{},
+  mixins:[statusMix],
+  methods:{
+    refund(orderId){
+      this.$router.push({path:'/refund/money', query:{orderId}})
+    }
+  },
   components:{
     topHeader,
     goodsInfo,

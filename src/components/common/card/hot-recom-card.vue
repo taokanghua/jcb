@@ -75,10 +75,10 @@ export default {
 
 <style lang="less" scoped>
 .shop-card {
-    box-sizing: border-box;
+    // box-sizing: border-box;
     // width: 5.81rem;
     padding: 0.15rem;
-    height: 3.79rem;
+    // height: 3.79rem;
     background-color: #ffffff;
     border-radius: 0.11rem;
     margin-bottom: 0.23rem;

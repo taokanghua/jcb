@@ -22,7 +22,7 @@
       <div class="notify row ac">
         <img src="../../assets/img/金材宝资讯.png" alt="" />
         <!-- <span>{{notice.content}}</span> -->
-        <NoticeBar style="flex:1" v-if="notice.length>0">{{notice}}</NoticeBar>
+        <NoticeBar style="flex:1" v-if="notice.length>2">{{notice}}</NoticeBar>
       </div>
 
       <div class="menu row sb">
@@ -82,6 +82,7 @@
           :key="item.id" 
           @click="$router.push({path:'/search?id='+item.id})"
         />
+        
       </div>
     </div>
 
@@ -139,6 +140,7 @@
 
 <script>
 import api from '../../api/home'
+import {initWxConfig, getLocation} from '../../utils/wxFn'
 import { Swipe, SwipeItem, Rate, Tab, Tabs, List, Overlay, NoticeBar } from "vant";
 import countDown from '../../components/common/count-down'
 import myFooter from "../../components/common/my/footer";
@@ -232,7 +234,7 @@ export default {
     async getNote(){
       let res = await api.getNotice({source:1, type:2})
       let content  = res.result.map(v=>v.content)
-      this.notice = content.join('   ')
+      this.notice = content.join(' ')
       // this.notice = '12312312312'
       //console.log(this.notice)
     },
@@ -247,6 +249,8 @@ export default {
       //urltype  1 商品 2店铺 3活动页 
       let {url:id, urlType:type} = info
       switch(type){
+        case 0:
+          break
         case 1:
           this.$router.push({path:'/goodsdetail', query:{id}})
           break
@@ -287,7 +291,7 @@ export default {
 });
     }
   },
-  created(){
+  async created(){
     this.getHomeGoodsList()
     this.getRecomBrand()
     this.getRecomStore()
@@ -296,7 +300,18 @@ export default {
     this.getCarousel()
     //保存openid
     // this.$store.state.openid = this.$route.query.openid
-    sessionStorage.setItem('openid', this.$route.query.openid)
+    // let res = await api.auth({url:'/home'})
+    // initWxConfig(res.result)
+    // getLocation(ok=>{
+    //   alert(JSON.parse(JSON.stringify(ok)))
+    // }, fail=>{
+    //   alert(JSON.parse(JSON.stringify(fail)))
+    // })
+    this.$nextTick(()=>{
+      if(!this.$route.query.openid) return
+      sessionStorage.setItem('openid', this.$route.query.openid)
+      //this.showToast('openid保存成功')
+    })
   },
   mounted(){
     this.getLocal()

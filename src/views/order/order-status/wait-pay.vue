@@ -1,25 +1,28 @@
 <template>
   <div class="wait-pay-wrap">
-    <top-header status="待支付">
-      <span>剩余: <count-down endTime="2020/11/11" crowd colonColor="#fff"></count-down> </span>
+    <top-header status="待支付" :info="orderInfo">
+      <span>剩余: <count-down :endTime="endTime" crowd colonColor="#fff"></count-down> </span>
+      <!-- <CountDown :time="endTime"></CountDown> -->
     </top-header>
 
     <div class="content">
       <!-- 内容区 padding -->
-      <goods-info></goods-info>
+      <goods-info :info="orderInfo"></goods-info>
       <!-- 结算 -->
-      <settlement></settlement>
+      <settlement :info="orderInfo"></settlement>
       <!-- 物流信息 -->
-      <other-info></other-info>
+      <other-info :info="orderInfo"></other-info>
     </div>
     <div class="footer">
-      <order-btn type="plain">取消订单</order-btn>
-      <order-btn type="primary">立即支付</order-btn>
+      <order-btn type="plain" @click="cancelOrder">取消订单</order-btn>
+      <order-btn type="primary" @click="goToPay">立即支付</order-btn>
     </div>
   </div>
 </template>
 
 <script>
+import { CountDown } from 'vant';
+import api from '../../../api/order'
 import topHeader from '../../../components/common/order/top-header'
 import countDown from '../../../components/common/count-down'
 import goodsInfo from '../../../components/common/order/goods-info'
@@ -30,18 +33,46 @@ import orderBtn from '../../../components/common/order/order-btn'
 export default {
   data(){
     return{
-
+      orderId:'',
+      orderInfo:{},
+      endTime:''
     }
   },
-  methods:{},
+  methods:{
+    async getOrderInfo(){
+      let res = await api.getOrder(this.orderId)
+      this.orderInfo = res.result
+      this.endTime = new Date(this.orderInfo.commitTime).valueOf()+86400000
+    },
+    goToPay(){
+      //去支付
+      this.$router.push({path:'/confirmorder', query:{orderId:this.info.mergeOrderCode}})
+    },
+    async cancelOrder(){
+      let res = await api.cancelOrder({orderId: this.orderInfo.orderCode})
+      if(res.success){
+        this.showToast('取消订单成功')
+        this.$router.replace({path:'/orderList'})
+      }else{
+        this.showToast(res.message)
+      }
+    }
+  },
   components:{
     topHeader,
     countDown,
     goodsInfo,
     settlement,
     otherInfo,
-    orderBtn
+    orderBtn,
+    CountDown
     // goodsCard
+  },
+  created(){
+    this.orderId = this.$route.query.orderId
+
+    this.getOrderInfo()
+    // console.log(new Date(this.orderInfo.commitTime).valueOf()+86400000)
   }
 }
 </script>

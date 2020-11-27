@@ -179,12 +179,22 @@ export default {
       this.changeMenu(0)
     },
     changeMenu(i) { //二级
+      //给三级复位
+      //this.thirdIdx = -1
       this.third = this.second[i].children
       this.activeIndex = i;
       this.isThrid = this.third.length>0
+      if(this.isThrid){
+        this.thirdIdx=0
+        this.searchParams.id = this.third[this.thirdIdx].id
+      }else{
+        this.thirdIdx=-1
+        this.searchParams.id = this.second[i].id
+      }
+
       // this.resizeCon()
-      this.searchParams.id = this.second[i].id
-      console.log(this.second[i].id)
+      
+      //console.log(this.second[i].id)
       this.goodsList = []
       this.getGoodList()
     },
@@ -239,7 +249,7 @@ export default {
       let lv3h = lv3box.clientHeight;
       this.dynamicHeight=rh-fh-lv3h 
       this.leftHeight = rh
-      console.log(rh,fh,lv3h)    
+      //console.log(rh,fh,lv3h)    
     },
 
     //筛选pop

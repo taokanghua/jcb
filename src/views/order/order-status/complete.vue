@@ -1,24 +1,25 @@
 <template>
   <div class="complete-wrap">
-    <top-header status="交易成功">
+    <top-header status="交易成功" :info="orderInfo">
       <span></span>
     </top-header>
 
     <div class="content">
       <!-- 内容区 padding -->
-      <goods-info></goods-info>
+      <goods-info :info="orderInfo"></goods-info>
       <!-- 结算 -->
-      <settlement></settlement>
+      <settlement :info="orderInfo"></settlement>
       <!-- 物流信息 -->
-      <other-info all></other-info>
+      <other-info all :info="orderInfo"></other-info>
     </div>
     <div class="footer">
-      <order-btn type="plain">去评价</order-btn>
+      <order-btn type="plain" @click="evaluate" v-if="orderInfo.isComment!=1">去评价</order-btn>
     </div>
   </div>
 </template>
 
 <script>
+import api from '../../../api/order'
 import topHeader from '../../../components/common/order/top-header'
 import goodsInfo from '../../../components/common/order/goods-info'
 import settlement from '../../../components/common/order/settlement'
@@ -27,10 +28,24 @@ import orderBtn from '../../../components/common/order/order-btn'
 export default {
   data(){
     return{
-
+      orderId:'',
+      orderInfo:{}
     }
   },
-  methods:{},
+  methods:{
+    async getOrderInfo(){
+      let res = await api.getOrder(this.orderId)
+      this.orderInfo = res.result
+      this.endTime = new Date(this.orderInfo.commitTime).valueOf()+86400000
+    },
+    evaluate(){
+      this.$router.push({name:'orderEvaluate', query:{orderId: this.orderInfo.orderCode}})
+    }
+  },
+  created(){
+    this.orderId = this.$route.query.orderId
+    this.getOrderInfo()
+  },
   components:{
     topHeader,
     goodsInfo,

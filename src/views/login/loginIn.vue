@@ -147,7 +147,7 @@ export default {
     // second()
   },
   created(){
-    this.openid = this.$store.state.openid
+    this.openid = sessionStorage.getItem('openid')||''
     // console.log(this.openid)
   },
   components:{

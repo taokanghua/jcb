@@ -1,22 +1,28 @@
 <template>
-  <div class="goods-card row ac sb">
-    <div class="circle"></div>
-    <img src="../../../assets/img/分类220x220.png" alt="" />
+  <div class="goods-card row ac">
+    <img :src="info.productPic" alt="" />
     <div class="info column sb">
       <div>
-        <div class="name e2">博世 电动工具 3.6V锂电池充电起子 螺丝刀 IXO3</div>
-        <span class="spec">规格:220V 颜色:黑色</span>
+        <div class="name e2">{{info.productName}}</div>
+        <span class="spec ">{{info.propertyName}}</span>
       </div>
       <div class="row sb" style="line-height:1">
-        <span class="price">￥298</span>
-        <span class="num">x1</span>
+        <span class="price">￥{{info.skuPrice}}</span>
+        <span class="num">x{{info.number}}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props:{
+    info:{
+      type: Object,
+      default:() => ({})
+    }
+  }
+};
 </script>
 
 <style lang="less" scoped>
@@ -27,10 +33,12 @@ export default {};
 	      height: 1.41rem;
         border-radius: 0.11rem;
         margin-left: 0.1rem;
+        flex-shrink: 0;
       }
       .info{
         margin-left: 0.2rem;
         height: 1.48rem;
+        flex:1;
         .name{
           color: #1a1a1a;
           font-size: 0.21rem;

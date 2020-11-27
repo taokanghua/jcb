@@ -3,7 +3,7 @@
     <!-- 心疼我做得这么好的tabbar栏 改啥改  :( -->
     <div class="deliver">
           <!-- 无地址情况 -->
-      <router-link to="/editaddress" tag="div" class="no-address row ac jc" v-if="noAddress">+添加地址</router-link>
+      <router-link :to="'/editaddress?orderId='+$route.query.orderId" tag="div" class="no-address row ac jc" v-if="noAddress">+添加地址</router-link>
 
       <router-link :to="'/address?orderId='+$route.query.orderId" class="has-address row sb ac" v-else>
         <div class="column">
@@ -160,6 +160,7 @@
 </template>
 
 <script>
+import {invokeWxPay} from '../../utils/wxFn'
 import api from '../../api/home'
 import userApi from '../../api/user'
 import {ActionSheet} from 'vant'
@@ -241,7 +242,8 @@ export default {
       }
       // console.log(data)
       let res = await api.payment(data)
-      console.log(res)
+      //console.log(res)
+      invokeWxPay({...res.result, success:res=>{console.log(res)}, fail:err=>{console.log(fail)}})
     },
     //获取商品卡片的值
     getData(obj){
@@ -256,18 +258,27 @@ export default {
       if(this.info.firstCouponStatus==2){ //计算是否有首单优惠
         this.totalPrice-5<=0?0:this.totalPrice-=5
       }
+      this.totalPrice = Number(this.totalPrice).toFixed(2) //总价保留两位小数
     }
   },
   computed:{
     ...mapState({info:state=>state.user.info.memberUserInfoVo})
   },
+  watch:{
+    '$route'(from, to){
+      // if(from.path=="/editaddress"){
+      //判断url 来决定调用什么方式来获取地址
+    let {address} = this.$route.query||''
+    address?this.getAddress():this.getAddressList();
+      // }
+    }
+  },
+  // mounted(){
+  //   //console.log(this.info)
+  // },
   mounted(){
     this.getMonthDay()
-    //console.log(this.info)
-  },
-  created(){
     this.getOrderInfo()
-    //判断url 来决定调用什么方式来获取地址
     let {address} = this.$route.query||''
     address?this.getAddress():this.getAddressList();
     //加载动画

@@ -1,22 +1,22 @@
 <template>
   <div class="money-goods-wrap">
     <div class="ptitle">申请原因</div>
-    <div class="reason" @click="reasonPop=true">
+    <span class="reason-refund">仅退款</span>
+    <!-- <div class="reason" @click="reasonPop=true">
       <input type="text" placeholder="请选择退货原因" disabled>
       <i class="iconfont iconARROW"></i>
-    </div>
+    </div> -->
     <div class="ptitle">问题内容描述</div>
-    <textarea placeholder="请输入您的内容"></textarea>
+    <textarea placeholder="请输入您的内容" v-model="content"></textarea>
     <div class="ptitle">上传图片(最多四张)</div>
     <div class="img-wrap row">
-      <!-- <div class="choose-box row jc ac"> <i class="iconfont icontianjia"></i></div> -->
-      <div style="position:relative" v-for="item in 5" :key="item">
-        <img src="https://img.yzcdn.cn/vant/sand.jpg" alt="">
-        <div class="close row ac jc"><i class="iconfont iconguanbi"></i></div>
+      <div style="position:relative" v-for="(item,i) in imgs" :key="i">
+        <img :src="item" alt="">
+        <div class="close row ac jc"><i class="iconfont iconguanbi" @click="del(i)"></i></div>
       </div>
       <Uploader :after-read="afterRead" multiple :show-upload="true"></Uploader>
     </div>
-    <div class="btn row jc ac">提交</div>
+    <div class="btn row jc ac" @click="submit">提交</div>
 
 
     <!-- popup -->
@@ -36,18 +36,54 @@
 </template>
 
 <script>
-import { Uploader, ActionSheet } from 'vant';
+import api from '../../../api/order'
+import homeApi from '../../../api/home'
+import { Uploader, ActionSheet, Dialog } from 'vant';
 export default {
   data(){
     return{
       reasonPop:false,
       reasonIdx:4,
+      imgs:[],
+      content:'',
       reasonList:['不喜欢，效果不好', '多拍、错拍、不想要', '货物与描述不对', '质量问题', '其他原因']
     }
   },
   methods:{
-    afterRead(file){
-      console.log(file)
+    async afterRead(file){
+      let f = file.file
+      let formData = new FormData()
+      formData.append('file', f)
+      let res = await homeApi.upload(formData)
+      if(res.success){
+        this.imgs.push(res.message)
+      }
+    },
+    del(i){
+      this.imgs.splice(i, 1)
+    },
+    async submit(){
+      if(this.content.length<3){
+        return this.showToast('请输入退款原因')
+      }
+
+      let {orderId} = this.$route.query
+      //提交申请
+      let data = {
+        applicantType:1,
+        orderId,
+        reason:this.content,
+        pics: this.imgs.join(','),
+        returnType:1
+      }
+      let res = await api.applyRefund(data)
+      if(!res.success) return this.showToast(res.message)
+      Dialog.alert({
+        message: res.result,
+      }).then(() => {
+        // on close
+        this.$router.replace({path:'/orderList'})
+      });
     }
   },
   components:{
@@ -71,6 +107,10 @@ export default {
   font-size: 0.24rem;
   margin-top: 0.45rem;
   margin-bottom: 0.22rem;
+}
+.reason-refund{
+  font-size: 0.22rem;
+  color: #a8a8a8;
 }
 .reason{
   position: relative;

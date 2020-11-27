@@ -6,14 +6,20 @@
         <slot></slot>
       </span>
     </div>
-    <div class="address-card column sb">
+    <div class="address-card column sb" v-if="info.selfCarry!=1">
       <div class="top row ac">
-        <span>张三</span>
-        <span class="phone">12345678900</span>
+        <span>{{info.receiveBy||'***'}}</span>
+        <span class="phone">{{info.receivePhone||'***********'}}</span>
       </div>
       <div class="bottom row ac">
         <i class="iconfont icondizhi"></i>
-        <p class="address-info e1">地球市地球镇地球村东南西北888号</p>
+        <p class="address-info e1">{{info.receiveAddress||'暂无地址'}}</p>
+      </div>
+    </div>
+    <div class="address-card row ac" v-else>
+      <div class="bottom row ac">
+        <i class="iconfont icondizhi"></i>
+        <p class="address-info e1">{{info.getApiVo&&info.getApiVo.addressName}}</p>
       </div>
     </div>
   </div>
@@ -26,7 +32,7 @@ export default {
 
     }
   },
-  props:['status']
+  props:['status', 'info']
 }
 </script>
 

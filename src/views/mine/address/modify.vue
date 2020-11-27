@@ -157,9 +157,14 @@ export default {
         this.showToast('请输入完整的信息！', 2000)
         return
       }
+      let orderId = this.$route.query.orderId||false
       let res = await api.addAddress(this.form)
-      if(res.success){
-        this.$router.go(-1)
+      if(res.success&&orderId){
+        //有orderid 说明是订单无地址 跳到这里的
+        this.$router.replace({path:'/confirmorder', query:{orderId}})
+        return
+      }else if(res.success){
+        this.$router.replace({path:'/address'})
         return
       }
       this.showToast('添加失败!', 2000)
@@ -175,7 +180,7 @@ export default {
       let res = await api.editAddress(this.form)
       if(res.success){
         this.showToast('修改成功！')
-        this.$router.go(-1)
+        this.$router.replace({path:'/address'})
       }
     }
   },
@@ -223,6 +228,7 @@ export default {
       width: 1rem;
       font-size: 0.24rem;
       color: #1a1a1a;
+      flex-shrink: 0;
     }
     &>div{
       flex: 1;

@@ -18,7 +18,6 @@
         <input type="text" placeholder="请输入密码 (6 - 12 字母、数字)" v-model="password" />
       </div>
     </div>
-
     <div class="btn row ac jc" @click="register">注册</div>
     <div class="btn btn-plain row ac jc" @click="$router.push({name:'login'})">返回</div>
   </div>
@@ -34,10 +33,12 @@ export default {
       second: 60,
       timer: null,
       waitText: "获取验证码",
-
+      openid:'',
       phone: "",
       password: "",
       verifyMsg: "",
+
+      s_alone:false
     };
   },
   methods: {
@@ -57,7 +58,7 @@ export default {
         this.waitText = `${this.second}S后重新获取`;
       }, 1000);
       let params = {
-            openId:this.$store.state.openid,
+            openId:this.openid,
             phone: this.phone,
             service:2 //1登录 2注册 3找回
       }
@@ -72,17 +73,27 @@ export default {
       let r = [this.phone, this.password, this.verifyMsg].some(v=>!v)
       if(r) return Toast('请按要求填写内容')
       let params ={
-        openId: this.$store.state.openid,
+        openId: this.openid,
         password:this.password,
         phone: this.phone,
         code: this.verifyMsg
-      }
+      } 
       let res = await api.register(params)
       if(!res.success)return this.showToast(res.message)
       tokenHolder.set(res.result)
+      if(this.s_alone){
+        //如果单独招盟进来
+        let {openid} = this.$route.query
+        this.$router.replace({path:'/introduce', query:{token:res.result, openid, router:true}})
+        return
+      }
       this.$router.replace({path:'/home'})
     },
   },
+  created(){
+    this.openid = sessionStorage.getItem('openid')||this.$route.query.openid||''
+    this.s_alone = this.$route.query.alone //单独进招商 并且未注册用户
+  }
 };
 </script>
 

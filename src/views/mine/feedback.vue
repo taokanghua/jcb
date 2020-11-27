@@ -22,6 +22,7 @@
 <script>
 import { Uploader } from 'vant';
 import homeApi from '../../api/home'
+import api from '../../api/user'
 export default {
   data(){
     return{
@@ -42,14 +43,28 @@ export default {
     remove(i){
       this.imgs.splice(i, 1)
     },
-    submit(){
+    async submit(){
+      if(this.content.length<3) return this.showToast('请输入内容')
+      let phone = /^1[0-9]{10}$/.test(this.phone)
+      if(!phone) return this.showToast('手机号格式错误')
       //提交
-      
+      let data = {
+        content: this.content,
+        phone: this.phone,
+        pic: this.imgs.join(',')
+      }
+      let res = await api.feedbackApi(data)
+      if(res.success){
+        this.showToast(res.message)
+        this.$router.replace({path:'/mine'})
+      }else{
+        this.showToast(res.message)
+      }
     }
   },
   watch:{
     imgs(n){
-      n.length>=6?this.upbtn=false:this.upbtn=true
+      n.length>=4?this.upbtn=false:this.upbtn=true
     }
   },
   components:{

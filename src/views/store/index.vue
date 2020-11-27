@@ -70,13 +70,14 @@
             </div>
             <div class="col sb ac" style="padding: 0 0.17rem; flex: 1">
               <div class="name e2">{{item.productName}}</div>
-              <div class="price">￥{{item.paymentPrice}}</div>
+              <div class="price"><span class="symbol">￥</span>{{item.paymentPrice}} </div>
             </div>
           </router-link>
         </div>
       </div>
 
       <!-- 筛选 -->
+      <sticky>
       <div class="prepar-wrap row ac">
         <span
           :class="{ 'active-text': conditionIdx == 0 }"
@@ -97,8 +98,8 @@
           <preparation :status.sync="salesCondition" ref="price"></preparation>
         </span>
       </div>
-
-      <waterfall
+      </sticky>
+      <!-- <waterfall
               @afterFetch="mergeGoodsList"
               :req="getStoreGoodsApi"
               :params="storeParams"
@@ -106,7 +107,17 @@
         <div class="row sb" style="flex-wrap:wrap">
           <home-good-card v-for="item in goodsList" :key="item.id" :info="item"></home-good-card>
         </div>
-      </waterfall>
+      </waterfall> -->
+
+        <listEnHands
+          :req="getStoreGoodsApi"
+          :params="storeParams"
+          @reachBottom="mergeGoodsList"
+          ref="listEnhands">
+          <div class="row sb" style="flex-wrap:wrap">
+            <home-good-card v-for="item in goodsList" :key="item.id" :info="item"></home-good-card>
+          </div>
+        </listEnHands>
     </div>
 
     <!-- 领取优惠券pop -->
@@ -148,11 +159,12 @@
 <script>
 import api from '../../api/store'
 import waterfall from '../../components/common/waterfall'
-import { ActionSheet, Swipe, SwipeItem } from 'vant';
+import { ActionSheet, Swipe, SwipeItem, Sticky } from 'vant';
 import searchTop from "@/components/common/my/search-top";
 import preparation from "@/components/common/my/preparation";
 import homeGoodCard from '@/components/common/card/home-good-card'
 import loading from '../../components/common/my/loading'
+import listEnHands from '../../components/common/my/list-enhands'
 export default {
   data() {
     return {
@@ -197,7 +209,7 @@ export default {
         }
       }
       this.goodsList = []
-      this.$refs.storeWaterFall.refresh()
+      this.$refs.listEnhands.refresh()
     },
   async getStoreDetail(){
       let params ={
@@ -252,7 +264,9 @@ export default {
     waterfall,
     Swipe, 
     SwipeItem,
-    loading
+    loading,
+    listEnHands,
+    Sticky
   },
 };
 </script>
@@ -431,8 +445,10 @@ export default {
       font-size: 0.27rem;
       font-weight: bold;
       margin-top: 0.18rem;
+
     }
   }
+
 }
 .prepar-wrap {
   padding: 0 0.45rem;

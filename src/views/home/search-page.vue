@@ -1,6 +1,8 @@
 <template>
   
     <div class="search-page-wrap">
+      <Sticky>
+
       <div class="header-top row sb ac">
         <input
           type="search"
@@ -9,6 +11,7 @@
           @change="searchBlur"
         />
       </div>
+      </Sticky>
       <!-- <search-top :address="false" @focus="getFocus" @blur="loseFocus"></search-top> -->
 
       <tabs color="#2ecb62" v-model="seleteTab" v-show="!searchStatus">
@@ -39,8 +42,8 @@
                 <div class="row ac" @click="praparationPop = true"><i class="iconfont iconshaixuan"></i> 筛选</div>
               </div>
             </div>
-            <waterFall
-    @afterFetch="handleFetchResult"
+            <listEnhands
+    @reachBottom="handleFetchResult"
     :req="searchGoods"
     :params="goodsParams"
     ref="waterFall"
@@ -52,7 +55,7 @@
                 :info="item"
               ></home-good-card>
             </div>
-            </waterFall>
+            </listEnhands>
           </div>
         </tab>
         <tab title="店铺">
@@ -67,14 +70,14 @@
                 <i class="iconfont iconshaixuan"></i> 筛选
               </div> -->
             </div>
-            <waterFall
-              @afterFetch="storeListData"
+            <listEnhands
+              @reachBottom="storeListData"
               :req="searchStore"
               :params="storeParams"
               ref="storeWaterFall"
             >
             <hot-recom-card v-for="(item,i) in storeList" :key="i" :info="item"></hot-recom-card>
-            </waterFall>
+            </listEnhands>
             <!-- 商店 -->
           </div>
         </tab>
@@ -98,14 +101,16 @@
  
 <script>
 import api from "../../api/home";
-import { Tab, Tabs, List } from "vant";
+import { Tab, Tabs, List, Sticky } from "vant";
 import waterFall from "../../components/common/waterfall";
+import listEnhands from '../../components/common/my/list-enhands'
 import preparation from "../../components/common/my/preparation";
 import homeGoodCard from "../../components/common/card/home-good-card";
 import hotRecomCard from "../../components/common/card/hot-recom-card";
 import popUp from "../../components/common/popUp";
 import preparationInner from "../../components/common/my/preparation-inner";
 export default {
+  name:'search',
   data() {
     return {
       seleteTab:0, //tab卡片
@@ -219,6 +224,7 @@ export default {
         this.storeList = []
         this.$refs.storeWaterFall.refresh()
       }
+      
     },
     // async getGoods() {
     //   let res = await api.searchGoods(this.goodsParams);
@@ -234,7 +240,9 @@ export default {
       // console.log(value, price)
       this.goodsList=[]
       this.goodsParams.type = value[0]||null
-      this.goodsParams.brandId = value[1].id||null
+      if(value[1]){
+        this.goodsParams.brandId = value[1].id
+      }
       this.goodsParams.startPrice = price.start
       this.goodsParams.endPrice = price.end
       this.$refs.waterFall.refresh()
@@ -249,7 +257,7 @@ export default {
   watch: {
     searchText(n) {
       if (n.length == 0) {
-        this.$refs.waterFall.refresh();
+        // this.$refs.waterFall.refresh();
       }
     },
   },
@@ -263,6 +271,8 @@ export default {
     popUp,
     preparationInner,
     waterFall,
+    listEnhands,
+    Sticky
   },
 };
 </script>

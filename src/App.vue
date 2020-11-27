@@ -1,6 +1,14 @@
 <template>
 <div>
-  <router-view v-if="isReady"></router-view>
+  <!-- <keep-alive>
+    <router-view v-if="$route.meta.keepAlive"></router-view>
+  </keep-alive>
+  <keep-alive>
+    <router-view v-if="!$route.meta.keepAlive"></router-view>
+  </keep-alive> -->
+  <keep-alive include="search">
+    <router-view></router-view>
+  </keep-alive>
 </div>
 </template>
 <script>
@@ -18,7 +26,7 @@ export default {
     // this.fetchUser().then((isOk) => {
     //   if (!isOk) return;
     //   this.isReady=true
-      // initWxConfig();
+      initWxConfig();
     //   iosPositionIssue();
     // });
   },

@@ -98,8 +98,7 @@ export default {
         this.totalNum = s.length
       },
       updateShopList(status){
-        if(!status) return
-        this.getShopcartList()
+        if(status) this.getShopcartList()
       },
       selectAll(){ //全选商品
         this.refs.forEach(v=>{
@@ -121,6 +120,8 @@ export default {
         }else{
           this.chooseData[index].productVoList = obj.productVoList
         }
+      },
+      calc(){
         //计算总数量
         let num = this.chooseData.map(v=>v.productVoList.length)
         this.quantity = num.reduce((pre, cur)=> pre+cur)
@@ -129,7 +130,7 @@ export default {
         //计算总价格
         let list = []
         this.chooseData.map(v=>list.push(...v.productVoList))
-        this.totalPirce = list.reduce((pre, cur)=>cur.price*cur.count + pre, 0)
+        this.totalPirce = list.reduce((pre, cur)=>cur.price*cur.count + pre, 0).toFixed(2)
       },
       async delShopcartGoods(){
         let list = []
@@ -138,10 +139,15 @@ export default {
           Toast('请勾选需要删除的商品!')
           return 
         }
+        let s = list.map(v=>v.cartId)
         let ids = list.map(v=>v.cartId).join(',')
         let res = await api.delGoods({id:ids})
         if(res.success){
           this.getShopcartList()
+          this.mode = 'buy'
+          this.refs.forEach(v=>{
+          this.$refs[v][0].init()
+        })
         }else{
           Toast('删除商品失败！')
         }
@@ -151,6 +157,11 @@ export default {
         if(this.quantity==0) return Toast('请勾选商品！')
         let id = this.$store.state.user.info.memberUserInfoVo.id//获取用户id
         let storeGoodsList = this.chooseData.map(v=>v.productVoList)//[ [array], [array] ]
+        for(let i=0;i<storeGoodsList.length;i++){ //清除空数组的店铺
+          if(storeGoodsList[i].length==0){
+            storeGoodsList.splice(i,1)
+          }
+        }
         let result = storeGoodsList.map((v,i)=>{
           let wrap = {}
           let foo = v.map(o=>{ //[obj,obj]
@@ -181,6 +192,12 @@ export default {
         }else{
           this.isSelectAll = false
         }
+      },
+      chooseData:{
+        handler(n){
+          this.calc()
+        },
+        deep:true
       }
     },
     created(){

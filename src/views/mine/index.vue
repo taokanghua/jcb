@@ -28,11 +28,11 @@
           <span class="word">优惠券</span>
         </div> -->
         <router-link to="/collection?type=0" tag="div" class="item">
-          <span>4</span>
+          <span>{{numberObj.collectNumber||0}}</span>
           <span class="word">关注商品</span>
         </router-link>
         <router-link to="/collection?type=1" tag="div" class="item">
-          <span>4</span>
+          <span>{{numberObj.focusNumber||0}}</span>
           <span class="word">关注店铺</span>
         </router-link>
       </div>
@@ -57,7 +57,7 @@
             </div>
             <span>待收货</span>
           </router-link>
-          <router-link to="/orderList?type=3" tag="div" class="column ac jc">
+          <router-link to="/orderList?type=6" tag="div" class="column ac jc">
             <div class="order-item">
               <i class="iconfont icondingdan"></i>
               <div class="badge">50</div>
@@ -140,22 +140,27 @@
 </template>
 
 <script>
+import homeApi from '../../api/home'
 import myFooter from "../../components/common/my/footer";
 export default {
   name: "mine",
   data() {
     return {
-      userInfo:{}
+      userInfo:{},
+      numberObj:{}
     };
   },
   methods: {
-    getInfo(){
+    async getInfo(){
       //获取数据
-      this.userInfo = this.$store.state.user.info.memberUserInfoVo||{}
+      let res = await homeApi.getUserInfo()
+      this.numberObj = res.result.memberDynamicVo
+      
       //console.log(this.userInfo)
     }
   },
   created(){
+    this.userInfo = this.$store.state.user.info.memberUserInfoVo||{}
     this.getInfo()
   },
   components: {

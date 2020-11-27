@@ -17,6 +17,7 @@ function showToast(title, duration=1500) {
 
   setTimeout(() => {
     toastDOM.isShow = false
+    
   }, duration)
 }
 
