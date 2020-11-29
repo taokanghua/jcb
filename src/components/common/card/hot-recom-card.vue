@@ -4,7 +4,7 @@
           <div class="left row">
             <img class="shop-img" :src="info.head" alt="" />
             <div class="info col sb">
-              <div class="row" style="align-item:base-line">
+              <div class="row ac" style="align-item:base-line">
                 <span class="shop-name" style="flex-wrap:wrap">{{info.storeName}}</span>
                 <span v-if="level">
                   <img src="../../../assets/img/等级一.png" alt="" v-show="idx==0" />
@@ -34,8 +34,8 @@
               {{item.productName}}
             </div>
             <div class="price row">
-              <div class="now">￥{{Number(item.paymentPrice).toFixed(0)}}</div>
-              <div class="old">￥{{Number(item.price).toFixed(0)}}</div>
+              <div class="now">￥{{Number(item.paymentPrice).toFixed(2)}}</div>
+              <!-- <div class="old">￥{{Number(item.price).toFixed(2)}}</div> -->
             </div>
           </div>
         </div>

@@ -159,7 +159,7 @@
 <script>
 import api from '../../api/store'
 import waterfall from '../../components/common/waterfall'
-import { ActionSheet, Swipe, SwipeItem, Sticky } from 'vant';
+import { ActionSheet, Swipe, SwipeItem, Sticky, Dialog } from 'vant';
 import searchTop from "@/components/common/my/search-top";
 import preparation from "@/components/common/my/preparation";
 import homeGoodCard from '@/components/common/card/home-good-card'
@@ -221,6 +221,16 @@ export default {
         params.memberId = this.$store.state.user.info.memberUserInfoVo.id||null
       }
       let res = await api.getStoreDetail(params)
+      if(!res.success){
+        Dialog.alert({
+          //title: '标题',
+          message: res.message,
+        }).then(() => {
+          // on close
+          this.$router.go(-1)
+        });
+        return
+      }
       this.storeInfo = res.result
       this.$refs.loading.hide()
       //判断是否收藏了店铺

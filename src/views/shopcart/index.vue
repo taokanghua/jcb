@@ -19,17 +19,16 @@
       <!-- 推荐产品 -->
 
         <h3 class="title">推荐产品</h3>
-      
-        <waterFall
-          @afterFetch="handleFetchResult"
-          :req="searchGoods"
-          :params="goodsParams"
-          ref="waterFall"
-        >
-        <div class="row sb" style="flex-wrap:wrap">
-          <home-card v-for="item in goodsList" :key="item.id" :info="item"></home-card>
-      </div>
-        </waterFall>
+    
+        <list 
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad()">
+          <div class="row sb" style="flex-wrap:wrap">
+            <home-card v-for="item in goodsList" :key="item.id" :info="item"></home-card>
+          </div>
+        </list>
       </div>
 
     
@@ -57,12 +56,11 @@
 <script>
 import homeApi from '../../api/home'
 import api from '../../api/shopcart'
-import { Empty, Toast } from 'vant';
+import { Empty, Toast, List } from 'vant';
 import myFooter from '../../components/common/my/footer'
 // import shopcardGroup from '../../components/common/shopcart/shopcart-group'
 import shopCard from '../../components/common/shopcart/shopcart-card'
 import HomeCard from '../../components/common/card/home-good-card'
-import waterFall from '../../components/common/waterfall'
 import radioOne from '../../components/common/my/radio-one'
 export default {
     name:'shoppingCar',
@@ -79,9 +77,11 @@ export default {
         mode: 'buy', //是购买还是删除 -> buy / del
 
         //推荐商品
-        searchGoods: homeApi.getGoodsList,
+        // searchGoods: homeApi.getGoodsList,
         goodsList:[],
-        goodsParams:{type:2},
+        goodsParams:{type:2, pageSize:10, pageNo:1},
+        loading:false,
+        finished:false
       }
     },
     methods:{
@@ -107,10 +107,6 @@ export default {
           this.$refs[v][0].chooseAll()
         })
         //console.log(this.$refs)
-      },
-      //推荐商品
-      handleFetchResult(result) {
-        this.goodsList = [...this.goodsList, ...result.lists];
       },
       getData(obj){//获取购物车的勾选数据
         let storeId = obj.storeId
@@ -183,7 +179,30 @@ export default {
         if(!res.success) return this.showToast(res.message)
         this.$router.push({path:'/confirmorder?orderId='+res.result})
         // console.log(result)
-      }
+      },
+      //推荐商品
+      onLoad() {
+      this.loading = true;
+      var timer = setTimeout(async () => {
+          clearTimeout(timer);
+          let res = await homeApi.getGoodsList(this.goodsParams);
+          this.loading = false;
+          if (
+              !res.success ||
+              !res.result ||
+              res.result.lists.length == 0
+          ) {
+              this.finished = true;
+          } else {
+              this.goodsList = [...this.goodsList, ...res.result.lists];
+          }
+          if (!res.success) {
+              Toast("获取数据失败!");
+              return;
+          }
+          this.goodsParams.pageNo++;
+      }, 500);
+    },
     },
     watch:{
       quantity(n){
@@ -208,9 +227,9 @@ export default {
       // shopcardGroup,
       HomeCard,
       shopCard,
-      waterFall,
       Empty,
-      radioOne
+      radioOne,
+      List
     }
 }
 </script>

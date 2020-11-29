@@ -213,7 +213,7 @@ export default new Router({
         {
             path: '/orderList',
             name: 'orderList',
-            meta: { title: '我的订单', keepAlive:false },
+            meta: { title: '我的订单' },
             component: () =>
                 import ('@/views/mine/order')
         },
@@ -367,7 +367,7 @@ export default new Router({
         {
             path: '/information',
             name: 'information',
-            meta: { title: '招商加盟' },
+            meta: { title: '招商加盟', keepAlive:true },
             component: () =>
                 import ('@/views/join-in/information')
         },

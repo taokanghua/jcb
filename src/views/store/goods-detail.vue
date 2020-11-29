@@ -10,8 +10,8 @@
     </swipe>
     <!-- 商品信息 -->
     <div class="goods-info">
-      <span class="pre-sale" v-show="pageInfo.isPreSale==1">付款后，最晚{{takeDay[0]}}年{{takeDay[1]}}月{{takeDay[2]}}日发货</span>
-      <div class="name"> <div class="pre-tag" v-show="pageInfo.isPreSale==1">预售</div> {{pageInfo.name}}</div>
+      <span class="pre-sale" v-show="pageInfo.productShelveService.isPreSale==1">付款后，最晚{{takeDay[0]}}年{{takeDay[1]}}月{{takeDay[2]}}日发货</span>
+      <div class="name"> <div class="pre-tag" v-show="pageInfo.productShelveService.isPreSale==1">预售</div> {{pageInfo.name}}</div>
       <div class="row sb ac" style="margin: 0.15rem 0 0.08rem 0;">
         <div class="row" style="align-items:flex-end">
           <span class="now">￥{{pageInfo.paymentPrice}}</span>
@@ -52,10 +52,11 @@
           <i class="iconfont iconARROW"></i>
         </router-link> -->
 
-        <div class="filed-item" @click="pops.serverInfo=true">
+        <div class="filed-item" @click="pops.serverInfo=true" v-if="server.length>0">
           <div>
             <span class="r38">服务</span>
-            <span>退货包运费·极速退款·7天无理由退货</span>
+            <!-- <span>退货包运费·极速退款·7天无理由退货</span> -->
+            <span>{{server.slice(0,3).map(v=>v.content.title).join(' · ')}}</span>
           </div>
           <i class="iconfont iconARROW"></i>
         </div>
@@ -182,19 +183,19 @@
     </action-sheet>
     <action-sheet v-model="pops.serverInfo" title="服务说明">
       <div class="pop-content server-content">
-        <div>
-          <span class="s-title">退货包运费</span>
-          <p>订单发货后90天内如果申请退货退款或换货，平台将免除退货运费</p>
+        <div v-for="s in server" :key="s.key">
+          <span class="s-title">{{s.content.title}}</span>
+          <p>{{s.content.desc}}</p>
         </div>
-        <div>
+        <!-- <div>
           <span class="s-title">极速退款</span>
           <p>下单4小时内，未发货状态下，提交退款申请立即退款</p>
         </div>
         <div>
           <span class="s-title">7天无理由退款</span>
           <p>满足相应条件时，消费者可申请7天无理由退</p>
-        </div>
-        <div class="pop-close-btn position" @click="pops.serverInfo=false">关闭</div>
+        </div> -->
+        <div class="pop-close-btn" :class="{position:server.length<=3}" @click="pops.serverInfo=false">关闭</div>
       </div>
     </action-sheet>
     <action-sheet v-model="pops.goodsParams" title="产品参数">
@@ -271,7 +272,6 @@
         <div class="spec-wrap" v-for="(item,i) in pageInfo.propertyBoots" :key="i">
           <span class="title">{{item.propertyName}}</span>
           <div class="row" style=" margin-top: 0.17rem; flex-wrap:wrap">
-            <!-- <div class="spec-item active">黑色</div>-->
             <div class="spec-item" 
             :class="{active:sku_active_id[i]==idx}"
             v-for="(v, idx) in item.options" 
@@ -317,7 +317,7 @@ export default {
       specs: false
      },
      num:1, //商品数量
-     pageInfo:{pics:'',comments:{records:[]}, productSubVo:{},productParameter:{}}, //详情
+     pageInfo:{pics:'',comments:{records:[]}, productSubVo:{},productParameter:{},productShelveService:{}}, //详情
      recomList:[],
      takeDay:[0,0,0], //预售发货时间
      sku_list:[], //选购规格的value 动态绑定
@@ -325,6 +325,15 @@ export default {
      sku_obj:{}, // 筛选出来的obj 展示用
      sku_selected:'', //已选中的规格
      pop_type:'add', //判断是添加购物车还是购买  add购物车  buy购买
+     //服务
+     serveList:[ // 服务对应数组对象
+       {key:'isReturn', content:{title:'七天无理由退换', desc:'满足相应条件时，消费者可申请7天无理由退款'}},
+       {key:'isCompensation', content:{title:'假一赔十', desc:'若收到的商品是假冒商品，可获得十倍现金券赔偿'}},
+       {key:'isDelivery', content:{title:'48小时发货', desc:'付款后，48小时内发货'}},
+       {key:'isRefund', content:{title:'急速退款', desc:'下单4小时内，未发货状态下，提交退款申请立即退款'}},
+       //缺少同城送货字段
+     ],
+     server:[], //筛选出来的服务数组
    }
  },
  methods:{
@@ -343,11 +352,20 @@ export default {
        let res = await api.getGoodsDetail(params)
         this.pageInfo = res.result
         this.isCollect = res.result.collectState==1?true:false
-        this.takeDay = (res.result.deliveryDate||'').split('-')
+        this.takeDay = (res.result.productShelveService.preSaleTime||'').split('-')
         // 给规格展示一个默认值
         this.sku_obj = this.pageInfo.productSkuVos[0]
+        //筛选店铺服务
+        let o = this.pageInfo.productShelveService
+        let enServe = Object.keys(o).filter(v=>o[v]>0)
+        this.server = this.serveList.filter(v=>enServe.includes(v.key))
+        // console.log(o, enServe, Object.keys(o), this.server)
+        // console.log(this.server)
      } catch (error) {
        this.showToast('商品已下架...', 2500)
+       setTimeout(()=>{
+         this.$router.go(-1)
+       }, 1200)
      }
      this.$refs.loading.hide()
    },
@@ -421,7 +439,10 @@ export default {
    },
    async buyNow(){
      let memberId = this.$store.state.user.info.memberUserInfoVo||false
-     if(!memberId)return this.showToast('请登录后再操作')
+     if(!memberId){
+       setTimeout(()=>{this.$router.replace({path:'/login'})}, 1200)
+       return this.showToast('请登录后再操作')
+     }
      //console.log(this.sku_obj)
      if(!this.valid()){
       this.showToast('请选中所有类别！')

@@ -2,13 +2,16 @@
   <div class="mall-wrap">
     <search-top :search="false"></search-top>
 
-    <swipe autoplay class="swipe">
-      <swipe-item>
+    <swipe autoplay="5000" class="swipe" loop>
+      <swipe-item v-for="(item,i) in carousel" :key="i" loop>
+        <img class="swipe-img" :src="item.pic" alt="" @click="carouselToPage(item)" />
+      </swipe-item>
+      <!-- <swipe-item>
         <img src="../../assets/img/店铺街banner.png" alt="">
       </swipe-item>
       <swipe-item>
         <img src="../../assets/img/店铺街banner.png" alt="">
-      </swipe-item>
+      </swipe-item> -->
     </swipe>
     
     <div class="mall-content">
@@ -34,7 +37,7 @@
       </div>
       <div class="shop-wrap row sb" >
         <router-link :to="'/store?id='+item.id" class="shop-item" v-for="item in newStoreList" :key="item.id">
-          <img :src="item.pic" alt="">
+          <img :src="item.head" alt="">
           <div>{{item.name}}</div>
         </router-link>
       </div>
@@ -80,6 +83,7 @@ export default {
       allBrands:[],
       newStoreList:[],
       storeList:[],
+      carousel:[],
       storeParams:{
         //brandId: string,
         keyword: '',
@@ -94,6 +98,27 @@ export default {
   },
   methods:{
     searchStore: api.searchStore,
+    //获取轮播图
+    async getCarousel(){
+      //feild   source:1 //公众号 type:2 //c端
+      let res = await api.getBanner({field:3,source:1,type:2})
+      if(!res.success)return this.showToast(res.message)
+      this.carousel = res.result
+    },
+    carouselToPage(info){
+      //urltype  1 商品 2店铺 3活动页 
+      let {url:id, urlType:type} = info
+      switch(type){
+        case 0:
+          break
+        case 1:
+          this.$router.push({path:'/goodsdetail', query:{id}})
+          break
+        case 2:
+          this.$router.push({path:'/store', query:{id}})
+          break
+      }
+    },
     async getAllBrands(){
       let res = await classifyApi.getAllList()
       let count = Math.ceil(res.result.length/5)
@@ -113,6 +138,7 @@ export default {
     },
   },
   created(){
+    this.getCarousel()
     this.getAllBrands()
     this.getNewStoreList()
   },

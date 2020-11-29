@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import api from '../../../api/home'
 import chooseGroup from './choose-group'
 export default {
   data(){
@@ -40,8 +41,8 @@ export default {
       s1: [{id:0, name:"有货优先"}, {id:1, name: "预售商品"}],
       index:-1,
       saleType:-1,
-      small:0,
-      high:0
+      small:'',
+      high:''
       //s2: ['博士', '东城', '威克斯', '大有', '牧田', '欧莱德', '大意', '得力', '更多']
     }
   },
@@ -64,7 +65,12 @@ export default {
     }
   },
   watch:{
-
+    index(n){
+      //监听品牌选中变化 获取品牌下的下级标签
+      let id = this.info[n].id
+      // console.log(id)
+      api.getSecBrand({id}).then(res=>{console.log(res)})
+    }
   },
   components:{
     chooseGroup

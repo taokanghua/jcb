@@ -243,7 +243,7 @@ export default {
       // console.log(data)
       let res = await api.payment(data)
       //console.log(res)
-      invokeWxPay({...res.result, success:res=>{console.log(res)}, fail:err=>{console.log(fail)}})
+      invokeWxPay({...res.result, success:res=>{console.log(res)}, fail:err=>{console.log(err)}})
     },
     //获取商品卡片的值
     getData(obj){

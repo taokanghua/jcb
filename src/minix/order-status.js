@@ -1,10 +1,10 @@
 import api from '../api/order'
-import {Dialog} from 'vant'
+import { Dialog } from 'vant'
 export default {
     data() {
         return {
             orderId: '',
-            orderInfo: {}
+            orderInfo: { getApiVo: {} }
         }
     },
     methods: {

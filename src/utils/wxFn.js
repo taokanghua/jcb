@@ -9,7 +9,8 @@ const domain = location.origin; //用于分享
 
 const firstUrl = location.href.split('#')[0]
 // const firstUrl = 'http://192.168.2.139'
-const GetWXConfig = () => request.get(`/login/${webConfig.appid}/getJsapiSignature`, { params: { url: encodeURIComponent(firstUrl) } })
+// const GetWXConfig = () => request.get(`/login/${webConfig.appid}/getJsapiSignature`, { params: { url: encodeURIComponent(firstUrl) } })
+const GetWXConfig = () => request.get(`/login/${webConfig.appid}/getJsapiSignature`, {url:firstUrl })
 const defaultShare = { targetUrl: '', imgUrl: webConfig.domain + '/upload/image/202091178562234.png', title: '城大陆和学院', desc: '城大陆和学院师资的培训经历是包括国家认可的相关证书、城大陆和学院培训合格证书。' }
     /** 注入微信配置 */
 export const initWxConfig = async function(entity) {
@@ -35,7 +36,7 @@ export const initWxConfig = async function(entity) {
                     // store.commit('home/LOCATION_DATA', { latitude: 135, longitude: 246 });
                     // console.error('getLocation-fail', res)
                 // alert(location.href)
-                // alert(JSON.stringify(res))
+                alert(JSON.stringify(res))
             }
         })
         initShareConfig(entity);

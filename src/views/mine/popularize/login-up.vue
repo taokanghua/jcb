@@ -3,16 +3,16 @@
     <div class="content">
       <div class="title">注册</div>
       <div class="input-wrap">
-        <input type="text" placeholder="请输入手机号码">
+        <input type="text" placeholder="请输入手机号码" v-model="form.phone">
         <i class="iconfont iconphone"></i>
       </div>
       <div class="input-wrap row ac">
-        <input type="text" placeholder="请输入验证码">
+        <input type="text" placeholder="请输入验证码" v-model="form.code">
         <i class="iconfont iconmessage"></i>
         <div class="send-msg row ac jc" @click="getMessage">{{waitText}}</div>
       </div>
       <div class="input-wrap row ac">
-        <input type="text" placeholder="请输入密码">
+        <input type="text" placeholder="请输入密码" v-model="form.password">
         <i class="iconfont iconlock"></i>
       </div>
       <router-link to="/registered?type=1" tag="div" class="btn row ac jc">注册并关注金材宝</router-link>
@@ -21,16 +21,25 @@
 </template>
 
 <script>
+import api from '../../../api/login'
 export default {
   data(){
     return{
        second: 5,
        timer:null,
        waitText:'获取验证码',
+
+      form:{
+        openId: '',
+        password:'',
+        phone: '',
+        code: '',
+        service:2 //1登录 2注册 3找回
+      }
     }
   },
   methods:{
-    getMessage(){
+    async getMessage(){
       if(this.timer) return
       this.timer = setInterval(()=>{
         if(this.second<=0){
@@ -43,6 +52,10 @@ export default {
         this.second -= 1
         this.waitText = `${this.second}S获取`
       }, 1000)
+      let res = await api.getMsgCode(this.form)
+      if(!res.success){
+        this.showToast(res.message)
+      }
     },
   }
 }

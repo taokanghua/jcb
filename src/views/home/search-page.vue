@@ -8,13 +8,12 @@
           type="search"
           placeholder="请输入商品名称或店铺名称搜索"
           v-model="searchText"
-          @change="searchBlur"
+          @keyup.enter="searchBlur"
         />
       </div>
       </Sticky>
       <!-- <search-top :address="false" @focus="getFocus" @blur="loseFocus"></search-top> -->
-
-      <tabs color="#2ecb62" v-model="seleteTab" v-show="!searchStatus">
+      <tabs color="#2ecb62" v-model="seleteTab" v-show="!searchStatus" animated>
         <tab title="商品">
           <div class="store">
             <div class="prepar-wrap row sb ac">
@@ -82,7 +81,6 @@
           </div>
         </tab>
       </tabs>
-
       <!-- 商品筛选弹框 -->
       <pop-up
         :show="praparationPop"
@@ -102,7 +100,7 @@
 <script>
 import api from "../../api/home";
 import { Tab, Tabs, List, Sticky } from "vant";
-import waterFall from "../../components/common/waterfall";
+// import waterFall from "../../components/common/waterfall";
 import listEnhands from '../../components/common/my/list-enhands'
 import preparation from "../../components/common/my/preparation";
 import homeGoodCard from "../../components/common/card/home-good-card";
@@ -128,9 +126,9 @@ export default {
         saleCount: false,
         //startPrice: 0,
         //priceSort:true,
-        type: 0,
-        userLat: 0,
-        userLng: 0,
+        type: -1,
+        // userLat: 0,
+        // userLng: 0,
       },
       storeParams:{
         //brandId: string,
@@ -218,48 +216,73 @@ export default {
       if(this.seleteTab==0){//搜商品
         this.goodsParams.keyword = this.searchText;
         this.goodsList = []
-        this.$refs.waterFall.refresh()
+        this.$nextTick(()=>{this.$refs.waterFall.refresh()})
       }else{
         this.storeParams.keyword = this.searchText
         this.storeList = []
-        this.$refs.storeWaterFall.refresh()
+        this.$nextTick(()=>{this.$refs.storeWaterFall.refresh()})
       }
-      
     },
     // async getGoods() {
     //   let res = await api.searchGoods(this.goodsParams);
     // },
-    handleFetchResult(result) {
+    handleFetchResult(result, o) {
+      // o 用来判断需不需用来清空之前的数据
+      if(o) this.goodsList = []
       this.goodsList = [...this.goodsList, ...result.lists];
     },
-    storeListData(result){
+    storeListData(result, o){
+      //if(o) this.storeList = []
       this.storeList = [...this.storeList, ...result.lists]
     },
     confirm(value, price){
       //点击筛选后返回的
-      // console.log(value, price)
+      console.log(value, price)
       this.goodsList=[]
-      this.goodsParams.type = value[0]||null
+      this.goodsParams.type = value[0]
       if(value[1]){
         this.goodsParams.brandId = value[1].id
       }
-      this.goodsParams.startPrice = price.start
-      this.goodsParams.endPrice = price.end
+      this.goodsParams.startPrice = price.start||0
+      this.goodsParams.endPrice = price.end||0
       this.$refs.waterFall.refresh()
     }
   },
   created(){
     if(this.$route.query.id){
       this.goodsParams.brandId = this.$route.query.id
+    }else{
+      this.goodsList = []
+      this.goodsParams.brandId = ''
     }
     this.getBrandRec()
+    //this.searchBlur()
+
+  },
+  activated(){
+    if(this.$route.query.id){
+      this.goodsParams.brandId = this.$route.query.id
+    }else{
+      // this.goodsList = []
+      this.goodsParams.brandId = ''
+    }
+    this.searchBlur()
   },
   watch: {
     searchText(n) {
       if (n.length == 0) {
+        this.goodsParams.keyword = ''
+        this.storeParams.keyword = ''
         // this.$refs.waterFall.refresh();
       }
     },
+    // '$route'(to, from){
+    //   console.log(from.name +'->' + to.name)
+    // }
+    seleteTab(n){
+      console.log(n)
+      this.searchBlur()
+    }
   },
   components: {
     Tab,
@@ -270,7 +293,7 @@ export default {
     hotRecomCard,
     popUp,
     preparationInner,
-    waterFall,
+    // waterFall,
     listEnhands,
     Sticky
   },

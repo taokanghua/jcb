@@ -224,7 +224,7 @@ export default {
       this.editPhone = true
     },
     checkPhone(e){
-      let phone = /^1[0-9]{10}$/.test(this.info.createByName)
+      let phone = /^1[0-9]{10}$/.test(this.info.phone)
       if(!phone) return this.showToast('手机号无效！')
       this.editPhone = false
       this.calcPacking()
@@ -255,6 +255,8 @@ export default {
       // let openHours = '2020-11-22 08:30:00'
       // let closeHours = '2020-11-22 18:30:00'
       let {openHours, closeHours} = this.info.getApiVo
+      openHours = '2018/09/01 ' + openHours
+      closeHours = '2018/09/01 ' + closeHours
       let [min, max] = [openHours, closeHours].map(v => new Date(v) * 1)
       const halfHours = 30 * 60 * 1000
       let cur = min;

@@ -1,71 +1,85 @@
 <template>
   <div class="self-take-wrap">
-    <div class="top-head row">
-      <div class="info column">
+    <div class="top-head column">
+      <div class="info row ac">
         <span class="title">取货人</span>
-        <span class="con">张三</span>
+        <span class="title" style="margin-left: 0.45rem;">预留手机</span>
       </div>
-      <div class="info column">
-        <span class="title">预留手机</span>
-        <span class="con">12345678900</span>
+      <div class="info2 row ac">
+        <span class="title">{{orderInfo.createByName}}</span>
+        <span class="con" style="margin-left: 0.45rem;">{{orderInfo.phone}}</span>
       </div>
     </div>
 
     <!-- 取货码 -->
     <div class="content-wrap">
       <div class="qr-wrap column ac">
-        <span class="shop-name">豪迪五金店取货码</span>
-        <img src="../../assets/img/取货码.png" alt="" class="take-qr">
-        <div class="take-number">取货码：860438</div>
+        <span class="shop-name">{{orderInfo.getApiVo.name}}取货码</span>
+        <!-- <img src="../../assets/img/取货码.png" alt="" class="take-qr"> -->
+        <VueQrcode class="take-qr" :value="qr_value"></VueQrcode>
+        <div class="take-number">取货码：{{orderInfo.selfCode||'666666'}}</div>
         <div class="tip">注意：上门自提时请出示取货码需要扫码取货以便完成交易</div>
-        <i class="iconfont iconyishiyong took"></i>
+        <i class="iconfont iconyishiyong took" v-if="orderInfo.selfCodeStatus==1 "></i>
       </div>
 
       <!-- 商品卡片 -->
       <div class="s-goods-card">
         <div class="top row sb ac"> 
           <!-- 待收货状态  状态文字为蓝色 -->
-          <span>订单单号:1000001</span>
+          <span>订单单号:{{orderInfo.orderCode}}</span>
           <span>已完成</span>
         </div>
-        <div class="goods row">
-          <img src="../../assets/img/购物车.png" alt="">
+        <div class="goods row" v-for="item in orderInfo.productList" :key="item.skuId">
+          <img :src="item.productPic" alt="">
           <div class="right column sb">
             <div class="t column">
-              <span class="name">博世 电动工具 3.6V锂电池充电起子 螺丝刀 IXO3</span>
-              <span class="sku">规格:220V    颜色:黑色</span>
+              <span class="name">{{item.productName}}</span>
+              <span class="sku">{{item.propertyName}}</span>
             </div>
             <div class="row sb ac">
-              <span class="price">￥298</span>
-              <span class="count">x50</span>
+              <span class="price">￥{{item.skuPrice}}</span>
+              <span class="count">x{{item.number}}</span>
             </div>
           </div> 
         </div>
         <div class="feild row ac sb">
           <span class="title">取货时间</span>
-          <span>2020-10-10  12:00</span>
+          <span class="feild-v">{{orderInfo.selfTime||'加载失败'}}</span>
         </div>
-        <div class="feild row ac sb">
+        <div class="feild row ">
           <span class="title">取货地址</span>
-          <span>广东省佛山市南海区新石大街22号附近</span>
+          <span class="feild-v">{{orderInfo.getApiVo.addressName}}</span>
         </div>
         <div class="feild row ac sb">
           <span class="title">联系电话</span>
-          <span>12345678900</span>
+          <span class="feild-v">{{orderInfo.getApiVo.phone}}</span>
         </div>
       </div>
     </div>
     
     <div class="tabbar row ac sb">
-      <span class="s-money"><span class="word">合计:</span>￥14900</span>
+      <span class="s-money"><span class="word">合计:</span>￥{{orderInfo.totalAmount}}</span>
       <div class="refund-btn row ac jc">申请退款</div>
     </div>
   </div>
 </template>
 
 <script>
+import orderMix from '../../minix/order-status'
+import VueQrcode from '@chenfengyuan/vue-qrcode'
 export default {
-
+  data(){
+    return{
+      qr_value:''
+    }
+  },
+  mixins:[orderMix],
+  mounted(){
+    this.qr_value = 'http://taokanghua.cn'
+  },
+  components:{
+    VueQrcode
+  }
 }
 </script>
 
@@ -79,6 +93,7 @@ export default {
 }
 .top-head{
   height: 2.36rem;
+  line-height: 1;
   background-image: url('../../assets/img/我的订单-订单详情.png');
   background-size: cover;
   padding-top: 0.42rem;
@@ -91,8 +106,14 @@ export default {
       font-size: 0.21rem;
     }
     .con{
-      margin-top: 0.22rem;
+      
+    }
+  }
+  .info2{
+    margin-top: 0.22rem;
+    .con{
       font-size: 0.27rem;
+      line-height: 1;
     }
   }
 }
@@ -108,13 +129,15 @@ export default {
     transform: translateY(-0.82rem);
     position: relative;
     .shop-name{
-      font-size: 0.31rem;
+      text-align: center;
+      font-size: 0.18rem;
       color: #1a1a1a;
       font-weight: bold;
+      transform: translateY(-0.1rem);
     }
     .take-qr{
-      width: 3.41rem;
-      height: 3.46rem;
+      width: 3.41rem !important;
+      height: 3.46rem !important;
       margin-bottom: 0.23rem;
     }
     .take-number{
@@ -135,6 +158,7 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
+      line-height: 1;
     }
   }
   .s-goods-card{
@@ -152,9 +176,11 @@ export default {
       img{
         width: 1.41rem;
 	      height: 1.41rem;
-	      border-radius: 0.11rem;
+        border-radius: 0.11rem;
+        flex-shrink: 0;
       }
       .right{
+        flex: 1;
         height: 1.41rem;
         margin-left: 0.23rem;
         .name{
@@ -180,8 +206,14 @@ export default {
       margin-top: 0.28rem;
       font-size: 0.21rem;
       color: #1a1a1a;
+      justify-content: baseline;
       .title{
         margin-right: 0.46rem;
+        width: 1rem;
+      }
+      .feild-v{
+        flex: 1;
+        text-align: right;
       }
     }
   }

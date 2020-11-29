@@ -46,28 +46,28 @@
           <router-link to="/orderList?type=1" tag="div" class="column ac jc">
             <div class="order-item">
               <i class="iconfont iconweizhifu"></i>
-            <div class="badge">5</div>
+            <!-- <div class="badge">5</div> -->
             </div>
             <span>待支付</span>
           </router-link>
           <router-link to="/orderList?type=2" tag="div" class="column ac jc">
             <div class="order-item">
               <i class="iconfont iconyiwancheng"></i>
-              <div class="badge">5</div>
+              <!-- <div class="badge">5</div> -->
             </div>
             <span>待收货</span>
           </router-link>
           <router-link to="/orderList?type=6" tag="div" class="column ac jc">
             <div class="order-item">
               <i class="iconfont icondingdan"></i>
-              <div class="badge">50</div>
+              <!-- <div class="badge">50</div> -->
             </div>
             <span>已完成</span>
           </router-link>
           <router-link to="/orderList" tag="div" class="column ac jc">
             <div class="order-item">
               <i class="iconfont iconshouhou"></i>    
-              <div class="badge">5</div>
+              <!-- <div class="badge">5</div> -->
             </div>
             <span>售后/退货</span>
           </router-link>
@@ -125,7 +125,7 @@
                 <!-- <i class="iconfont iconliaotian"></i> -->
                 <span>我的评价</span>
               </div>
-              <div class="other-item">
+              <div class="other-item" @click="changeIndentity">
                 <img src="../../assets/img/mine/切换身份@3x.png" alt="">
                 <!-- <i class="iconfont iconqiehuan"></i> -->
                 <span>切换店铺</span>
@@ -142,6 +142,7 @@
 <script>
 import homeApi from '../../api/home'
 import myFooter from "../../components/common/my/footer";
+import tokenHolder from '../../utils/tokenHolder';
 export default {
   name: "mine",
   data() {
@@ -157,6 +158,11 @@ export default {
       this.numberObj = res.result.memberDynamicVo
       
       //console.log(this.userInfo)
+    },
+    changeIndentity(){
+      let token = tokenHolder.get()||''
+      location.href = 'http://192.168.2.188:8080/#/workbench?token='+token
+      // this.$router.push({path:, query:{token}})
     }
   },
   created(){

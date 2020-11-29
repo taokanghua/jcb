@@ -29,5 +29,6 @@ export default {
     getBanner: data => req.post('carousel/get', data),
     upload: data => req.post('oss/upload', data, config),
     getJoinState: openid => req.get('member/joinStatus/' + openid), //查看加盟状态
-    getAgreement: type => req.get('/protocol/'+type)
+    getAgreement: type => req.get('/protocol/' + type),
+    getSecBrand: params => req.get('productBrand/tags', {params})
 }

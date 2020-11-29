@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import api from '../../api/popularize'
+import {mapState} from 'vuex'
 export default {
   data(){
     return{
@@ -80,9 +82,19 @@ export default {
     }
   },
   methods:{
+    async getData(){
+      let res = await api.getPD({memberId:this.info.id})
+      console.log(res)
+    },
     changeTab(i){
       this.tagIdx = i
     }
+  },
+  computed:{
+    ...mapState({info:state=>state.user.info.memberUserInfoVo})
+  },
+  mounted(){
+    this.getData()
   }
 }
 </script>

@@ -8,7 +8,10 @@
       </div>
       <div class="shop-name e1">{{info.storeName}}</div>
       <div class="price-wrap row sb">
-        <div class="price">￥{{parseInt(info.paymentPrice||0).toFixed(0)}} <span style="text-decoration:line-through">￥{{parseInt(info.price).toFixed(0)}}</span></div>
+        <div class="price">
+          ￥{{Number(info.paymentPrice||0).toFixed(2)}} 
+          <span style="text-decoration:line-through">￥{{Number(info.price).toFixed(2)}}</span>
+          </div>
       </div>
         <div class="sale">销量:{{info.saleCount}}</div>
     </router-link>

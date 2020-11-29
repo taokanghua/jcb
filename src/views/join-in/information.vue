@@ -11,7 +11,7 @@
           <i class="iconfont iconjia" v-if="!form.storeBase.head"></i>
           <img :src="form.storeBase.head" v-else alt="" class="logo">
         </div>
-        <input type="file" class="my-upload" @change="logoUp" />
+        <input type="file" class="my-upload" @change="logoUp"/>
       </div>
     </div>
     <div class="class-feild row sb ac">
@@ -270,6 +270,12 @@ export default {
         return res
       }
     },
+    imgValid(file){
+      let ableList = ['jpg', 'png', 'jpeg']
+      let type = file.type.split('/')[1]
+      console.log(file)
+      return ableList.includes(type)
+    },
     async getStore(){
       let res = await api.getStoreType()
       if(!res.success)return this.showToast(res.message)
@@ -322,6 +328,7 @@ export default {
     },
     async logoUp(files) {//店铺图标上传
       let file = files.target.files[0]
+      console.log(this.imgValid(file))
       let url =await this.formateImg(file)
       this.form.storeBase.head = url
     },
@@ -330,10 +337,13 @@ export default {
       if(!url) return
       this.form.storeAuth.businessLicensePic.push(url)
     },
-    async afterRead(file){
+    async afterRead(file){ //门店详情照片
       let url =await this.formateImg(file.file)
       if(!url) return
       this.form.storeAuth.detailsPic.push(url)
+      if(this.form.storeAuth.detailsPic.length>=4){
+        this.upBtn.store = false
+      }
     },
     removeImg(type, index){//删除上传图片
       if(type=='business'){
@@ -363,7 +373,7 @@ export default {
       copy.storeAuth.certificatePics = this.form.storeAuth.certificatePics.join(',')
       let res = await api.upgrade(copy)
       // console.log(res)
-      // console.log(this.form);
+      console.log(this.form);
       let {router} = this.$route.query||false
       if(res.success){
         Dialog.alert({

@@ -15,7 +15,7 @@
     <!-- 轮播图 -->
     <div class="tools-wrap">
       <swipe autoplay="5000" loop style="height: 2.3rem">
-        <swipe-item v-for="(item,i) in carousel" :key="i">
+        <swipe-item v-for="(item,i) in carousel" :key="i" loop>
           <img class="swipe-img" :src="item.pic" alt="" @click="carouselToPage(item)" />
         </swipe-item>
       </swipe>
@@ -122,11 +122,17 @@
       </div>
     </div>
 
-    <list @load="loadNext">
-      <div class="tabs-wrap row" >
+    <!-- <list @load="loadNext"> -->
+      <!-- <div class="tabs-wrap row" >
         <home-card v-for="(item,i) in goodsList" :key="i" :info="item"></home-card>
-      </div>
-    </list>
+      </div> -->
+      <tabs v-model="recomIndex" swipeable animated color="#f6f6f6" background="#f6f6f6">
+        <tab title="" :name="item.value" v-for="(item,i) in 3" :key="i">
+          <!-- <order-list :status="item.value"></order-list> -->
+          <recom-list :type="i+1"></recom-list>
+        </tab>
+      </tabs>
+    <!-- </list> -->
 
     <!-- 底部tabbar -->
     <myFooter></myFooter>
@@ -148,54 +154,32 @@ import HomeCard from '../../components/common/card/home-good-card'
 import searchTop from '../../components/common/my/search-top'
 import hotRecomCard from '../../components/common/card/hot-recom-card'
 import tokenHolder from '../../utils/tokenHolder';
+import recomList from './components/recom-list'
 export default {
   name: "home",
   data() {
     return {
       mapInfo:{}, //获取用户定位的信息
       recomIndex:1,
-      goodsParams:{pageNo:1, pageSize:10, type:2},
+      // goodsParams:{pageNo:1, pageSize:10, type:2},
       timer:null,
       userInfo:{},
       isRedpack:false, //红包遮罩
 
-      goodsList:[],
       reconBrandList:[],
       reconStoreList:[],
 
-      notice:{}, //咨询
+      notice:'', //咨询
       carousel:[], //轮播图
     };
   },
   methods:{
     changeRecom(i){
       this.recomIndex = i
-      this.goodsParams.type = i+1
-      this.goodsList = []
-      this.goodsParams.pageNo = 1
-      this.getHomeGoodsList()
-    },
-    loadNext(){ //触底加载（执行多次） 设置了节流 最快2s间隔加载一次
-      if(!this.timer){
-        this.timer = setTimeout(()=>{
-          clearTimeout(this.timer)
-          this.timer = null
-          this.getHomeGoodsList()
-          this.goodsParams.pageNo += 1
-          }, 2000)
-        // console.log(1)
-      }
-      
-    },
-    async getHomeGoodsList(){
-      let res = await api.getGoodsList(this.goodsParams)
-      if(!res.success){
-        this.showToast('获取商品失败!', 2500)
-        return
-      }
-      //if(res.result==null) res.result = []
-      this.goodsList = [...this.goodsList, ...res.result.lists]
-      //this.goodsList.concat(res.result.lists)
+      // this.goodsParams.type = i+1
+      // this.goodsList = []
+      // this.goodsParams.pageNo = 1
+      // this.getHomeGoodsList()
     },
     async takeRedpack(){
       //领取红包
@@ -292,7 +276,7 @@ export default {
     }
   },
   async created(){
-    this.getHomeGoodsList()
+    // this.getHomeGoodsList()
     this.getRecomBrand()
     this.getRecomStore()
     this.getUserInfo()
@@ -329,19 +313,20 @@ export default {
     hotRecomCard,
     List,
     Overlay,
-    NoticeBar
+    NoticeBar,
+    recomList
   },
 };
 </script>
 
 <style lang="less" scoped>
-.tabs-wrap{
-  padding: 0 0.25rem;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-top: 0.28rem;
-  min-height: 5rem;
-}
+// .tabs-wrap{
+//   padding: 0 0.25rem;
+//   flex-wrap: wrap;
+//   justify-content: space-between;
+//   margin-top: 0.28rem;
+//   min-height: 5rem;
+// }
 .pr24 {
   padding-right: 0.24rem;
 }
@@ -494,6 +479,7 @@ export default {
 .menu-title{
   padding: 0 1rem;
   .item{
+    flex: 1;
     div{
       font-size: 0.27rem;
     }
@@ -562,5 +548,7 @@ export default {
   color: #1a1a1a;
   background-color: #ffffff!important;
 }
-
+/deep/.van-tabs__wrap{
+  display: none;
+}
 </style>
