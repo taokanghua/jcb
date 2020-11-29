@@ -1,5 +1,5 @@
 <template>
-  <div class="pop-up" ref="pop">
+  <div class="pop-up" ref="pop" @touchmove.prevent.self="e=>e.preventDefault()">
     <div class="y-modal" :class="{'fade-show':liftUp}"></div>
     <div class="y-menu" :class="{'up':liftUp,[position]:true}" @click.stop.self="handelModalClick()">
       <slot></slot>
@@ -51,6 +51,7 @@ export default {
   height: 100vh;
   display: none;
   z-index: 999999;
+  overflow: auto;
 }
 .y-modal {
   opacity: 0;

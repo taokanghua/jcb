@@ -157,10 +157,11 @@ export default {
       let res = await homeApi.getUserInfo()
       this.numberObj = res.result.memberDynamicVo
       
-      //console.log(this.userInfo)
+      //console.log(this.userInfo) 
     },
     changeIndentity(){
       let token = tokenHolder.get()||''
+      // location.href = 'https://china-jcb.com/store/#/workbench?token='+token
       location.href = 'http://192.168.2.188:8080/#/workbench?token='+token
       // this.$router.push({path:, query:{token}})
     }

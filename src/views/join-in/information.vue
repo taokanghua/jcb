@@ -231,6 +231,7 @@ export default {
   methods: {
     //处理图片公共方法
     async formateImg(file){
+      if(!this.imgValid(file)) return
       let formData = new FormData()
       formData.append('file',file)
       let res = await api.upload(formData)
@@ -270,11 +271,24 @@ export default {
         return res
       }
     },
-    imgValid(file){
+    imgValid(file){ //验证图片格式 大小限制 类型限制
       let ableList = ['jpg', 'png', 'jpeg']
       let type = file.type.split('/')[1]
-      console.log(file)
-      return ableList.includes(type)
+      let size = (Number(file.size)/1024/1024).toFixed(2) // M
+      let enType = ableList.includes(type)
+      if(!enType){
+        Dialog.alert({
+          message: '仅支持.jpg .png .jpeg格式文件',
+        })
+        return false
+      }
+      if(size>5.1){
+        Dialog.alert({
+          message: '仅支持小于5M的文件',
+        })
+        return false
+      }
+      return true
     },
     async getStore(){
       let res = await api.getStoreType()
@@ -328,7 +342,7 @@ export default {
     },
     async logoUp(files) {//店铺图标上传
       let file = files.target.files[0]
-      console.log(this.imgValid(file))
+      //if(!this.imgValid(file)) return
       let url =await this.formateImg(file)
       this.form.storeBase.head = url
     },

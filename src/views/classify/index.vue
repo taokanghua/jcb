@@ -86,6 +86,13 @@
 
           <!-- 筛选出来的商品 -->
             <div class="searched-goods" ref="resultBox" :style="`height:${dynamicHeight}px`">
+              <empty
+                class="custom-image"
+                v-show="empty"
+                image="https://img.yzcdn.cn/vant/custom-empty-image.png"
+                description="暂时无商品"
+              />
+
               <router-link :to="'/goodsdetail?id='+item.productId" class="goods-card row" v-for="item in goodsList" :key="item.productId">
                 <img :src="item.pic" alt="" />
                 <div class="right-info column sb">
@@ -106,7 +113,7 @@
     <div class="useless"></div>
 
     <!-- 商品筛选弹框 -->
-      <pop-up
+      <!-- <pop-up
         :show="isPop"
         position="right-center"
         @onModalClick="closePop"
@@ -116,24 +123,33 @@
         @close="closePop"
         @reset="resetPop"
         @confirm="confirm"></preparation-inner>
-      </pop-up>
+      </pop-up> -->
+      <Popup v-model="isPop" position="right" :style="{ height: '100vh' }">
+        <preparation-inner 
+          :info="goodsBrands" 
+          @close="closePop"
+          @reset="resetPop"
+          @confirm="confirm">
+        </preparation-inner>
+      </Popup>
     <myFooter></myFooter>
   </div>
 </template>
 
 <script>
-import {list } from 'vant'
+import {list, Popup, Empty } from 'vant'
 import api from '../../api/classify'
 import homeApi from '../../api/home'
 import myFooter from "../../components/common/my/footer";
 import preparation from "../../components/common/my/preparation";
-import popUp from '../../components/common/popUp'
+// import popUp from '../../components/common/popUp'
 import preparationInner from '../../components/common/my/preparation-inner'
 
 import {isIphoneX} from '../../utils/iosOnly'
 export default {
   data() {
     return {
+      empty:false,
       activeIndex: 0, //二级选中idx
       thirdIdx:-1, //三级筛选 选中id
       fuck:0,
@@ -171,7 +187,11 @@ export default {
   methods: {
     async getGoodList(){
       let res = await api.getGoods(this.searchParams)
-      this.goodsList = res.result.lists
+      // console.log(res)
+      this.goodsList = (res.result||{}).lists||[]
+      if(!res.result||res.result.length==0||res.result==null){
+        this.empty=true}
+        else{this.empty=false}
     },
     changeOne(i){ //一级
       this.second = this.allList[i].children
@@ -274,7 +294,7 @@ export default {
       this.searchParams.startPrice = price.start
       this.searchParams.endPrice = price.end
       this.searchParams.type = value[0]
-      this.searchParams.brandId = value[1].id
+      this.searchParams.brandId = value[1].id||''
       this.goodsList = []
       this.getGoodList()
     }
@@ -295,9 +315,11 @@ export default {
   components: {
     myFooter,
     preparation,
-    popUp,
+    // popUp,
     preparationInner,
     list,
+    Popup,
+    Empty
   },
 };
 </script>
@@ -464,5 +486,9 @@ export default {
       }
     }
   }
+}
+/deep/.van-empty__image{
+  width: 90px;
+    height: 90px;
 }
 </style>

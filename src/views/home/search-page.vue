@@ -82,7 +82,7 @@
         </tab>
       </tabs>
       <!-- 商品筛选弹框 -->
-      <pop-up
+      <!-- <pop-up
         :show="praparationPop"
         position="right-center"
         @onModalClick="closePop"
@@ -92,21 +92,30 @@
         @close="closePop"
         @reset="resetPop"
         @confirm="confirm"></preparation-inner>
-      </pop-up>
+      </pop-up> -->
+      <Popup v-model="praparationPop" position="right" :style="{ height: '100vh' }">
+        <preparation-inner 
+          :info="goodsBrands" 
+          @close="closePop"
+          @reset="resetPop"
+          @confirm="confirm">
+        </preparation-inner>
+      </Popup>
     </div>
   
 </template>
  
 <script>
 import api from "../../api/home";
-import { Tab, Tabs, List, Sticky } from "vant";
+import { Tab, Tabs, List, Sticky, Popup } from "vant";
 // import waterFall from "../../components/common/waterfall";
 import listEnhands from '../../components/common/my/list-enhands'
 import preparation from "../../components/common/my/preparation";
 import homeGoodCard from "../../components/common/card/home-good-card";
 import hotRecomCard from "../../components/common/card/hot-recom-card";
-import popUp from "../../components/common/popUp";
+// import popUp from "../../components/common/popUp";
 import preparationInner from "../../components/common/my/preparation-inner";
+// import PopUp from '../../components/common/popUp.vue';
 export default {
   name:'search',
   data() {
@@ -235,7 +244,7 @@ export default {
       //if(o) this.storeList = []
       this.storeList = [...this.storeList, ...result.lists]
     },
-    confirm(value, price){
+    confirm(value, price, tags){
       //点击筛选后返回的
       console.log(value, price)
       this.goodsList=[]
@@ -245,6 +254,7 @@ export default {
       }
       this.goodsParams.startPrice = price.start||0
       this.goodsParams.endPrice = price.end||0
+      this.goodsParams.tags = tags
       this.$refs.waterFall.refresh()
     }
   },
@@ -291,11 +301,12 @@ export default {
     preparation,
     homeGoodCard,
     hotRecomCard,
-    popUp,
+    // popUp,
     preparationInner,
     // waterFall,
     listEnhands,
-    Sticky
+    Sticky,
+    Popup
   },
 };
 </script>

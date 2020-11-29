@@ -1,29 +1,31 @@
 <template>
-  <div class="preparation-inner-wrap">
-    <div class="address e1">
+  <div class="preparation-inner-wrap column" @touchmove="console.log(1)">
+    <div class="address e1 row ac">
       配送至  广东省佛山市南海区新石大街…
     </div>
+    <section style="flex:1;overflow:auto">
     
-    <div class="com-card row ac">
-      <choose-group :info="s1" :index.sync="saleType" ref="group1"></choose-group>
-    </div>
-    <!-- <div class="select1 row ac">
-      <div class="s-item">有货优先</div>
-      <div class="s-item">预售商品</div>
-    </div> -->
-    <div class="pinpai">
-      <div class="title">品牌</div>
-      <choose-group :info="info" :index.sync="index" ref="group2"></choose-group>
-    </div>
-
-    <div class="pinpai">
-      <div class="title">价格</div>
-      <div class="input-wrap row sb">
-        <input type="text" class="start" placeholder="最低价" v-model="small">
-        <input type="text" class="end" placeholder="最高价" v-model="high">
+      <div class="com-card row ac">
+        <choose-group :info="s1" :index.sync="saleType" ref="group1"></choose-group>
       </div>
-    </div>
+      <div class="pinpai">
+        <div class="title">品牌</div>
+        <choose-group :info="info" :index.sync="index" ref="group2"></choose-group>
+      </div>
+      <!-- 品牌下级 -->
+      <div class="pinpai" v-for="(item,i) in child" :key="item.id">
+        <div class="title">{{item.name}}</div>
+        <choose-group :info="item.children" :index.sync="checkChildIds[i]" :ref="childRef[i]"></choose-group>
+      </div>
 
+      <div class="pinpai">
+        <div class="title">价格</div>
+        <div class="input-wrap row sb">
+          <input type="text" class="start" placeholder="最低价" v-model="small">
+          <input type="text" class="end" placeholder="最高价" v-model="high">
+        </div>
+      </div>
+      </section>
     <div class="footer row ac jc">
       <div class="left" @click="$emit('close')"> <i class="iconfont iconguanbi"></i> </div>
       <div class="btn" @click="reset">重置</div>
@@ -42,8 +44,11 @@ export default {
       index:-1,
       saleType:-1,
       small:'',
-      high:''
+      high:'',
       //s2: ['博士', '东城', '威克斯', '大有', '牧田', '欧莱德', '大意', '得力', '更多']
+      child:[], //品牌下的子标签
+      checkChildIds:[], //选中子标签的值
+      childRef:[], //重置用的
     }
   },
   props:{
@@ -56,20 +61,32 @@ export default {
     reset(){
       this.$refs.group1.reset()
       this.$refs.group2.reset()
-      // this.$emit('close')
+      this.childRef.map(v=>{
+        // console.log(this.$refs[v])
+        this.$refs[v][0].reset()
+        })
+      return
       this.$emit('reset')
     },
-    confirm(){
-      this.$emit('confirm',[this.saleType, this.info[this.index]],{start:this.small, end:this.high})
+    confirm(){    //
+      let child = []
+      if(this.checkChildIds.length>0){
+        child = this.checkChildIds.map((v,i)=>this.child[i].children[v].id)//子集id数组 [id, id]
+      }
+      this.$emit('confirm',[this.saleType, (this.info[this.index]||{})],{start:this.small, end:this.high}, child)
       this.$emit('close')
     }
   },
   watch:{
-    index(n){
+    async index(n){
       //监听品牌选中变化 获取品牌下的下级标签
+      this.checkChildIds = []
       let id = this.info[n].id
       // console.log(id)
-      api.getSecBrand({id}).then(res=>{console.log(res)})
+      let res = await api.getSecBrand({id})
+      // console.log(res)
+      this.child = res.result.result
+      this.child.map((v,i)=>this.childRef[i]=v.id)
     }
   },
   components:{
@@ -86,13 +103,17 @@ export default {
   margin-bottom: 0.2rem;
 }
 .preparation-inner-wrap{
+  overflow: auto;
   height: 100vh;
   width: 4.52rem;
   position: relative;
   background-color: #f6f6f6;
+  // padding-bottom: 0.75rem;
 }
 .address{
-  padding: 0.25rem 0.23rem;
+  height: 0.7rem;
+  // padding: 0.25rem 0.23rem;
+  padding-left: 0.23rem;
   background-color: #ffffff;
   font-size: 0.21rem;
   color: #1a1a1a;
@@ -120,9 +141,9 @@ export default {
   }
 }
 .footer{
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  // position: fixed;
+  // bottom: 0;
+  // right: 0;
   width: 4.52rem;
 	height: 0.75rem;
   background-color: #ffffff;

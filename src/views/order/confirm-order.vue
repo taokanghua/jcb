@@ -163,7 +163,7 @@
 import {invokeWxPay} from '../../utils/wxFn'
 import api from '../../api/home'
 import userApi from '../../api/user'
-import {ActionSheet} from 'vant'
+import {ActionSheet, Dialog} from 'vant'
 import {mapState} from 'vuex'
 import inputNumber from '../../components/common/my/input-number'
 import chooseMethCard from '../../components/common/card/order-goods-card'
@@ -242,8 +242,26 @@ export default {
       }
       // console.log(data)
       let res = await api.payment(data)
-      //console.log(res)
-      invokeWxPay({...res.result, success:res=>{console.log(res)}, fail:err=>{console.log(err)}})
+      /* 
+        { errMsg: 'chooseWXPay:cancel' } / { errMsg: 'chooseWXPay:ok' }
+      */
+      invokeWxPay(
+        {
+      ...res.result, 
+      success:res=>{
+        // let result = res.errMsg.split(':')[1]
+        // if(result == 'ok'){
+          this.$router.replace({path:'/orderList'})
+          this.showToast('购买成功!')
+        // }
+      }, 
+      fail:err=>{
+        Dialog.alert({
+          message: '支付失败',
+        })
+      },
+      cancel: c => {console.log(c)}
+      })
     },
     //获取商品卡片的值
     getData(obj){

@@ -255,8 +255,8 @@ export default {
       // let openHours = '2020-11-22 08:30:00'
       // let closeHours = '2020-11-22 18:30:00'
       let {openHours, closeHours} = this.info.getApiVo
-      openHours = '2018/09/01 ' + openHours
-      closeHours = '2018/09/01 ' + closeHours
+      openHours = '2018/09/01 ' + (openHours||'09:00:00')
+      closeHours = '2018/09/01 ' + (closeHours||'17:00:00')
       let [min, max] = [openHours, closeHours].map(v => new Date(v) * 1)
       const halfHours = 30 * 60 * 1000
       let cur = min;
@@ -383,6 +383,7 @@ export default {
       width: 1.41rem;
       height: 1.41rem;
       border-radius: 0.11rem;
+      flex-shrink: 0;
     }
     .name{
       font-size: 0.21rem;
