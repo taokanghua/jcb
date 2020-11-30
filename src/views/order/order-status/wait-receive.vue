@@ -14,8 +14,8 @@
     </div>
     <div class="footer">
       <!-- <order-btn type="plain">查看物流</order-btn> -->
-      <order-btn type="plain" @click="goRefund">申请退款</order-btn>
-      <order-btn type="primary" @click="confirm">确认收货</order-btn>
+      <!-- <order-btn type="plain" @click="goRefund">申请退款</order-btn> -->
+      <!-- <order-btn type="primary" @click="confirm">确认收货</order-btn> -->
     </div>
   </div>
 </template>

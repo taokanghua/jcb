@@ -11,5 +11,5 @@ export default {
     deleteAddress: params => req.delete('member/address/deleteBatch', { params }),
     getCollectList: data => req.post('memberSubApi/listCollectCommodity', data),
     feedbackApi: data => req.post('feedback/add', data)
-        //getOrderList:()=>req.get('')
+    //getOrderList:()=>req.get('')
 }

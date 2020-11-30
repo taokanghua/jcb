@@ -1,123 +1,77 @@
 <template>
-  <div class="popu-order-wrap">
-    <div class="top row ac">
-      <div class="column">
-        <span class="title">推广人订单</span>
-        <span class="num">48</span>
-      </div>
-    </div>
-    <div class="list">
-      <div class="tab row sb ac">
-        <div :class="{active:tabIdx==0}" @click="tabIdx=0">店铺</div>
-        <div :class="{active:tabIdx==1}" @click="tabIdx=1">一级</div>
-        <div :class="{active:tabIdx==2}" @click="tabIdx=2">二级</div>
-      </div>
-
-      <div class="order-list">
-        <div class="o-card row sb" v-for="item in 4" :key="item">
-          <div class="left column sb">
-            <div class="row ac">
-              <img src="../../../assets/img/推广中心-订单头像.png" alt="">
-              <span class="name">用户姓名</span>
-            </div>
-            <span class="way">{{tabIdx==0?'交易订单':'购买商品'}}</span>
-          </div>
-          <div class="right column sb">
-            <span class="money">+67.5</span>
-            <span class="info">订单金额  4500</span>
-          </div>
+    <div class="page">
+        <div class="top">
+            <div class="title">推广人数</div>
+            <div class="count">{{$route.query.num||0}}</div>
         </div>
-      </div>
+
+        <div class="tabs-list">
+            <tabs
+                v-model="active"
+                swipeable
+                animated
+                color="#2ecb62"
+                line-width="0.452rem"
+                line-height="0.068rem"
+            >
+                <tab v-for="(item, index) in tabs" :key="index" :title="item">
+                    <propleList :sourceType="active+1" />
+                </tab>
+            </tabs>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
+import { Tab, Tabs, List, Toast } from "vant";
+import propleList from "../component/opoilarize-order";
 export default {
-  data(){
-    return{
-      tabIdx:0
-    }
-  }
-}
+    data() {
+        return {
+            loading: false,
+            finished: false,
+            active: 0,
+            tabs: ["店铺", "一级", "二级"],
+        };
+    },
+    components: {
+        Tab,
+        Tabs,
+        List,
+        propleList
+    },
+};
 </script>
 
 <style lang="less" scoped>
-.popu-order-wrap{
-  height: 100vh;
-  background-color: #f6f6f6;
-  overflow: scroll;
-}
-.top{
-  width: 6.36rem;
-	height: 1.81rem;
-  background-image: url('../../../assets/img/推广中心人数-订单页面底图.png');
-  background-size: cover;
-  padding: 0 0.27rem;
-  color: #ffffff;
-  .title{
-    font-size: 0.2rem;
-  }
-  .num{
-    font-size: 0.41rem;
-  }
-}
-.list{
-  margin-top: 0.23rem;
-  .order-list{
-    .o-card{
-      width: 6.36rem;
-      height: 1.24rem;
-      background-color: #ffffff;
-      padding: 0.24rem 0.27rem;
-      box-sizing: border-box;
-      img{
-        width: 0.36rem;
-        height: 0.36rem;
-        background-color: #a8a8a8;
-        border-radius: 50%;
-        margin-right: 0.18rem;
-      }
-      .name{
-        font-size: 0.24rem;
-        color: #1a1a1a;
-      }
-      .way{
-        font-size: 0.18rem;
-        color: #a8a8a8;
-        margin-top: 0.2rem;
-      }
-      .right{
-        text-align: right;
-        .money{
-          font-size: 0.27rem;
-          color: #fc0808;
+.page {
+    .top {
+        background: url("../../../assets/img/推广中心人数-订单页面底图.png");
+        background-size: cover;
+        height: 1.808rem;
+        background-color: #2ecb62;
+        padding-left: 0.2rem;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 0.226rem;
+        .title {
+            font-size: 0.203rem;
         }
-        .info{
-          font-size: 0.18rem;
-          color: #a8a8a8;
-          margin-top: 0.2rem;
+        .count {
+            font-size: 0.407rem;
+            margin-top: 0.1rem;
         }
-      }
     }
-  }
-}
-.tab{
-  width: 6.36rem;
-	height: 0.68rem;
-  background-color: #ffffff;
-  padding: 0 1.6rem;
-  box-sizing: border-box;
-  div{
-    color: #1a1a1a;
-    font-size: 0.21rem;
-    height: 100%;
-    line-height: 0.68rem;
-    box-sizing: border-box;
-  }
-  .active{
-    border-bottom: 0.07rem solid #2ecb62;
-    font-weight: bold;
-  }
+    .tabs-list {
+        background-color: #ffffff;
+        /deep/ .van-tab--active {
+            font-weight: bold;
+        }
+        /deep/ .van-tab__pane-wrapper {
+            min-height: 80vh;
+        }
+    }
 }
 </style>

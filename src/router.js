@@ -100,7 +100,7 @@ export default new Router({
         {
             path: '/mine',
             name: 'mine',
-            meta: { title: '个人中心', keepAlive:true },
+            meta: { title: '个人中心', keepAlive:false },
             component: () =>
                 import ('@/views/mine/index')
         },
@@ -376,6 +376,12 @@ export default new Router({
             name: 'agreement',
             meta: { title: '协议内容' },
             component: ()=> import('@/views/other/agreement')
+        },
+        {
+            path: '/waitSelfTake',
+            name: 'waitSelfTake',
+            meta: { title: '订单详情' },
+            component: () => import('@/views/order/order-status/wait-self-take')
         }
     ],
     linkActiveClass: 'tabbar-active',

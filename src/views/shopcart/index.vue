@@ -101,6 +101,11 @@ export default {
         if(status) this.getShopcartList()
       },
       selectAll(){ //全选商品
+        if(this.shopcartList.length==0){ //如果没商品 禁止全选
+          Toast('暂无商品')
+          this.isSelectAll = false
+          return
+        }
         this.refs.forEach(v=>{
           //console.log('index -> '+this.isSelectAll)
           this.$refs[v][0].checkAll = this.isSelectAll
@@ -153,11 +158,12 @@ export default {
         if(this.quantity==0) return Toast('请勾选商品！')
         let id = this.$store.state.user.info.memberUserInfoVo.id//获取用户id
         let storeGoodsList = this.chooseData.map(v=>v.productVoList)//[ [array], [array] ]
-        for(let i=0;i<storeGoodsList.length;i++){ //清除空数组的店铺
-          if(storeGoodsList[i].length==0){
-            storeGoodsList.splice(i,1)
-          }
-        }
+        // for(let i=0;i<storeGoodsList.length;i++){ //清除空数组的店铺
+        //   if(storeGoodsList[i].length==0){
+        //     this.chooseData.splice(i,1)
+        //   }
+        // }
+        storeGoodsList = storeGoodsList.filter(v=>v.length>0)
         let result = storeGoodsList.map((v,i)=>{
           let wrap = {}
           let foo = v.map(o=>{ //[obj,obj]

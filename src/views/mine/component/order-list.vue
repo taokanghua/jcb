@@ -7,10 +7,10 @@
       @load="onLoad()"
     >
       <div class="common-wrap">
-          <div v-for="order in orderList" :key="order.id">
+          <div v-for="(order,i) in orderList" :key="i">
           <!-- 已完成 -->
           <order-status-card status="已完成" v-if="order.status==6" :info="order" @click.native="completeDetail(order.orderCode)">
-            <order-btn type="plain" v-if="order.isComment!=1" @click="goEvaluate(order.orderCode)">去评价</order-btn>
+            <!-- <order-btn type="plain" v-if="order.isComment!=1" @click="goEvaluate(order.orderCode)">去评价</order-btn> -->
           </order-status-card>
 
           <!-- 待支付 -->
@@ -19,25 +19,26 @@
               剩余时间 
               <count-down :endTime="new Date(order.commitTime).valueOf()+86400000" crowd color="#1a1a1a" fontSize="0.21rem"></count-down> 
             </span>
+            <order-btn type="plain" @click="cancelOrder(order.orderCode, i)" style="margin-right:0.17rem">取消订单</order-btn>
             <order-btn type="primary" @click="$router.push({path:'/waitPay?orderId='+order.orderCode})">立即支付</order-btn>
           </order-status-card>
 
           <!-- 待发货 -->
           <order-status-card blue status="待发货" v-if="order.status==2" :info="order" @click.native="waitConsign(order.orderCode)">
-            <order-btn type="plain" style="margin-right:0.17rem" @click="goRefund(order.orderCode)">申请退款</order-btn>
-            <order-btn type="primary" @click="confirm(order.orderCode)">确认收货</order-btn>
+            <!-- <order-btn type="plain" style="margin-right:0.17rem" @click="goRefund(order.orderCode)">申请退款</order-btn> -->
+            <!-- <order-btn type="primary" @click="confirm(order.orderCode)">确认收货</order-btn> -->
           </order-status-card>
 
           <!-- 待收货 -->
           <order-status-card blue status="待收货" v-if="order.status==3" :info="order" @click.native="waitReceive(order.orderCode)">
             <!-- <order-btn type="plain" style="margin-right:0.17rem">查看物流</order-btn> -->
-            <order-btn type="plain" style="margin-right:0.17rem" @click="goRefund(order.orderCode)">申请退款</order-btn>
-            <order-btn type="primary" @click="confirm(order.orderCode)">确认收货</order-btn>
+            <!-- <order-btn type="plain" style="margin-right:0.17rem" @click="goRefund(order.orderCode)">申请退款</order-btn> -->
+            <!-- <order-btn type="primary" @click="confirm(order.orderCode)">确认收货</order-btn> -->
           </order-status-card> 
 
           <!-- 退款中 -->
           <order-status-card blue status="退款中" v-if="order.status==5" :info="order" @click.native="refundDetail(order.orderCode)">
-            <order-btn type="primary" @click="cancelRefund(order.orderCode)">撤销退款</order-btn>
+            <!-- <order-btn type="primary" @click="cancelRefund(order.orderCode)">撤销退款</order-btn> -->
           </order-status-card>
 
           <!-- 已取消 -->
@@ -45,8 +46,8 @@
           </order-status-card>
 
           <!-- 待自提 -->
-          <order-status-card blue status="待自提" v-if="order.status==7" :info="order">
-            <order-btn type="plain" style="margin-right:0.17rem" @click="goRefund(order.orderCode)">申请退款</order-btn>
+          <order-status-card blue status="待自提" v-if="order.status==7" :info="order" @click.native="waitSelfTake(order.orderCode)">
+            <!-- <order-btn type="plain" style="margin-right:0.17rem" @click="goRefund(order.orderCode)">申请退款</order-btn> -->
             <order-btn type="primary" @click="goSelfTake(order.orderCode)">取货码</order-btn>
           </order-status-card>
           </div>
@@ -61,7 +62,7 @@ import {mapState} from 'vuex'
 import orderStatusCard from '../../../components/common/order/order-status-card'
 import orderBtn from '../../../components/common/order/list-item-btn'
 import countDown from '../../../components/common/count-down'
-import {List } from 'vant'
+import {List, Dialog } from 'vant'
 export default {
   data(){
     return{
@@ -79,6 +80,10 @@ export default {
   },
   props:['status'],
   methods:{
+    refresh(){
+      this.params.pageNo = 1
+      this.onLoad()
+    },
     onLoad() {
       this.loading = true;
       var timer = setTimeout(async () => {
@@ -119,6 +124,25 @@ export default {
     },
 
     //下面为订单按钮的各种方法 ---------华丽分割线-------------
+    cancelOrder(orderId, i){
+      Dialog.confirm({
+      message: '确认取消订单?',
+    })
+      .then(async () => {
+        // on confirm
+        let res = await api.cancelOrder({orderId})
+        if(res.success){
+          this.showToast('取消订单成功')
+          this.orderList[i].status = 0
+        }else{
+          this.showToast(res.message)
+        }
+      })
+      .catch(() => {
+        // on cancel
+      });
+      
+    },
     goEvaluate(orderId){
       this.$router.push({name:'orderEvaluate', query:{orderId}})
     },
@@ -138,11 +162,15 @@ export default {
           let res = await api.cancelRefund({orderId})
           if(!res.success) return this.showToast(res.message)
           this.showToast(res.result)
-          this.$refs.list.refresh()
+          //this.$refs.list.refresh()
+          this.refresh()
         })
         .catch(() => {
           // on cancel
         });
+    },
+    waitSelfTake(orderId){
+      this.$router.push({path:'/waitSelfTake', query:{orderId}})
     },
     confirm(orderId){ //确定收货
       Dialog.confirm({

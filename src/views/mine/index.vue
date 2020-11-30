@@ -81,11 +81,11 @@
             <span>{{popularize.jicaifen||0}}</span>
             <div>集采分</div>
           </router-link>
-          <router-link to="/popularizePeople" tag="div" class="info-item column ac jc f1">
+          <router-link :to="'/popularizePeople?num='+popularize.recommendedUsers" tag="div" class="info-item column ac jc f1">
             <span>{{popularize.recommendedUsers||0}}</span>
             <div>推广人数</div>
           </router-link>
-          <router-link to="/popularizeOrder" tag="div" class="info-item column ac jc f1">
+          <router-link :to="'/popularizeOrder?num='+popularize.recommendedOrders" tag="div" class="info-item column ac jc f1">
             <span>{{popularize.recommendedOrders||0}}</span>
             <div>推广人订单</div>
           </router-link>
@@ -155,13 +155,12 @@ export default {
   },
   methods: {
     async getInfo(){
-      let token = tokenHolder.get()||''
+      let token = localStorage.getItem('token')||''
       if(!token) return
       //获取数据
       let res = await homeApi.getUserInfo()
       this.numberObj = res.result.memberDynamicVo
       this.popularize = res.result.memberDynamicVo
-      // alert(Object.kseys(this.userInfo).length)
       if(Object.keys(this.userInfo).length==0){
         this.userInfo = res.result.memberUserInfoVo
         this.$store.commit('SET_INFO', res.result)
@@ -172,7 +171,8 @@ export default {
     changeIndentity(){
       let token = tokenHolder.get()||''
       // location.href = 'https://china-jcb.com/store/#/workbench?token='+token
-      location.href = 'http://192.168.2.188:8080/#/workbench?token='+token
+      // location.href = 'http://192.168.2.188:8080/#/workbench?token='+token
+      location.href = 'http://192.168.2.139:8081/#/workbench?token='+token
       // this.$router.push({path:, query:{token}})
     }
   },

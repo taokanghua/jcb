@@ -13,8 +13,8 @@
       <other-info :info="orderInfo"></other-info>
     </div>
     <div class="footer">
-      <order-btn type="plain" @click="refund(orderInfo.orderCode)">申请退款</order-btn>
-      <order-btn type="primary" @click="confirm">确认收货</order-btn>
+      <!-- <order-btn type="plain" @click="refund(orderInfo.orderCode)">申请退款</order-btn> -->
+      <!-- <order-btn type="primary" @click="confirm">确认收货</order-btn> -->
     </div>
   </div>
 </template>

@@ -14,7 +14,7 @@
       <other-info plus :info="orderInfo"></other-info>
     </div>
     <div class="footer">
-      <order-btn type="primary">撤销退款</order-btn>
+      <!-- <order-btn type="primary">撤销退款</order-btn> -->
     </div>
   </div>
 </template>

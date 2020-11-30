@@ -14,7 +14,7 @@
         </div>
         <div class="other-feild row sb ac" v-if="plus||cancel||all">
           <span>物流单号</span>
-          <span>SF493772984929 <span class="copy" @click="copy">复制</span></span>
+          <span>{{info.receiveCode||'暂无单号'}} <span class="copy" @click="copy">复制</span></span>
         </div>
         <div class="other-feild row sb ac">
           <span>下单时间</span>
@@ -46,7 +46,8 @@ export default {
   },
   methods:{
     copy() {
-            this.$copyText('copy的内容').then(suc => {
+            if(!this.info.receiveCode) return
+            this.$copyText(this.info.receiveCode).then(suc => {
                 Toast('复制成功')
             }, err => {
                 Toast('复制失败')

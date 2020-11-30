@@ -59,7 +59,7 @@
     
     <div class="tabbar row ac sb">
       <span class="s-money"><span class="word">合计:</span>￥{{orderInfo.totalAmount}}</span>
-      <div class="refund-btn row ac jc">申请退款</div>
+      <!-- <div class="refund-btn row ac jc">申请退款</div> -->
     </div>
   </div>
 </template>

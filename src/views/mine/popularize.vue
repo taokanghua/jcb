@@ -4,7 +4,7 @@
       <div class="top row sb">
         <div class="left column sb ac">
           <span>剩余集采分</span>
-          <div class="integral">5467</div>
+          <div class="integral">{{ info.canCarryAmount || 0 }}</div>
         </div>
         <!-- 暂时不不要 -->
         <!-- <div class="reflect">我要提现</div> -->
@@ -12,15 +12,15 @@
       <div class="bottom row sb ac">
         <div class="left row sb ac">
           <div class="item column sb ac">
-            <span class="int">3048</span>
+            <span class="int">{{ info.todayProfit || 0 }}</span>
             <span>今日收益</span>
           </div>
           <div class="item column sb ac">
-            <span class="int">3048</span>
+            <span class="int">{{ info.monthProfit || 0 }}</span>
             <span>本月收益</span>
           </div>
           <div class="item column sb ac">
-            <span class="int">3048</span>
+            <span class="int">{{ info.totalProfit || 0 }}</span>
             <span>总收益</span>
           </div>
         </div>
@@ -30,24 +30,24 @@
 
     <!-- 推广统计 -->
     <div class="menu row sb">
-      <router-link to="/popularizePeople" tag="div" class="icon-item row ac jc">
+      <router-link :to="'/popularizePeople?num='+info.recommendedUsers" tag="div" class="icon-item row ac jc">
         <img src="../../assets/img/推广中心-人数统计.png" alt="">
         <div class="column sb">
-          <span class="number">48</span>
+          <span class="number">{{ info.recommendedUsers || 0 }}</span>
           <span>推广人数</span>
         </div>
       </router-link>
-      <router-link to="/popularizeOrder" tag="div" class="icon-item row ac jc">
+      <router-link :to="'/popularizeOrder?num='+info.recommendedOrders" tag="div" class="icon-item row ac jc">
         <img src="../../assets/img/推广中心-订单统计.png" alt="">
         <div class="column sb">
-          <span class="number">8</span>
+          <span class="number">{{ info.recommendedOrders || 0 }}</span>
           <span>推广人订单</span>
         </div>
       </router-link>
     </div>
     <!-- 收益列表 -->
-    <div class="tab">
-      <div class="row">
+    <div class="tab tabs-list">
+      <!-- <div class="row">
         <div class="tag row ac jc" :class="{active:tagIdx==0}" @click="changeTab(0)">全部</div>
         <div class="tag row ac jc" :class="{active:tagIdx==1}" @click="changeTab(1)">收入</div>
         <div class="tag row ac jc" :class="{active:tagIdx==2}" @click="changeTab(2)">支出</div>
@@ -67,7 +67,21 @@
           </div>
           <span class="count sub">-100.00</span>
         </div>
-      </div>
+      </div> -->
+      <tabs
+        v-model="active"
+        swipeable
+        animated
+        title-inactive-color="#2ecb62"
+        title-active-color="#ffffff"
+        color="#2ecb62"
+        line-width="0"
+        line-height="0"
+      >
+        <tab v-for="(item, index) in tabs" :key="index" :title="item">
+          <popliarizeList :status="active" />
+        </tab>
+      </tabs>
     </div>
   </div>
 </template>
@@ -75,26 +89,37 @@
 <script>
 import api from '../../api/popularize'
 import {mapState} from 'vuex'
+import {Tabs, Tab} from 'vant'
+import popliarizeList from './component/popilarize-list'
 export default {
   data(){
     return{
-      tagIdx:0
+      tagIdx:0,
+      active:0,
+      tabs: ["全部"],
+      // tabs: ["全部", "收入", "支出"],
+      info:{}
     }
   },
   methods:{
     async getData(){
-      let res = await api.getPD({memberId:this.info.id})
-      console.log(res)
+      let res = await api.getPopularize(this.member.id)
+      this.info = res.result;
     },
     changeTab(i){
       this.tagIdx = i
     }
   },
   computed:{
-    ...mapState({info:state=>state.user.info.memberUserInfoVo})
+    ...mapState({member:state=>state.user.info.memberUserInfoVo})
   },
   mounted(){
     this.getData()
+  },
+  components:{
+    Tabs,
+    Tab,
+    popliarizeList
   }
 }
 </script>
@@ -178,46 +203,26 @@ export default {
 }
 .tab{
   margin-top: 0.45rem;
-  .tag{
-    width: 1.07rem;
-    height: 0.45rem;
-    color: #2ecb62;
-    font-size: 0.21rem;
-    border-radius: 0.23rem;
-    margin-right: 0.23rem;
-    border: solid 0.01rem #2ecb62;
-  }
   .active{
     color: #ffffff;
     background-color: #2ecb62;
   }
-  .list{
-    margin-top: 0.23rem;
-    .profit-card{
-      height: 1.02rem;
-      background-color: #ffffff;
-      border-radius: 0.11rem;
-      padding: 0.23rem;
-      box-sizing: border-box;
-      margin-bottom: 0.23rem;
-      .desc{
-        font-size: 0.21rem;
-        color: #1a1a1a;
-        line-height: 1;
-        margin-bottom: 0.2rem;
-      }
-      .date{
-        font-size: 0.18rem;
-        color: #a8a8a8;
-      }
-      .count{
-        font-size: 0.31rem;
-        color: #fc0808;
-      }
-      .sub{
-        color: #2ecb62;
-      }
+}
+  .tabs-list {
+    /deep/ .van-tabs__nav {
+      background: none;
     }
-  }
+    /deep/ .van-tab {
+      width: 1.073rem;
+      height: 0.452rem;
+      border-radius: 0.226rem;
+      border: solid 0.006rem #2ecb62;
+      flex: none;
+      margin-right: 0.226rem;
+      font-size: 0.215rem;
+    }
+    /deep/ .van-tab--active {
+      background-color: #2ecb62;
+    }
 }
 </style>

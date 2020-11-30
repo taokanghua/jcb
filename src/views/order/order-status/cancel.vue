@@ -12,10 +12,10 @@
       <!-- 结算 -->
       <settlement :info="orderInfo"></settlement>
       <!-- 物流信息 -->
-      <other-info cancel :info="orderInfo"></other-info>
+      <other-info :info="orderInfo"></other-info>
     </div>
     <!-- <div class="footer">
-      <order-btn type="plain">申请退款</order-btn>
+      <order-btn type="plain">申请退款</order-btn> 
       <order-btn type="primary">确认收货</order-btn>
     </div> -->
   </div>

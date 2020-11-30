@@ -46,7 +46,7 @@ export default {
     },
     goToPay(){
       //去支付
-      this.$router.push({path:'/confirmorder', query:{orderId:this.info.mergeOrderCode}})
+      this.$router.push({path:'/confirmorder', query:{orderId:this.orderInfo.mergeOrderCode}})
     },
     async cancelOrder(){
       let res = await api.cancelOrder({orderId: this.orderInfo.orderCode})

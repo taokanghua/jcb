@@ -73,7 +73,7 @@ export default {
     loginOut(){
       tokenHolder.remove()
       this.$store.state.user.info = {}
-      this.$router.push({path:'/mine'})
+      this.$router.replace({path:'/login'})
     }
   },
 

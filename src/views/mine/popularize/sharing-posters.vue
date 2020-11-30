@@ -1,9 +1,10 @@
 <template>
   <div class="sharing-posters">
     <div class="content column ac">
-      <img src="../../../assets/img/分享头像.png" alt="" class="avatar">
-      <span class="invite">夜雨泪痕  邀请您加入金材宝</span>
-      <img src="../../../assets/img/分享二维码.png" alt="" class="qr-code">
+      <img :src="userInfo.headPortrait" alt="" class="avatar">
+      <span class="invite">{{userInfo.nickname}}  邀请您加入金材宝</span>
+      <VueQrcode class="qr-code" :value="qrContent"></VueQrcode>
+      <!-- <img src="../../../assets/img/分享二维码.png" alt="" class="qr-code"> -->
       <span class="tip">长按识别二维码扫描进入</span>
     </div>
     
@@ -12,8 +13,31 @@
 </template>
 
 <script>
+import VueQrcode from '@chenfengyuan/vue-qrcode'
+import config from '@/web.config.js'
 export default {
-
+  data(){
+    return{
+      qrContent:'',
+      userInfo:{}
+    }
+  },
+  methods:{
+    qr(){
+      let appid = config.appid
+      this.userInfo = this.$store.state.user.info.memberUserInfoVo
+      // let src = encodeURIComponent('http://192.168.2.139:8080/#/loginUp&memberId='+this.userInfo.id)
+      let src = encodeURIComponent('https://china-jcb.com/jcb-collect/wechat/#/loginUp&memberId='+this.userInfo.id)
+      // this.qrContent = `https://jincaibao-dev.utools.club/jcb-collect/api/login/${appid}/authorize?returnUrl=${src}`
+      this.qrContent = `https://china-jcb.com/jcb-collect/api/login/${appid}/authorize?returnUrl=${src}`
+    }
+  },
+  created(){
+    this.qr()
+  },
+  components:{
+    VueQrcode
+  }
 }
 </script>
 
@@ -48,9 +72,9 @@ export default {
     color: #222222;
   }
   .qr-code{
-    margin-top: 0.45rem;
-    width: 2.63rem;
-	  height: 2.64rem;
+    margin-top: 0.25rem;
+    width: 2.8rem!important;
+	  height: 2.8rem!important;
   }
   .tip{
     font-size: 0.21rem;

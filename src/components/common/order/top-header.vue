@@ -16,7 +16,10 @@
         <p class="address-info e1">{{info.receiveAddress||'暂无地址'}}</p>
       </div>
     </div>
-    <div class="address-card row ac" v-else>
+    <div class="address-card column sb" v-else>
+      <div class="top row ac">
+        <span>{{info.getApiVo.name||'***'}}</span>
+      </div>
       <div class="bottom row ac">
         <i class="iconfont icondizhi"></i>
         <p class="address-info e1">{{info.getApiVo&&info.getApiVo.addressName}}</p>
