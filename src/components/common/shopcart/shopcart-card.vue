@@ -16,7 +16,7 @@
             <radio-one v-model="checkList[i]" @click.native="selectOne(i)"></radio-one>
             <img :src="item.pic" alt="">
             <div class="info column sb">
-              <div class="name e2">{{item.productName}}</div>
+              <router-link :to="'/goodsdetail?id='+item.productId" tag="div" class="name e2">{{item.productName}}</router-link>
               <span class="spec e2">{{item.prop}}</span>
               <div class="row sb">
                 <span class="price">￥{{item.price||0}}</span>

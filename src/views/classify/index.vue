@@ -289,12 +289,13 @@ export default {
       this.goodsList = []
       this.getGoodList()
     },
-    confirm(value, price){
+    confirm(value, price, tags){
       console.log(value,price)
-      this.searchParams.startPrice = price.start
-      this.searchParams.endPrice = price.end
+      this.searchParams.startPrice = price.start||0
+      this.searchParams.endPrice = price.end||0
       this.searchParams.type = value[0]
-      this.searchParams.brandId = value[1].id||''
+      this.searchParams.tags = tags||[]
+      this.searchParams.brandId = (value[1]||{}).id||''
       this.goodsList = []
       this.getGoodList()
     }

@@ -23,8 +23,8 @@
 
         <div class="shop-goods row sb">
           <div class="goods-item column sb"
-           v-for="item in info.productList" 
-           :key="item.productId"
+           v-for="(item,i) in info.productList" 
+           :key="i"
            @click="goDetail(item)">
             <div class="img-show">
               <img :src="item.pic" alt="" />
@@ -52,7 +52,7 @@ export default {
   props:{
     info:{
       type:Object,
-      default:()=>({head:''})
+      default:()=>({head:'', productList:[]})
     },
     level:{
       type: Boolean,

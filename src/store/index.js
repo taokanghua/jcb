@@ -11,7 +11,7 @@ const store = new Vuex.Store({
         shareStation,
     },
     plugins: [
-        persistedState({ storage: window.sessionStorage })
+        persistedState({ storage: window.sessionStorage,key:'vuex-client' })
     ]
 })
 

@@ -24,6 +24,10 @@
           <span>会员折扣</span>
           <span>9.9折</span>
         </div> -->
+        <div class="set-feild row sb ac" v-if="info.firstCouponStatus==1">
+          <span>新客优惠</span>
+          <span>-￥5.00</span>
+        </div>
         <div class="total">
           <span class="word">合计: </span>
           <span class="money">￥{{info.paymentAmount}}</span>

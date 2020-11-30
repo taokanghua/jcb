@@ -100,7 +100,7 @@ export default new Router({
         {
             path: '/mine',
             name: 'mine',
-            meta: { title: '个人中心' },
+            meta: { title: '个人中心', keepAlive:true },
             component: () =>
                 import ('@/views/mine/index')
         },
@@ -128,7 +128,7 @@ export default new Router({
         {
             path: '/search',
             name: 'search',
-            meta: { title: '搜索', keepAlive:true },
+            meta: { title: '搜索'},
             component: () =>
                 import ('@/views/home/search-page')
         },

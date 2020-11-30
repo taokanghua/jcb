@@ -376,7 +376,7 @@ export default {
    async collectIt(){
      //收藏功能
      let {id} = this.$route.query
-     let res = await storeApi.collectStore({commodityId:id})
+     let res = await storeApi.collectStore({commodityId:id, source:1})
      if(!res.success) return this.showToast(res.message)
      this.showToast(res.result)
      this.isCollect = !this.isCollect
@@ -413,7 +413,6 @@ export default {
    showSpecPop(type){
      this.pops.specs=true;
      this.pop_type=type
-     console.log(this.pop_type)
     //  this.sku_list = []
     //  this.sku_active_id = []
    },
@@ -464,6 +463,7 @@ export default {
         sourceType:1,
         sourceId:this.$store.state.user.info.memberUserInfoVo.id
      }
+     
      let res = await api.createOrder([data])
      if(res.success){
        this.$router.push({name:'confirmorder', query:{orderId:res.result}})

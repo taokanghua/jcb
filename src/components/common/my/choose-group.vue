@@ -27,13 +27,14 @@ export default {
     checkIt(i) {
       if (i == this.selectIndex) {
         this.selectIndex = -1;
-        return;
+      }else{
+        this.selectIndex = i;
       }
-      this.selectIndex = i;
-      this.$emit('update:index', i)
+      // console.log(this.selectIndex)
+      this.$emit('update:index', this.selectIndex)
     },
     reset(){
-      this.selectIndex = -1
+      this.$emit('update:index', -1)
     }
   },
 };

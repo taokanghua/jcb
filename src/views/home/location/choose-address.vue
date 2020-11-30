@@ -14,7 +14,7 @@
       <span class="title">当前定位</span>
       <div class="row sb ac">
         <span class="now">广佛新干线</span>
-        <span class="reflesh">重新定位</span>
+        <span class="reflesh" @click="getLocal">重新定位</span>
       </div>
     </div>
 
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import wx from 'weixin-js-sdk'
 import userApi from '../../../api/user'
 export default {
   data(){
@@ -48,6 +49,22 @@ export default {
       if(!id) return
       let res = await userApi.getAddressList({memberId:id, pageSize:999})
       this.addressList = res.result.records
+    },
+    getLocal(){
+      wx.getLocation({
+        type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+        success: function (res) {
+            var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+            var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+            var speed = res.speed; // 速度，以米/每秒计
+            var accuracy = res.accuracy; // 位置精度
+            console.log(res)
+        },
+        fail: function(res){
+          console.log(res)
+        }
+    });
+    console.log('local')
     }
   },
   computed:{

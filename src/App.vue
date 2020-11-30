@@ -6,9 +6,6 @@
      </keep-alive>
       <!-- 不需要缓存的视图组件 -->
      <router-view v-if="!$route.meta.keepAlive"></router-view>
-  <!-- <keep-alive include="search">
-    <router-view></router-view>
-  </keep-alive> -->
 </div>
 </template>
 <script>
@@ -56,6 +53,7 @@ export default {
   --primary-gradient: linear-gradient(0deg, #3ab1fd 0%, #68c2fc 100%);
   --secondary: #ff9f3a;
 }
+
 .van-dialog {
   border-radius: 0.11rem !important;
 }

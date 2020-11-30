@@ -134,7 +134,8 @@
       @getData="getData"
       :info="item"></chooseMethCard>
 
-    <div class="alone-feild row sb ac" v-if="info.firstCouponStatus==2">
+    <!-- {{c_status&&totalPrice>=29}} -->
+    <div class="alone-feild row sb ac" v-if="c_status==2&&totalPrice>=29">
       <span class="title">优惠</span>
       <span class="shit">新人礼包  -￥5.00</span>
     </div>
@@ -179,7 +180,8 @@ export default {
       //agreement: false, //同意协议
       dateList:[],//自提的日期表 
       storeOrderList:[],
-      totalPrice:0
+      totalPrice:0,
+      c_status:0, //首单优惠状态 2表示可用
     }
   },
   methods:{
@@ -235,10 +237,14 @@ export default {
     async pay(){
       if(this.noAddress) return this.showToast('请添加收货地址!')
       let data = {
-        firstCouponStatus:this.info.firstCouponStatus==2?1:0,
+        //firstCouponStatus:this.c_status==2?1:0,
         orderList:this.storeOrderList,
         paymentMethods:1,
         receiveAddressId:this.address.id
+      }
+      if(this.c_status==2&&this.totalPrice>=29){ //发送首单优惠
+        data.firstCouponStatus = 2
+        this.$store.state.user.info.memberUserInfoVo.firstCouponStatus = 0
       }
       // console.log(data)
       let res = await api.payment(data)
@@ -273,7 +279,7 @@ export default {
         this.storeOrderList[index] = obj
       }
       this.totalPrice = this.storeOrderList.reduce((pre,cur)=>cur.total+pre,0)
-      if(this.info.firstCouponStatus==2){ //计算是否有首单优惠
+      if(this.c_status==2 && this.totalPrice>=29){ //计算是否有首单优惠
         this.totalPrice-5<=0?0:this.totalPrice-=5
       }
       this.totalPrice = Number(this.totalPrice).toFixed(2) //总价保留两位小数
@@ -303,6 +309,12 @@ export default {
     this.$nextTick(()=>{
       this.$refs.loading.load()
     })
+    //获取首单优惠
+    this.c_status = this.$store.state.user.info.memberUserInfoVo.firstCouponStatus
+    //  if(c_status == 2){ //查看是否有首单优惠 这里偷了一下懒 ^_^
+    //    data.firstCouponStatus = 2
+    //    this.$store.state.user.info.memberUserInfoVo.firstCouponStatus = 3
+    //  }
   },
   components:{
     ActionSheet,

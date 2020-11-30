@@ -8,7 +8,6 @@ import webConfig from '../web.config'
 const domain = location.origin; //用于分享
 
 const firstUrl = location.href.split('#')[0]
-// const firstUrl = 'http://192.168.2.139'
 const GetWXConfig = () => request.get(`/login/${webConfig.appid}/getJsapiSignature`, { params: { url: encodeURIComponent(firstUrl) } })
 // const GetWXConfig = () => request.get(`/login/${webConfig.appid}/getJsapiSignature`, {url:firstUrl })
 const defaultShare = { targetUrl: '', imgUrl: webConfig.domain + '/upload/image/202091178562234.png', title: '城大陆和学院', desc: '城大陆和学院师资的培训经历是包括国家认可的相关证书、城大陆和学院培训合格证书。' }
@@ -26,7 +25,7 @@ export const initWxConfig = async function(entity) {
                 localStorage.setItem('location', JSON.stringify(res))
                     // store.commit('home/LOCATION_DATA', res);
                     // store.dispatch('home/getStore');
-                // alert(JSON.stringify(res))
+                alert(JSON.stringify(res))
             },
             cancel: function(res) {
                 console.error('getLocation-cancel', res)
@@ -39,7 +38,7 @@ export const initWxConfig = async function(entity) {
                 // alert(JSON.stringify(res))
             }
         })
-        initShareConfig(entity);
+        // initShareConfig(entity);
     })
 }
 

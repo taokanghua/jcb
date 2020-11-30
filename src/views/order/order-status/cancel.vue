@@ -2,7 +2,7 @@
   <div class="wait-consignment-wrap">
     <top-header status="已取消" :info="orderInfo">
       <!-- 这里两种 要么超时 要么不显示 -->
-      <span v-if="orderInfo.timeout==1">取消原因:超时未支付</span>
+      <span v-if="orderInfo.timeOut==1">取消原因:超时未支付</span>
       <span></span>
     </top-header>
 

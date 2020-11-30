@@ -65,7 +65,6 @@ export default {
         // console.log(this.$refs[v])
         this.$refs[v][0].reset()
         })
-      return
       this.$emit('reset')
     },
     confirm(){    //
@@ -85,7 +84,7 @@ export default {
       // console.log(id)
       let res = await api.getSecBrand({id})
       // console.log(res)
-      this.child = res.result.result
+      this.child = res.result
       this.child.map((v,i)=>this.childRef[i]=v.id)
     }
   },

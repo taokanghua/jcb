@@ -11,7 +11,7 @@
 
     <!-- 店铺 -->
     <div class="shop-wrap" v-show="tabIdx==1">
-      <hot-recom-card v-for="item in list" :key="item.storeId" :info="item"></hot-recom-card>
+      <hot-recom-card v-for="(item,i) in list" :key="i" :info="item"></hot-recom-card>
     </div>
     <empty image="error" description="暂无收藏" v-show="list.length==0"></empty>
 
@@ -37,14 +37,16 @@ export default {
         pageSize: 1000,
         type: parseInt(this.tabIdx)+1,
         userLat: 0,
-        userLng: 0
+        userLng: 0,
+        source:1
       }
       let res = await api.getCollectList(params)
       // console.log(res)
-      this.list = res.result.lists.map(v=>{
+      this.list = ((res.result||{}).lists||[]).map(v=>{
         v.productId = v.commodityId
         return v
       })
+      // console.log(this.list)
     }
   },
   components:{

@@ -78,15 +78,15 @@
         <span class="title">推广中心</span>
         <div class="wrap row ">
           <router-link to="/popularizeCenter" tag="div" class="info-item column ac sb f1">
-            <span>3000</span>
+            <span>{{popularize.jicaifen||0}}</span>
             <div>集采分</div>
           </router-link>
           <router-link to="/popularizePeople" tag="div" class="info-item column ac jc f1">
-            <span>302</span>
+            <span>{{popularize.recommendedUsers||0}}</span>
             <div>推广人数</div>
           </router-link>
           <router-link to="/popularizeOrder" tag="div" class="info-item column ac jc f1">
-            <span>22</span>
+            <span>{{popularize.recommendedOrders||0}}</span>
             <div>推广人订单</div>
           </router-link>
         </div>
@@ -125,6 +125,7 @@
                 <!-- <i class="iconfont iconliaotian"></i> -->
                 <span>我的评价</span>
               </div>
+              <!-- <div class="other-item" @click="changeIndentity" v-if="userInfo.isStore"> -->
               <div class="other-item" @click="changeIndentity">
                 <img src="../../assets/img/mine/切换身份@3x.png" alt="">
                 <!-- <i class="iconfont iconqiehuan"></i> -->
@@ -148,15 +149,24 @@ export default {
   data() {
     return {
       userInfo:{},
-      numberObj:{}
+      numberObj:{},
+      popularize:{}, //推广数据
     };
   },
   methods: {
     async getInfo(){
+      let token = tokenHolder.get()||''
+      if(!token) return
       //获取数据
       let res = await homeApi.getUserInfo()
       this.numberObj = res.result.memberDynamicVo
-      
+      this.popularize = res.result.memberDynamicVo
+      // alert(Object.kseys(this.userInfo).length)
+      if(Object.keys(this.userInfo).length==0){
+        this.userInfo = res.result.memberUserInfoVo
+        this.$store.commit('SET_INFO', res.result)
+      }
+      // alert(JSON.stringify(this.userInfo))
       //console.log(this.userInfo) 
     },
     changeIndentity(){

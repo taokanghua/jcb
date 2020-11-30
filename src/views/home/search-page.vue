@@ -251,6 +251,8 @@ export default {
       this.goodsParams.type = value[0]
       if(value[1]){
         this.goodsParams.brandId = value[1].id
+      }else{
+        this.goodsParams.brandId = ''
       }
       this.goodsParams.startPrice = price.start||0
       this.goodsParams.endPrice = price.end||0

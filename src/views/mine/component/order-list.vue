@@ -14,7 +14,7 @@
           </order-status-card>
 
           <!-- 待支付 -->
-          <order-status-card blue status="待支付" v-if="order.status==1" :info="order">
+          <order-status-card blue status="待支付" v-if="order.status==1" :info="order" @click.native="$router.push({path:'/waitPay?orderId='+order.orderCode})">
             <span class="count-d">
               剩余时间 
               <count-down :endTime="new Date(order.commitTime).valueOf()+86400000" crowd color="#1a1a1a" fontSize="0.21rem"></count-down> 
