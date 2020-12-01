@@ -17,10 +17,10 @@
           <order-status-card blue status="待支付" v-if="order.status==1" :info="order" @click.native="$router.push({path:'/waitPay?orderId='+order.orderCode})">
             <span class="count-d">
               剩余时间 
-              <count-down :endTime="new Date(order.commitTime).valueOf()+86400000" crowd color="#1a1a1a" fontSize="0.21rem"></count-down> 
+              <count-down :endTime="new Date(order.commitTime.replace(/-/g,'/')).valueOf()+86400000" crowd color="#1a1a1a" fontSize="0.21rem"></count-down> 
             </span>
             <order-btn type="plain" @click="cancelOrder(order.orderCode, i)" style="margin-right:0.17rem">取消订单</order-btn>
-            <order-btn type="primary" @click="$router.push({path:'/waitPay?orderId='+order.orderCode})">立即支付</order-btn>
+            <order-btn type="primary" @click="pay(order.orderCode)">立即支付</order-btn>
           </order-status-card>
 
           <!-- 待发货 -->
@@ -59,6 +59,7 @@
 <script>
 import api from '../../../api/order'
 import {mapState} from 'vuex'
+import {invokeWxPay} from '../../../utils/wxFn'
 import orderStatusCard from '../../../components/common/order/order-status-card'
 import orderBtn from '../../../components/common/order/list-item-btn'
 import countDown from '../../../components/common/count-down'
@@ -142,6 +143,21 @@ export default {
         // on cancel
       });
       
+    },
+    async pay(orderId){
+      let res = await api.pay(orderId)
+      invokeWxPay({
+        ...res.result,
+        success:res=>{
+          this.showToast('支付成功!')
+          this.refresh()
+      }, 
+      fail:err=>{
+        Dialog.alert({
+          message: '支付失败',
+        })
+      }
+      })
     },
     goEvaluate(orderId){
       this.$router.push({name:'orderEvaluate', query:{orderId}})

@@ -341,8 +341,8 @@ export default {
     let params = {
       productId:this.$route.query.id,
       storeId:'',
-      lat:'',
-      lon:'',
+      lat:this.$store.state.local.position.lat||'',
+      lon:this.$store.state.local.position.lng||'',
       //memberId:
     }
     if(this.$store.state.user.info.memberUserInfoVo){

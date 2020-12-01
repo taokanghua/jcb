@@ -5,7 +5,8 @@ import api from '../api/user'
 import { initToken, validateToken } from '../utils/auth';
 import tokenHolder from '../utils/tokenHolder'
 const state = {
-    info: {}
+    info: {},
+    local: {}
 };
 const mutations = {
     SET_INFO(state, obj) {

@@ -21,7 +21,8 @@
 </template>
 
 <script>
-import { CountDown } from 'vant';
+import { CountDown, Dialog } from 'vant';
+import {invokeWxPay} from '../../../utils/wxFn'
 import api from '../../../api/order'
 import topHeader from '../../../components/common/order/top-header'
 import countDown from '../../../components/common/count-down'
@@ -42,11 +43,30 @@ export default {
     async getOrderInfo(){
       let res = await api.getOrder(this.orderId)
       this.orderInfo = res.result
-      this.endTime = new Date(this.orderInfo.commitTime).valueOf()+86400000
+      this.endTime = new Date(this.orderInfo.commitTime.replace(/-/g, '/')).valueOf()+86400000
     },
-    goToPay(){
+    async goToPay(){
       //去支付
-      this.$router.push({path:'/confirmorder', query:{orderId:this.orderInfo.mergeOrderCode}})
+      let res = await api.pay(this.orderInfo.orderCode)
+      invokeWxPay(
+        {
+      ...res.result, 
+      success:res=>{
+        Dialog.alert({
+          message: '支付成功!',
+        }).then(() => {
+          // on close
+          this.$router.replace({path:'/orderList'})
+        });
+      }, 
+      fail:err=>{
+        Dialog.alert({
+          message: '支付失败',
+        })
+      },
+      cancel: c => {console.log(c)}
+      })
+      // this.$router.push({path:'/confirmorder', query:{orderId:this.orderInfo.mergeOrderCode}})
     },
     async cancelOrder(){
       let res = await api.cancelOrder({orderId: this.orderInfo.orderCode})

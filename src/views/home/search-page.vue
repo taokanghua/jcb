@@ -136,8 +136,8 @@ export default {
         //startPrice: 0,
         //priceSort:true,
         type: -1,
-        // userLat: 0,
-        // userLng: 0,
+        userLat: this.$store.state.local.position.lat||'',
+        userLng: this.$store.state.local.position.lng||'',
       },
       storeParams:{
         //brandId: string,
@@ -146,8 +146,8 @@ export default {
         // pageSize: 0,
         saleCount: false,
         score: false,
-        // userLat: 0,
-        // userLng: 0
+        userLat: this.$store.state.local.position.lat||'',
+        userLng: this.$store.state.local.position.lng||''
       },
       goodsList: [], //筛选出来的数组
       goodsBrands:[], //商品品牌列表
@@ -155,6 +155,8 @@ export default {
       brandIdx:-1,  // 品牌id
 
       storeList:[], //dianpu
+      userLat:'',
+      userLng:''
     };
   },
   methods: {
@@ -278,6 +280,7 @@ export default {
       // this.goodsList = []
       this.goodsParams.brandId = ''
     }
+    
     this.searchBlur()
   },
   watch: {

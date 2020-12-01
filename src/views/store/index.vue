@@ -213,8 +213,8 @@ export default {
     },
   async getStoreDetail(){
       let params ={
-        lat: 0,
-        lon: 0,
+        lat: this.$store.state.local.position.lat||'',
+        lon: this.$store.state.local.position.lng||'',
         storeId: this.$route.query.id
       }
       if(this.$store.state.user.info.memberUserInfoVo){

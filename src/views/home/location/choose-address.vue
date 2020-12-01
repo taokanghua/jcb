@@ -3,18 +3,24 @@
     <div class="top">
       <div class="p-wrap">
         <input type="search" placeholder="请输入街道名称">
-        <router-link to="/chooseCity" tag="div" class="provi row ac">
-          <span>佛山市</span>
-          <i class="iconfont iconARROW"></i>
-        </router-link>
+        <!-- 暂时禁用 -->
+        <!-- <router-link to="/chooseCity" tag="div" class="provi row ac">
+          <span>{{local.addressComponent.city}}</span>
+          <i class="iconfont iconARROW"></i> 
+        </router-link>-->
+        <div class="provi row ac">
+          <span>{{local.addressComponent.city||''}}</span>
+          <i class="iconfont iconARROW"></i> 
+        </div>
       </div>
     </div>
     <!-- 定位 -->
     <div class="now-local com column sb">
       <span class="title">当前定位</span>
       <div class="row sb ac">
-        <span class="now">广佛新干线</span>
-        <span class="reflesh" @click="getLocal">重新定位</span>
+        <span class="now">{{local.formattedAddress}}</span>
+        <span class="reflesh" @click="getLocal" v-if="!add_load">重新定位</span>
+        <Loading color="#1989fa" v-else size="0.21rem">定位中...</Loading>
       </div>
     </div>
 
@@ -29,18 +35,19 @@
         </div>
       </div>
     </div>
-
     <router-link to="/editaddress" tag="div" class="add-btn" :class="{position}">添加地址</router-link>
   </div>
 </template>
 
 <script>
-import wx from 'weixin-js-sdk'
 import userApi from '../../../api/user'
+import {Dialog, Loading} from 'vant'
 export default {
   data(){
     return{
-      addressList:[]
+      addressList:[],
+      local:{addressComponent:{}},
+      add_load:false, //重新定位 加载动画
     }
   },
   methods:{
@@ -50,21 +57,43 @@ export default {
       let res = await userApi.getAddressList({memberId:id, pageSize:999})
       this.addressList = res.result.records
     },
-    getLocal(){
-      wx.getLocation({
-        type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-        success: function (res) {
-            var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
-            var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
-            var speed = res.speed; // 速度，以米/每秒计
-            var accuracy = res.accuracy; // 位置精度
-            console.log(res)
-        },
-        fail: function(res){
-          console.log(res)
-        }
+    async getLocal(){
+      this.add_load = true
+      let _this = this
+      let mapObj = new AMap.Map('map');
+      mapObj.plugin('AMap.Geolocation', function () {
+    let geolocation = new AMap.Geolocation({
+        enableHighAccuracy: true,//是否使用高精度定位，默认:true
+        timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+        maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+        convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+        showButton: true,        //显示定位按钮，默认：true
+        buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+        buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+        showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+        showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+        panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+        zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
     });
-    console.log('local')
+    mapObj.addControl(geolocation);
+    geolocation.getCurrentPosition();
+    AMap.event.addListener(geolocation, 'complete', function(e){
+      _this.local = e
+      // _this.$forceUpdate()
+      _this.$store.state.local = e
+      _this.add_load = false
+    });//返回定位信息
+    AMap.event.addListener(geolocation, 'error', function(err){
+      console.log('error')
+      console.log(err)
+      _this.local = err
+      _this.add_load = false
+      this.showToast('定位失败')
+      Dialog.alert({
+        message:'定位失败！'
+      })
+    });      //返回定位出错信息
+});
     }
   },
   computed:{
@@ -72,8 +101,11 @@ export default {
       return this.addressList.length<=6
     }
   },
+  components:{
+    Loading
+  },
   created(){
-    
+    this.local = this.$store.state.local||{}
     this.getAddress()
   }
 }
@@ -182,5 +214,9 @@ export default {
       }
     }
   }
+}
+/deep/.van-loading__text{
+  font-size: 0.21rem;
+  color: #8d8d8d;
 }
 </style>

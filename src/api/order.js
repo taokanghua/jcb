@@ -6,5 +6,6 @@ export default {
     cancelOrder: data => req.post('/order/cancel?orderId=' + data.orderId, data),
     applyRefund: data => req.post('/order/return', data),
     confirmGoods: orderId => req.post('order/confirmOrder/' + orderId),
-    cancelRefund: data => req.post('order/CloseRefunded', data)
+    cancelRefund: data => req.post('order/CloseRefunded', data),
+    pay: id => req.post('order/payContinue/'+id)
 }

@@ -1,7 +1,17 @@
 <template>
   <div class="mall-wrap">
-    <search-top :search="false"></search-top>
-
+    <div class="header-top row sb ac">
+      <input type="search" placeholder="请输入商品名称或店铺名称搜索"@click="$router.push({path:'search'})" />
+      <div class="address" @click="$router.push({name:'chooseAddress'})">
+        <div v-if="Object.keys(local).length>3">
+          <i class="iconfont icondizhi"></i>
+          <span>{{local.addressComponent.district}}</span>
+        </div>
+        <div v-else>
+          <span>定位失败</span>
+        </div>
+      </div>
+    </div>
     <swipe autoplay="5000" class="swipe" loop>
       <swipe-item v-for="(item,i) in carousel" :key="i" loop>
         <img class="swipe-img" :src="item.pic" alt="" @click="carouselToPage(item)" />
@@ -48,13 +58,6 @@
           <span>热门店铺</span>
           <router-link to="/allstores" class="more">更多 <i class="iconfont icongengduo"></i></router-link>
         </div>
-        <!-- <waterFall
-              @afterFetch="storeListData"
-              :req="searchStore"
-              :params="storeParams"
-            >
-        <hot-recom-card v-for="(item,i) in storeList" :key="i" :info="item"></hot-recom-card>
-        </waterFall> -->
         <listEnhands
           :req="searchStore"
           :params="storeParams"
@@ -73,13 +76,12 @@
 import api from '../../api/home'
 import classifyApi from '../../api/classify'
 import { Swipe, SwipeItem } from 'vant';
-import searchTop from '../../components/common/my/search-top'
 import hotRecomCard from '../../components/common/card/hot-recom-card'
-import waterFall from '../../components/common/waterfall'
 import listEnhands from '../../components/common/my/list-enhands'
 export default {
   data(){
     return{
+      local:{},
       allBrands:[],
       newStoreList:[],
       storeList:[],
@@ -141,13 +143,14 @@ export default {
     this.getCarousel()
     this.getAllBrands()
     this.getNewStoreList()
+    this.local = this.$store.state.local||{}
+    this.storeParams.userLat = this.local.position.lat||''
+    this.storeParams.userLng = this.local.position.lng||''
   },
   components:{
     Swipe,
     SwipeItem,
-    searchTop,
     hotRecomCard,
-    waterFall,
     listEnhands
   }
 }
@@ -241,7 +244,33 @@ export default {
   }
 }
 
-
+.header-top {
+  padding: 0 0.27rem;
+  // margin: 0.12rem 0;
+  background-color: #ffffff;
+  input {
+    margin: 0.12rem 0;
+    // width: 100%;
+    flex: 1;
+    font-size: 0.18rem;
+    color: #bbbbbb;
+    height: 0.51rem;
+    background-color: #f6f6f6;
+    border-radius: 0.25rem;
+    padding-left: 10px;
+  }
+  .address {
+    width: 1.2rem;
+    text-align: right;
+    i {
+      font-size: 0.28rem;
+    }
+    span {
+      font-size: 0.22rem;
+      color: #1a1a1a;
+    }
+  }
+}
 //common
 .mb2{
   margin-bottom: 0.2rem;

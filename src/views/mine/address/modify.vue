@@ -164,7 +164,7 @@ export default {
         this.$router.replace({path:'/confirmorder', query:{orderId}})
         return
       }else if(res.success){
-        this.$router.replace({path:'/address'})
+        this.$router.back()
         return
       }
       this.showToast('添加失败!', 2000)

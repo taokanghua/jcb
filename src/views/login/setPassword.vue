@@ -26,7 +26,8 @@ export default {
       oldPwd: "",
       newPwd: "",
       phone:'',
-      voucher:''
+      voucher:'',
+      openId: sessionStorage.getItem('openid')
     };
   },
   methods:{
@@ -42,7 +43,8 @@ export default {
           let params = {
             password: this.newPwd,
             phone:this.phone,
-            voucher:this.voucher
+            voucher:this.voucher,
+            openId: this.openId
           }
           let res = await api.update(params)
           if(res.success){

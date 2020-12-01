@@ -147,7 +147,7 @@
 <script>
 import api from '../../api/home'
 import {initWxConfig, getLocation} from '../../utils/wxFn'
-import { Swipe, SwipeItem, Rate, Tab, Tabs, List, Overlay, NoticeBar } from "vant";
+import { Swipe, SwipeItem, Rate, Tab, Tabs, List, Overlay, NoticeBar, Dialog } from "vant";
 import countDown from '../../components/common/count-down'
 import myFooter from "../../components/common/my/footer";
 import HomeCard from '../../components/common/card/home-good-card'
@@ -206,6 +206,13 @@ export default {
       let token = tokenHolder.get()||false
       if(!token) return
       let res = await api.getUserInfo()
+      if(!res.success){
+        Dialog.alert({
+          message:'获取用户信息失败'
+        }).then(()=>{
+          this.$router.replace({path:'/login'})
+        })
+      }
       this.isRedpack = res.result.memberUserInfoVo.firstCouponStatus==1
       this.userInfo = res.result.memberUserInfoVo
       this.$store.commit('SET_INFO', res.result)
@@ -244,6 +251,11 @@ export default {
       }
     },
     async getLocal(){
+      let local = this.$store.state.local||{}
+      if(Object.keys(local).length>3){
+        this.mapInfo = local
+        return
+      }
       let _this = this
       let mapObj = new AMap.Map('map');
       mapObj.plugin('AMap.Geolocation', function () {
@@ -265,6 +277,7 @@ export default {
     AMap.event.addListener(geolocation, 'complete', function(e){
       _this.mapInfo = e
       // _this.$forceUpdate()
+      _this.$store.state.local = e
       console.log(e)
     });//返回定位信息
     AMap.event.addListener(geolocation, 'error', function(err){

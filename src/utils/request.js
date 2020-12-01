@@ -5,8 +5,8 @@ import qs from 'qs';
 //const ApiUrl = process.env.NODE_ENV == 'development' ? 'http://192.168.2.108:8080/jcb-collect/api' : 'http://api.chengdajiaoyu.com'
 // const defaultUrl = 'http://192.168.2.108:8001/jcb-collect/api'
 // const defaultUrl = 'http://192.168.2.117:8080/jcb-collect/api'
-const defaultUrl = 'http://192.168.2.173:8001/jcb-collect/api'
-// const defaultUrl = 'https://china-jcb.com/jcb-collect/api'  //online
+// const defaultUrl = 'http://192.168.2.173:8001/jcb-collect/api'
+const defaultUrl = 'https://china-jcb.com/jcb-collect/api'  //online
 const request = axios.create({
     baseURL: defaultUrl,
     timeout: 10000 // 请求超时时间
