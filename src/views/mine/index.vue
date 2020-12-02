@@ -95,11 +95,14 @@
           <div class="common-card other-serve">
             <span class="title">其他服务</span>
             <div class="other-wrap">
-              <router-link to="/couponCenter" tag="div" class="other-item">
-                <!-- <i class="iconfont iconyouhuiquan"></i> -->
+              <!-- <router-link to="/couponCenter" tag="div" class="other-item">
                 <img src="../../assets/img/mine/优惠券 (2)@3x.png" alt="">
                 <span>领券中心</span>
-              </router-link>
+              </router-link> -->
+              <div class="other-item">
+                <img src="../../assets/img/mine/优惠券 (2)@3x.png" alt="">
+                <span>领券中心</span>
+              </div>
               <router-link to="/address" tag="div" class="other-item">
                 <!-- <i class="iconfont icondizhi"></i> -->
                 <img src="../../assets/img/mine/地址 (2)@3x.png" alt="">
@@ -125,8 +128,8 @@
                 <!-- <i class="iconfont iconliaotian"></i> -->
                 <span>我的评价</span>
               </div>
-              <!-- <div class="other-item" @click="changeIndentity" v-if="userInfo.isStore"> -->
-              <div class="other-item" @click="changeIndentity">
+              <div class="other-item" @click="changeIndentity" v-if="userInfo.isStore">
+              <!-- <div class="other-item" @click="changeIndentity"> -->
                 <img src="../../assets/img/mine/切换身份@3x.png" alt="">
                 <!-- <i class="iconfont iconqiehuan"></i> -->
                 <span>切换店铺</span>

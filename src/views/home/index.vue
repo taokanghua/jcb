@@ -278,6 +278,7 @@ export default {
       _this.mapInfo = e
       // _this.$forceUpdate()
       _this.$store.state.local = e
+      _this.getRecomStore()
       console.log(e)
     });//返回定位信息
     AMap.event.addListener(geolocation, 'error', function(err){

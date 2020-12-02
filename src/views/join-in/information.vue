@@ -22,7 +22,7 @@
     </div>
     <div class="desc">
       <span v-show="storeTypeIdx==0">{{storeType[storeTypeIdx].name}}：{{storeType[storeTypeIdx].enterPrice}}元品牌使用费（终身免年费）</span>
-      <span v-show="storeTypeIdx==1">{{storeType[storeTypeIdx].name}}：{{storeType[storeTypeIdx].enterPrice}}元品牌使用费</span>
+      <span v-show="storeTypeIdx==1">{{storeType[storeTypeIdx].name}}：{{storeType[storeTypeIdx].enterPrice}}元品牌使用费每年</span>
     </div>
     <div class="com-wrap column">
       <span class="title">店铺名称</span>

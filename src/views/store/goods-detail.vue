@@ -258,7 +258,7 @@
       <div class="shopcart-content column">
         <!-- 顶部信息栏 -->
         <div class="top row">
-          <img :src="sku_obj.preview" alt="">
+          <img :src="sku_obj.preview" alt="" @click="viewImg(sku_obj.preview)">
           <div class="column sb">
             <div class="row price-wrap">
               <span class="symbol">￥</span><span class="price">{{sku_obj.paymentPrice}}</span>
@@ -299,7 +299,7 @@
 <script>
 import api from '../../api/home'
 import storeApi from '../../api/store'
-import { Swipe, SwipeItem, ActionSheet } from 'vant';
+import { Swipe, SwipeItem, ActionSheet, ImagePreview } from 'vant';
 import hotRecomCard from '../../components/common/card/hot-recom-card'
 import homeGoodCard from '../../components/common/card/home-good-card'
 import inputNumber from '../../components/common/my/input-number'
@@ -475,6 +475,9 @@ export default {
     let length = this.pageInfo.propertyBoots.length
     if(this.sku_list.length==0 || this.sku_list.length<length) return false
     return !this.sku_list.some(v=>!v)
+   },
+   viewImg(url){
+     ImagePreview([url])
    }
  },
  watch:{
@@ -503,7 +506,8 @@ export default {
    homeGoodCard,
    inputNumber,
    evaluateCard,
-   loading
+   loading,
+   ImagePreview
  }
 }
 </script>

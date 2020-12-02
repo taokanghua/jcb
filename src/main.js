@@ -9,7 +9,7 @@ import Toast from './components/common/Toast'
 import VueClipboard from 'vue-clipboard2'
 import filters from '@/utils/filters'
 import VueScroller from 'vue-scroller'
-import { Dialog } from 'vant'
+import { Dialog, ImagePreview } from 'vant'
 
 import 'vant/lib/index.css';
 // 自定义 toast 可通过 this.showToast(title, duration) 调用
@@ -21,6 +21,7 @@ Vue.use(toast)
 Vue.use(VueScroller)
 Vue.use(VueClipboard)
 Vue.use(Toast)
+Vue.use(ImagePreview)
 Vue.use(AwesomePicker);
 Vue.use(Dialog)
 Date.prototype.format = function(format) {

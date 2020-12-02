@@ -1,7 +1,7 @@
 <template>
   <div class="mall-wrap">
     <div class="header-top row sb ac">
-      <input type="search" placeholder="请输入商品名称或店铺名称搜索"@click="$router.push({path:'search'})" />
+      <input type="search" placeholder="请输入商品名称或店铺名称搜索" @click="$router.push({path:'search'})" />
       <div class="address" @click="$router.push({name:'chooseAddress'})">
         <div v-if="Object.keys(local).length>3">
           <i class="iconfont icondizhi"></i>
@@ -48,7 +48,7 @@
       <div class="shop-wrap row sb" >
         <router-link :to="'/store?id='+item.id" class="shop-item" v-for="item in newStoreList" :key="item.id">
           <img :src="item.head" alt="">
-          <div>{{item.name}}</div>
+          <div class="e1">{{item.name}}</div>
         </router-link>
       </div>
     </div>
